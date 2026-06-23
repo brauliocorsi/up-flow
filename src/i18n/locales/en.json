@@ -16,7 +16,8 @@
   "nav": {
     "equipa": "Team",
     "gerar": "Generate tasks",
-    "painel": "Dashboard"
+    "painel": "Dashboard",
+    "hoje": "My routine"
   },
   "auth": {
     "title": "Sign in",
@@ -82,8 +83,11 @@
       "papel": "App role",
       "estado": "Status",
       "login": "Login",
+      "cor": "Color",
       "actions": "Actions"
     },
+    "corLabel": "Employee color",
+    "corChanged": "Color updated.",
     "criar": {
       "openButton": "Create employee with access",
       "title": "Create employee with access",
@@ -165,6 +169,25 @@
       "clearing": "Clearing…",
       "generated": "Demo data generated for today.",
       "cleared": "Demo data removed."
+    }
+  },
+  "hoje": {
+    "title": "My routine for today",
+    "progresso": "Progress",
+    "tarefaAtual": "Current task",
+    "sessaoAtual": "Current session",
+    "tempoTotal": "Total time",
+    "listaTarefas": "Today's tasks",
+    "semTarefasHoje": "No tasks assigned for today.",
+    "tudoConcluido": "All done!",
+    "motivoPausa": "Pause reason",
+    "confirmarPausa": "Confirm pause",
+    "acao": {
+      "iniciar": "Start",
+      "retomar": "Resume",
+      "concluir": "Finish",
+      "pausar": "Pause",
+      "saltar": "Skip"
     }
   }
 }

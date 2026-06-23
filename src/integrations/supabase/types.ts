@@ -103,6 +103,7 @@ export type Database = {
       funcionarios: {
         Row: {
           ativo: boolean
+          cor: string | null
           created_at: string
           funcao_id: string | null
           id: string
@@ -112,6 +113,7 @@ export type Database = {
         }
         Insert: {
           ativo?: boolean
+          cor?: string | null
           created_at?: string
           funcao_id?: string | null
           id?: string
@@ -121,6 +123,7 @@ export type Database = {
         }
         Update: {
           ativo?: boolean
+          cor?: string | null
           created_at?: string
           funcao_id?: string | null
           id?: string
@@ -366,6 +369,7 @@ export type Database = {
           id: string
         }[]
       }
+      proxima_cor_funcionario: { Args: never; Returns: string }
       tarefa_pertence_a_mim: {
         Args: { _tarefa_dia_id: string }
         Returns: boolean

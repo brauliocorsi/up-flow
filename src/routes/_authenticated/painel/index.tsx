@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
+import { corFuncionario } from "@/lib/cores";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
   component: PainelPage,
@@ -39,6 +40,7 @@ type Funcionario = {
   id: string;
   nome: string;
   papel: "gestor" | "funcionario";
+  cor: string | null;
   funcao: { nome: string } | null;
 };
 type Motivo = { id: string; label: string };
@@ -91,7 +93,7 @@ function PainelPage() {
     queryFn: async (): Promise<Funcionario[]> => {
       const { data, error } = await supabase
         .from("funcionarios")
-        .select("id, nome, papel, funcao:funcoes(nome)")
+        .select("id, nome, papel, cor, funcao:funcoes(nome)")
         .eq("ativo", true)
         .order("nome");
       if (error) throw error;
@@ -355,7 +357,12 @@ function PainelPage() {
                 onClick={() => setExpanded((s) => ({ ...s, [c.f.id]: !open }))}
                 className="w-full flex items-center justify-between px-4 py-3 bg-muted/30 hover:bg-muted/50"
               >
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium text-foreground inline-flex items-center gap-2">
+                  <span
+                    className="inline-block h-3 w-3 rounded-full ring-1 ring-border"
+                    style={{ backgroundColor: corFuncionario(c.f.cor) }}
+                    aria-hidden
+                  />
                   {c.f.nome} <span className="text-muted-foreground">· {c.concluidas}/{c.tarefas.length}</span>
                 </span>
                 <span className="text-xs text-muted-foreground">{open ? "▾" : "▸"}</span>
@@ -415,10 +422,17 @@ function FuncionarioCard({ c, t }: { c: ReturnType<typeof makeCartaoType>; t: (k
   else if (c.excedido) { badgeLabel = t("painel.badge.excedido"); badgeClass = "bg-destructive/15 text-destructive"; }
   else if (c.execAberta) { badgeLabel = t("painel.badge.ativo"); badgeClass = "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"; }
 
+  const cor = corFuncionario(c.f.cor);
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div
+      className="rounded-lg border bg-card p-4"
+      style={{ borderColor: "var(--border)", borderLeftColor: cor, borderLeftWidth: 4 }}
+    >
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+        <div
+          className="h-10 w-10 rounded-full text-white flex items-center justify-center text-sm font-semibold shrink-0"
+          style={{ backgroundColor: cor }}
+        >
           {initials(c.f.nome)}
         </div>
         <div className="flex-1 min-w-0">

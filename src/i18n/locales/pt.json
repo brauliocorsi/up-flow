@@ -16,7 +16,8 @@
   "nav": {
     "equipa": "Equipa",
     "gerar": "Gerar tarefas",
-    "painel": "Painel"
+    "painel": "Painel",
+    "hoje": "A minha rotina"
   },
   "auth": {
     "title": "Entrar",
@@ -82,8 +83,11 @@
       "papel": "Papel",
       "estado": "Estado",
       "login": "Login",
+      "cor": "Cor",
       "actions": "Ações"
     },
+    "corLabel": "Cor do funcionário",
+    "corChanged": "Cor atualizada.",
     "criar": {
       "openButton": "Criar funcionário com acesso",
       "title": "Criar funcionário com acesso",
@@ -165,6 +169,25 @@
       "clearing": "A limpar…",
       "generated": "Dados de demonstração gerados para hoje.",
       "cleared": "Dados de demonstração removidos."
+    }
+  },
+  "hoje": {
+    "title": "A minha rotina de hoje",
+    "progresso": "Progresso",
+    "tarefaAtual": "Tarefa atual",
+    "sessaoAtual": "Sessão atual",
+    "tempoTotal": "Tempo total",
+    "listaTarefas": "Tarefas do dia",
+    "semTarefasHoje": "Sem tarefas atribuídas para hoje.",
+    "tudoConcluido": "Tudo concluído!",
+    "motivoPausa": "Motivo da pausa",
+    "confirmarPausa": "Confirmar pausa",
+    "acao": {
+      "iniciar": "Iniciar",
+      "retomar": "Retomar",
+      "concluir": "Concluir",
+      "pausar": "Pausar",
+      "saltar": "Saltar"
     }
   }
 }

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
+import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
 
 export const Route = createFileRoute("/_authenticated/equipa/")({
   component: EquipaPage,
@@ -21,6 +22,7 @@ type Funcionario = {
   ativo: boolean;
   user_id: string | null;
   funcao_id: string;
+  cor: string | null;
   funcao: { nome: string } | null;
 };
 type AuthUser = { id: string; email: string };
@@ -64,7 +66,7 @@ function EquipaPage() {
     queryFn: async (): Promise<Funcionario[]> => {
       const { data, error } = await supabase
         .from("funcionarios")
-        .select("id, nome, papel, ativo, user_id, funcao_id, funcao:funcoes(nome)")
+        .select("id, nome, papel, ativo, user_id, funcao_id, cor, funcao:funcoes(nome)")
         .order("nome");
       if (error) throw error;
       return (data ?? []) as unknown as Funcionario[];
@@ -141,6 +143,21 @@ function EquipaPage() {
       if (error) throw error;
     },
     onSuccess: invalidateAll,
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const updateCor = useMutation({
+    mutationFn: async (args: { id: string; cor: string }) => {
+      const { error } = await supabase
+        .from("funcionarios")
+        .update({ cor: args.cor })
+        .eq("id", args.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setFeedback(t("equipa.corChanged"));
+      invalidateAll();
+    },
     onError: (e: Error) => setFeedback(e.message),
   });
 
@@ -230,6 +247,7 @@ function EquipaPage() {
           <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-3 py-2">{t("equipa.col.nome")}</th>
+              <th className="px-3 py-2">{t("equipa.col.cor")}</th>
               <th className="px-3 py-2">{t("equipa.col.funcao")}</th>
               <th className="px-3 py-2">{t("equipa.col.papel")}</th>
               <th className="px-3 py-2">{t("equipa.col.estado")}</th>
@@ -240,7 +258,22 @@ function EquipaPage() {
           <tbody className="divide-y divide-border">
             {funcionarios.map((f) => (
               <tr key={f.id} className="text-foreground">
-                <td className="px-3 py-2 font-medium">{f.nome}</td>
+                <td className="px-3 py-2 font-medium">
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      className="inline-block h-3 w-3 rounded-full ring-1 ring-border"
+                      style={{ backgroundColor: corFuncionario(f.cor) }}
+                      aria-hidden
+                    />
+                    {f.nome}
+                  </span>
+                </td>
+                <td className="px-3 py-2">
+                  <CorPicker
+                    value={f.cor}
+                    onChange={(cor) => updateCor.mutate({ id: f.id, cor })}
+                  />
+                </td>
                 <td className="px-3 py-2 text-muted-foreground">{f.funcao?.nome ?? "—"}</td>
                 <td className="px-3 py-2">{t(`roles.${f.papel}`)}</td>
                 <td className="px-3 py-2">
@@ -302,7 +335,7 @@ function EquipaPage() {
               </tr>
             ))}
             {funcionarios.length === 0 && (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">{t("equipa.empty")}</td></tr>
+              <tr><td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">{t("equipa.empty")}</td></tr>
             )}
           </tbody>
         </table>
@@ -577,5 +610,38 @@ function CriarFuncionarioForm({
         </button>
       </div>
     </form>
+  );
+}
+
+function CorPicker({
+  value,
+  onChange,
+}: {
+  value: string | null;
+  onChange: (cor: string) => void;
+}) {
+  const { t } = useTranslation();
+  const current = corFuncionario(value);
+  return (
+    <label className="inline-flex items-center gap-2 text-xs" title={t("equipa.corLabel")}>
+      <span
+        className="inline-block h-5 w-5 rounded-full ring-1 ring-border shrink-0"
+        style={{ backgroundColor: current }}
+      />
+      <select
+        value={CORES_FUNCIONARIO.some((c) => c.value === value) ? (value ?? "") : ""}
+        onChange={(e) => {
+          if (e.target.value) onChange(e.target.value);
+        }}
+        className="rounded border border-input bg-background px-2 py-1 text-xs"
+      >
+        {!CORES_FUNCIONARIO.some((c) => c.value === value) && (
+          <option value="">—</option>
+        )}
+        {CORES_FUNCIONARIO.map((c) => (
+          <option key={c.value} value={c.value}>{c.label}</option>
+        ))}
+      </select>
+    </label>
   );
 }

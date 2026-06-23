@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel/index'
+import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authenticated/hoje/index'
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
@@ -43,6 +44,11 @@ const AuthenticatedPainelIndexRoute =
     path: '/painel/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedHojeIndexRoute = AuthenticatedHojeIndexRouteImport.update({
+  id: '/hoje/',
+  path: '/hoje/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedGerarIndexRoute = AuthenticatedGerarIndexRouteImport.update({
   id: '/gerar/',
   path: '/gerar/',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthenticatedAppIndexRoute
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
+  '/hoje/': typeof AuthenticatedHojeIndexRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
 }
 export interface FileRoutesByTo {
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppIndexRoute
   '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
+  '/hoje': typeof AuthenticatedHojeIndexRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
 }
 export interface FileRoutesById {
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
+  '/_authenticated/hoje/': typeof AuthenticatedHojeIndexRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
 }
 export interface FileRouteTypes {
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/equipa/'
     | '/gerar/'
+    | '/hoje/'
     | '/painel/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/equipa'
     | '/gerar'
+    | '/hoje'
     | '/painel'
   id:
     | '__root__'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/'
     | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
+    | '/_authenticated/hoje/'
     | '/_authenticated/painel/'
   fileRoutesById: FileRoutesById
 }
@@ -164,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/hoje/': {
+      id: '/_authenticated/hoje/'
+      path: '/hoje'
+      fullPath: '/hoje/'
+      preLoaderRoute: typeof AuthenticatedHojeIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/gerar/': {
       id: '/_authenticated/gerar/'
       path: '/gerar'
@@ -192,6 +211,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
+  AuthenticatedHojeIndexRoute: typeof AuthenticatedHojeIndexRoute
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
 }
 
@@ -199,6 +219,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
+  AuthenticatedHojeIndexRoute: AuthenticatedHojeIndexRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
 }
 
