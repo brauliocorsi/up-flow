@@ -66,7 +66,7 @@ function EquipaPage() {
     queryFn: async (): Promise<Funcionario[]> => {
       const { data, error } = await supabase
         .from("funcionarios")
-        .select("id, nome, papel, ativo, user_id, funcao_id, funcao:funcoes(nome)")
+        .select("id, nome, papel, ativo, user_id, funcao_id, cor, funcao:funcoes(nome)")
         .order("nome");
       if (error) throw error;
       return (data ?? []) as unknown as Funcionario[];
