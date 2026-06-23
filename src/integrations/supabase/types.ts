@@ -330,6 +330,112 @@ export type Database = {
         }
         Relationships: []
       }
+      questao_mensagens: {
+        Row: {
+          autor_funcionario_id: string
+          autor_papel: string
+          created_at: string
+          id: string
+          lida_pelo_gestor: boolean
+          lida_pelo_operador: boolean
+          questao_id: string
+          texto: string
+        }
+        Insert: {
+          autor_funcionario_id: string
+          autor_papel: string
+          created_at?: string
+          id?: string
+          lida_pelo_gestor?: boolean
+          lida_pelo_operador?: boolean
+          questao_id: string
+          texto: string
+        }
+        Update: {
+          autor_funcionario_id?: string
+          autor_papel?: string
+          created_at?: string
+          id?: string
+          lida_pelo_gestor?: boolean
+          lida_pelo_operador?: boolean
+          questao_id?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questao_mensagens_autor_funcionario_id_fkey"
+            columns: ["autor_funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questao_mensagens_questao_id_fkey"
+            columns: ["questao_id"]
+            isOneToOne: false
+            referencedRelation: "questoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questoes: {
+        Row: {
+          assunto: string
+          atividade_id: string | null
+          created_at: string
+          estado: string
+          funcionario_id: string
+          id: string
+          tarefa_dia_id: string | null
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          assunto: string
+          atividade_id?: string | null
+          created_at?: string
+          estado?: string
+          funcionario_id: string
+          id?: string
+          tarefa_dia_id?: string | null
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          assunto?: string
+          atividade_id?: string | null
+          created_at?: string
+          estado?: string
+          funcionario_id?: string
+          id?: string
+          tarefa_dia_id?: string | null
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questoes_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questoes_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questoes_tarefa_dia_id_fkey"
+            columns: ["tarefa_dia_id"]
+            isOneToOne: false
+            referencedRelation: "tarefas_dia"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rotina_templates: {
         Row: {
           created_at: string
@@ -537,6 +643,7 @@ export type Database = {
         Returns: undefined
       }
       proxima_cor_funcionario: { Args: never; Returns: string }
+      questao_visivel: { Args: { _questao_id: string }; Returns: boolean }
       tarefa_pertence_a_mim: {
         Args: { _tarefa_dia_id: string }
         Returns: boolean
