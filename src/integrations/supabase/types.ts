@@ -255,6 +255,47 @@ export type Database = {
         }
         Relationships: []
       }
+      horarios_trabalho: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          funcionario_id: string
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          tipo_dia: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          funcionario_id: string
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          tipo_dia: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          funcionario_id?: string
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          tipo_dia?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "horarios_trabalho_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       macros: {
         Row: {
           atividade_id: string | null
@@ -329,6 +370,50 @@ export type Database = {
           label?: string
         }
         Relationships: []
+      }
+      pausas_fixas: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          funcionario_id: string
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          nome: string
+          ordem: number
+          tipo_dia: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          funcionario_id: string
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          nome: string
+          ordem?: number
+          tipo_dia: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          funcionario_id?: string
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          tipo_dia?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pausas_fixas_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       questao_mensagens: {
         Row: {

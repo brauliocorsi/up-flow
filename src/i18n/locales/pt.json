@@ -340,6 +340,31 @@
       "submitting": "A registar…",
       "fillRequired": "Indica um título.",
       "semAbertos": "Sem eventos por atender."
-    }
+    },
+    "hojeLabel": "Hoje",
+    "folga": "Hoje é dia de folga."
+  },
+  "horario": {
+    "title": "Horário de trabalho",
+    "subtitle": "Define o início e fim do dia. Domingo é folga.",
+    "pausasTitle": "Pausas fixas",
+    "pausasSubtitle": "O almoço e outras pausas previsíveis do dia.",
+    "tipoDia": {
+      "util": "Dias úteis (seg–sex)",
+      "sabado": "Sábado"
+    },
+    "inicio": "Início",
+    "fim": "Fim",
+    "naoTrabalha": "Não trabalha",
+    "semHorario": "Sem horário definido para este dia.",
+    "adicionarPausa": "Adicionar pausa",
+    "semPausas": "Sem pausas definidas.",
+    "nomePausa": "Nome",
+    "nomePausaPh": "Ex.: Almoço",
+    "dentroDe": "Deve estar entre {{start}} e {{end}}",
+    "errInicioFim": "O início tem de ser anterior ao fim.",
+    "errForaHorario": "A pausa tem de estar dentro do horário de trabalho.",
+    "errNome": "Indica o nome da pausa.",
+    "warnSobreposicao": "Atenção: esta pausa sobrepõe-se a outra."
   }
 }

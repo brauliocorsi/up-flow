@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { HorarioEditor } from "@/components/HorarioEditor";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
 import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
@@ -490,6 +491,11 @@ function FuncionarioForm({
         )}
       </div>
       {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+      {initial && (
+        <div className="mt-6 border-t border-border pt-6">
+          <HorarioEditor funcionarioId={initial.id} />
+        </div>
+      )}
       <div className="mt-4 flex gap-2">
         <button
           onClick={() => save.mutate()}

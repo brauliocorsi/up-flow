@@ -141,6 +141,37 @@ function HojePage() {
     },
   });
 
+  const horarioQuery = useQuery({
+    enabled: !!me,
+    queryKey: ["hoje-horario", me?.id, data],
+    queryFn: async () => {
+      const dow = new Date(data + "T00:00:00").getDay(); // 0=dom,6=sab
+      if (dow === 0) return { tipoDia: null as null | "util" | "sabado", horario: null, pausas: [] as { nome: string; hora_inicio: string; hora_fim: string }[] };
+      const tipoDia: "util" | "sabado" = dow === 6 ? "sabado" : "util";
+      const [{ data: hRows }, { data: pRows }] = await Promise.all([
+        supabase
+          .from("horarios_trabalho")
+          .select("hora_inicio, hora_fim, ativo")
+          .eq("funcionario_id", me!.id)
+          .eq("tipo_dia", tipoDia)
+          .maybeSingle(),
+        supabase
+          .from("pausas_fixas")
+          .select("nome, hora_inicio, hora_fim, ativo")
+          .eq("funcionario_id", me!.id)
+          .eq("tipo_dia", tipoDia)
+          .order("ordem"),
+      ]);
+      return {
+        tipoDia,
+        horario: hRows && hRows.ativo ? { hora_inicio: hRows.hora_inicio as string, hora_fim: hRows.hora_fim as string } : null,
+        pausas: ((pRows ?? []) as { nome: string; hora_inicio: string; hora_fim: string; ativo: boolean }[])
+          .filter((p) => p.ativo)
+          .map((p) => ({ nome: p.nome, hora_inicio: p.hora_inicio, hora_fim: p.hora_fim })),
+      };
+    },
+  });
+
   const execucoesQuery = useQuery({
     enabled: !!tarefasQuery.data && tarefasQuery.data.length > 0,
     queryKey: ["hoje-execucoes", me?.id, data, tarefasQuery.data?.length ?? 0],
@@ -592,6 +623,24 @@ function HojePage() {
           <HelpCircle className="h-5 w-5" />
         </Link>
       </div>
+
+      {horarioQuery.data && (horarioQuery.data.horario || horarioQuery.data.tipoDia === null) && (
+        <p className="mt-2 px-1 text-xs text-muted-foreground">
+          {horarioQuery.data.tipoDia === null
+            ? t("hoje.folga")
+            : (() => {
+                const h = horarioQuery.data.horario!;
+                const parts = [
+                  `${t("hoje.hojeLabel")}: ${h.hora_inicio.slice(0,5)}–${h.hora_fim.slice(0,5)}`,
+                  ...horarioQuery.data.pausas.map(
+                    (p) => `${p.nome} ${p.hora_inicio.slice(0,5)}–${p.hora_fim.slice(0,5)}`,
+                  ),
+                ];
+                return parts.join(" · ");
+              })()}
+        </p>
+      )}
+
 
       {bellOpen && (
         <div className="mt-3 rounded-lg border border-border bg-card p-3">
