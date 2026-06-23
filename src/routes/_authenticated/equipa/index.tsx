@@ -22,6 +22,7 @@ type Funcionario = {
   ativo: boolean;
   user_id: string | null;
   funcao_id: string;
+  cor: string | null;
   funcao: { nome: string } | null;
 };
 type AuthUser = { id: string; email: string };
