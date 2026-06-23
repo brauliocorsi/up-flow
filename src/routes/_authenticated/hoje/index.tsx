@@ -85,6 +85,7 @@ function HojePage() {
   const [novoEv, setNovoEv] = useState<{ tipo: "recebimento" | "levantamento" | "outro"; titulo: string; descricao: string }>(
     { tipo: "recebimento", titulo: "", descricao: "" },
   );
+  const [duvidasTarefa, setDuvidasTarefa] = useState<{ titulo: string; atividadeId: string } | null>(null);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
