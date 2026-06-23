@@ -34,6 +34,19 @@ type Execucao = {
   motivo_pausa_id: string | null;
 };
 type Motivo = { id: string; label: string };
+type Evento = {
+  id: string;
+  funcionario_id: string;
+  tipo: "recebimento" | "levantamento" | "urgencia" | "outro";
+  titulo: string;
+  descricao: string;
+  inicio: string;
+  fim: string | null;
+  prioridade: "urgente" | "normal";
+  estado: "aberto" | "fechado";
+  tarefa_pausada_id: string | null;
+  lido: boolean;
+};
 
 function todayISO(): string {
   const d = new Date();
@@ -65,6 +78,12 @@ function HojePage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [pausingId, setPausingId] = useState<string | null>(null);
   const [pausaMotivoId, setPausaMotivoId] = useState<string>("");
+  const [bellOpen, setBellOpen] = useState(false);
+  const [retomarPrompt, setRetomarPrompt] = useState<{ tarefaId: string; titulo: string } | null>(null);
+  const [novoEvOpen, setNovoEvOpen] = useState(false);
+  const [novoEv, setNovoEv] = useState<{ tipo: "recebimento" | "levantamento" | "outro"; titulo: string; descricao: string }>(
+    { tipo: "recebimento", titulo: "", descricao: "" },
+  );
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -155,17 +174,36 @@ function HojePage() {
     [motivosQuery.data],
   );
 
-  // Realtime: refletir alterações feitas noutros sítios
+  const eventosQuery = useQuery({
+    enabled: !!me,
+    queryKey: ["hoje-eventos", me?.id, data],
+    queryFn: async (): Promise<Evento[]> => {
+      const start = `${data}T00:00:00Z`;
+      const end = `${data}T23:59:59Z`;
+      const { data: rows, error } = await supabase
+        .from("eventos")
+        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim, prioridade, estado, tarefa_pausada_id, lido")
+        .eq("funcionario_id", me!.id)
+        .gte("inicio", start).lte("inicio", end)
+        .order("inicio", { ascending: false });
+      if (error) throw error;
+      return (rows ?? []) as Evento[];
+    },
+  });
+
+  // Realtime
   useEffect(() => {
     if (!me) return;
     const invalidate = () => {
       qc.invalidateQueries({ queryKey: ["hoje-tarefas", me.id, data] });
       qc.invalidateQueries({ queryKey: ["hoje-execucoes", me.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me.id, data] });
     };
     const ch = supabase
       .channel(`hoje-${me.id}-${data}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "tarefas_dia", filter: `funcionario_id=eq.${me.id}` }, invalidate)
       .on("postgres_changes", { event: "*", schema: "public", table: "execucoes" }, invalidate)
+      .on("postgres_changes", { event: "*", schema: "public", table: "eventos", filter: `funcionario_id=eq.${me.id}` }, invalidate)
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
@@ -308,6 +346,58 @@ function HojePage() {
     onError: (e: Error) => setFeedback(e.message),
   });
 
+  const fecharEvento = useMutation({
+    mutationFn: async (args: { eventoId: string; retomar: boolean; tarefaTitulo?: string; tarefaId?: string | null }) => {
+      const { error } = await supabase.rpc("fechar_evento", {
+        _evento_id: args.eventoId,
+        _retomar: args.retomar,
+      });
+      if (error) throw error;
+    },
+    onSuccess: (_d, vars) => {
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-tarefas", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-execucoes", me?.id, data] });
+      if (!vars.retomar && vars.tarefaId && vars.tarefaTitulo) {
+        setRetomarPrompt({ tarefaId: vars.tarefaId, titulo: vars.tarefaTitulo });
+      } else {
+        setRetomarPrompt(null);
+      }
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const registarEvento = useMutation({
+    mutationFn: async () => {
+      if (!novoEv.titulo.trim()) throw new Error(t("hoje.eventos.fillRequired"));
+      const { error } = await supabase.from("eventos").insert({
+        funcionario_id: me!.id,
+        tipo: novoEv.tipo,
+        titulo: novoEv.titulo.trim(),
+        descricao: novoEv.descricao.trim(),
+        criado_por: "funcionario",
+        prioridade: "normal",
+        estado: "aberto",
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setNovoEvOpen(false);
+      setNovoEv({ tipo: "recebimento", titulo: "", descricao: "" });
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] });
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const marcarLidos = useMutation({
+    mutationFn: async () => {
+      if (!me) return;
+      const { error } = await supabase.rpc("marcar_eventos_lidos", { _funcionario_id: me.id });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] }),
+  });
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
@@ -335,6 +425,12 @@ function HojePage() {
     tarefas.find((tk) => tk.estado === "pausada") ??
     null;
   const motivos = motivosQuery.data ?? [];
+  const eventos = eventosQuery.data ?? [];
+  const eventosAbertos = eventos.filter((e) => e.estado === "aberto");
+  const urgenciaAberta = eventosAbertos.find((e) => e.prioridade === "urgente") ?? null;
+  const normaisAbertos = eventosAbertos.filter((e) => e.prioridade !== "urgente");
+  const eventosFechados = eventos.filter((e) => e.estado === "fechado");
+  const unread = eventosAbertos.filter((e) => !e.lido).length;
 
   const dateFmt = new Intl.DateTimeFormat(i18n.language === "pt" ? "pt-PT" : "en-GB", {
     weekday: "long", day: "2-digit", month: "long",
@@ -358,7 +454,104 @@ function HojePage() {
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("hoje.progresso")}</p>
           <p className="text-xl font-semibold text-foreground">{concluidas} / {tarefas.length}</p>
         </div>
+        <button
+          onClick={() => { setBellOpen((v) => { const nv = !v; if (nv && unread > 0) marcarLidos.mutate(); return nv; }); }}
+          className="relative ml-2 rounded-full border border-input bg-background p-2 hover:bg-accent"
+          aria-label={t("hoje.eventos.sino")}
+          title={t("hoje.eventos.sino")}
+        >
+          <span className="text-lg">🔔</span>
+          {unread > 0 && (
+            <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+              {unread}
+            </span>
+          )}
+        </button>
       </div>
+
+      {bellOpen && (
+        <div className="mt-3 rounded-lg border border-border bg-card p-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-foreground">{t("hoje.eventos.sino")}</h3>
+            <button onClick={() => setNovoEvOpen((v) => !v)} className="text-xs rounded-md border border-input bg-background px-2 py-1 hover:bg-accent">
+              + {t("hoje.eventos.registar")}
+            </button>
+          </div>
+          {novoEvOpen && (
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <label className="text-sm">
+                <span className="block text-xs text-muted-foreground mb-1">{t("hoje.eventos.tipo")}</span>
+                <select
+                  value={novoEv.tipo}
+                  onChange={(e) => setNovoEv({ ...novoEv, tipo: e.target.value as typeof novoEv.tipo })}
+                  className="w-full rounded border border-input bg-background px-2 py-1.5"
+                >
+                  <option value="recebimento">{t("painel.eventoTipo.recebimento")}</option>
+                  <option value="levantamento">{t("painel.eventoTipo.levantamento")}</option>
+                  <option value="outro">{t("painel.eventoTipo.outro")}</option>
+                </select>
+              </label>
+              <label className="text-sm">
+                <span className="block text-xs text-muted-foreground mb-1">{t("hoje.eventos.tituloLabel")}</span>
+                <input
+                  value={novoEv.titulo}
+                  onChange={(e) => setNovoEv({ ...novoEv, titulo: e.target.value })}
+                  className="w-full rounded border border-input bg-background px-2 py-1.5"
+                />
+              </label>
+              <label className="text-sm sm:col-span-2">
+                <span className="block text-xs text-muted-foreground mb-1">{t("hoje.eventos.descricaoLabel")}</span>
+                <textarea
+                  value={novoEv.descricao}
+                  onChange={(e) => setNovoEv({ ...novoEv, descricao: e.target.value })}
+                  rows={2}
+                  className="w-full rounded border border-input bg-background px-2 py-1.5"
+                />
+              </label>
+              <div className="sm:col-span-2 flex gap-2">
+                <button
+                  onClick={() => registarEvento.mutate()}
+                  disabled={registarEvento.isPending}
+                  className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {registarEvento.isPending ? t("hoje.eventos.submitting") : t("hoje.eventos.submit")}
+                </button>
+                <button onClick={() => setNovoEvOpen(false)} className="text-sm text-muted-foreground hover:underline">
+                  {t("common.cancel")}
+                </button>
+              </div>
+            </div>
+          )}
+          {eventosAbertos.length === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">{t("hoje.eventos.semAbertos")}</p>
+          ) : (
+            <ul className="mt-2 space-y-1 text-sm">
+              {eventosAbertos.map((e) => (
+                <li key={e.id} className="flex items-center justify-between border-b border-border/40 py-1">
+                  <span className="truncate">
+                    {e.prioridade === "urgente" && <span className="mr-1 text-destructive font-bold">URG</span>}
+                    {e.titulo}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{new Date(e.inicio).toLocaleTimeString()}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {eventosFechados.length > 0 && (
+            <details className="mt-2">
+              <summary className="text-xs text-muted-foreground cursor-pointer">{t("painel.eventosFechados")} · {eventosFechados.length}</summary>
+              <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
+                {eventosFechados.map((e) => (
+                  <li key={e.id} className="flex items-center justify-between border-b border-border/30 py-1">
+                    <span className="truncate">{e.titulo}</span>
+                    <span>{e.fim ? new Date(e.fim).toLocaleTimeString() : "—"}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </div>
+      )}
 
       {feedback && (
         <div className="mt-4 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
@@ -366,6 +559,85 @@ function HojePage() {
           <button onClick={() => setFeedback(null)} className="ml-2 text-xs text-muted-foreground hover:underline">
             {t("common.dismiss")}
           </button>
+        </div>
+      )}
+
+      {retomarPrompt && (
+        <div className="mt-4 rounded-lg border border-primary/40 bg-primary/5 p-4">
+          <p className="text-sm font-medium text-foreground">{t("hoje.eventos.retomarPergunta", { titulo: retomarPrompt.titulo })}</p>
+          <div className="mt-2 flex gap-2">
+            <button
+              onClick={() => {
+                // retoma manualmente: cria nova execução e marca a_decorrer
+                iniciar.mutate(retomarPrompt.tarefaId);
+                setRetomarPrompt(null);
+              }}
+              className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              {t("hoje.eventos.retomar")}
+            </button>
+            <button onClick={() => setRetomarPrompt(null)} className="text-sm text-muted-foreground hover:underline">
+              {t("hoje.eventos.naoRetomar")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {urgenciaAberta && (
+        <div className="mt-4 rounded-xl border-2 border-destructive bg-destructive/10 p-5 animate-pulse">
+          <div className="flex items-center gap-2">
+            <span className="text-3xl">🚨</span>
+            <span className="text-xs font-bold tracking-widest text-destructive">{t("hoje.eventos.urgenciaTitulo")}</span>
+          </div>
+          <h2 className="mt-2 text-2xl font-bold text-foreground">{urgenciaAberta.titulo}</h2>
+          {urgenciaAberta.descricao && (
+            <p className="mt-1 text-sm text-foreground/80 whitespace-pre-wrap">{urgenciaAberta.descricao}</p>
+          )}
+          <button
+            onClick={() => {
+              const tarefaPausada = urgenciaAberta.tarefa_pausada_id
+                ? tarefas.find((t) => t.id === urgenciaAberta.tarefa_pausada_id) ?? null
+                : null;
+              fecharEvento.mutate({
+                eventoId: urgenciaAberta.id,
+                retomar: false,
+                tarefaId: tarefaPausada?.id ?? null,
+                tarefaTitulo: tarefaPausada?.titulo,
+              });
+            }}
+            disabled={fecharEvento.isPending}
+            className="mt-4 w-full rounded-lg bg-destructive px-4 py-4 text-base font-bold text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
+          >
+            ✓ {t("hoje.eventos.concluirUrgencia")}
+          </button>
+        </div>
+      )}
+
+      {normaisAbertos.length > 0 && (
+        <div className="mt-4 rounded-lg border border-border bg-card p-3">
+          <h3 className="text-sm font-semibold text-foreground">{t("hoje.eventos.aAtender")}</h3>
+          <ul className="mt-2 space-y-2">
+            {normaisAbertos.map((e) => (
+              <li key={e.id} className="flex items-center justify-between gap-3 border-t border-border/50 pt-2 first:border-0 first:pt-0">
+                <div className="min-w-0">
+                  <p className="text-sm text-foreground truncate">
+                    <span className="text-xs uppercase tracking-wide text-muted-foreground mr-2">
+                      {t(`painel.eventoTipo.${e.tipo}`)}
+                    </span>
+                    {e.titulo}
+                  </p>
+                  {e.descricao && <p className="text-xs text-muted-foreground truncate">{e.descricao}</p>}
+                </div>
+                <button
+                  onClick={() => fecharEvento.mutate({ eventoId: e.id, retomar: false })}
+                  disabled={fecharEvento.isPending}
+                  className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  ✓ {t("hoje.eventos.concluir")}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

@@ -19,10 +19,14 @@ export type Database = {
           created_at: string
           criado_por: string
           descricao: string
+          estado: string
           fim: string | null
           funcionario_id: string
           id: string
           inicio: string
+          lido: boolean
+          prioridade: string
+          tarefa_pausada_id: string | null
           tipo: string
           titulo: string
         }
@@ -30,10 +34,14 @@ export type Database = {
           created_at?: string
           criado_por: string
           descricao?: string
+          estado?: string
           fim?: string | null
           funcionario_id: string
           id?: string
           inicio?: string
+          lido?: boolean
+          prioridade?: string
+          tarefa_pausada_id?: string | null
           tipo: string
           titulo: string
         }
@@ -41,10 +49,14 @@ export type Database = {
           created_at?: string
           criado_por?: string
           descricao?: string
+          estado?: string
           fim?: string | null
           funcionario_id?: string
           id?: string
           inicio?: string
+          lido?: boolean
+          prioridade?: string
+          tarefa_pausada_id?: string | null
           tipo?: string
           titulo?: string
         }
@@ -54,6 +66,13 @@ export type Database = {
             columns: ["funcionario_id"]
             isOneToOne: false
             referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_tarefa_pausada_id_fkey"
+            columns: ["tarefa_pausada_id"]
+            isOneToOne: false
+            referencedRelation: "tarefas_dia"
             referencedColumns: ["id"]
           },
         ]
@@ -334,9 +353,22 @@ export type Database = {
         Args: { _funcionario_id: string; _user_id: string }
         Returns: undefined
       }
+      criar_urgencia_gestor: {
+        Args: {
+          _descricao: string
+          _funcionario_id: string
+          _prioridade?: string
+          _titulo: string
+        }
+        Returns: string
+      }
       desassociar_user_de_funcionario: {
         Args: { _funcionario_id: string }
         Returns: undefined
+      }
+      fechar_evento: {
+        Args: { _evento_id: string; _retomar?: boolean }
+        Returns: string
       }
       funcionario_tem_historico: {
         Args: { _funcionario_id: string }
@@ -368,6 +400,10 @@ export type Database = {
           email: string
           id: string
         }[]
+      }
+      marcar_eventos_lidos: {
+        Args: { _funcionario_id: string }
+        Returns: undefined
       }
       proxima_cor_funcionario: { Args: never; Returns: string }
       tarefa_pertence_a_mim: {

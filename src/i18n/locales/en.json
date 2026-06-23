@@ -132,7 +132,8 @@
       "concluidas": "Tasks done",
       "dentroPct": "On time",
       "pausas": "On pause",
-      "urgencias": "Urgencies"
+      "urgencias": "Open urgencies",
+      "tempoUrg": "Urgency time"
     },
     "badge": {
       "ativo": "Active",
@@ -169,7 +170,24 @@
       "clearing": "Clearing…",
       "generated": "Demo data generated for today.",
       "cleared": "Demo data removed."
-    }
+    },
+    "urgencia": {
+      "trigger": "Trigger urgency",
+      "title": "Trigger urgency",
+      "funcionario": "Employee",
+      "tituloLabel": "Title",
+      "descricaoLabel": "Description",
+      "prioridade": "Priority",
+      "urgente": "Urgent (pauses current task)",
+      "normal": "Normal (notification only)",
+      "submit": "Send",
+      "submitting": "Sending…",
+      "sent": "Event sent.",
+      "fillRequired": "Pick an employee and provide a title."
+    },
+    "eventosAbertos": "Open",
+    "eventosFechados": "Closed today",
+    "ha": "{{m}}m ago"
   },
   "hoje": {
     "title": "My routine for today",
@@ -188,6 +206,25 @@
       "concluir": "Finish",
       "pausar": "Pause",
       "saltar": "Skip"
+    },
+    "eventos": {
+      "sino": "Notifications",
+      "urgenciaTitulo": "URGENCY",
+      "concluirUrgencia": "Finish urgency",
+      "aAtender": "To handle",
+      "concluir": "Finish",
+      "retomarPergunta": "Resume “{{titulo}}”?",
+      "retomar": "Yes, resume",
+      "naoRetomar": "Not now",
+      "registar": "Log event",
+      "novoEvento": "New event",
+      "tipo": "Type",
+      "tituloLabel": "Title",
+      "descricaoLabel": "Description",
+      "submit": "Log",
+      "submitting": "Logging…",
+      "fillRequired": "Provide a title.",
+      "semAbertos": "No events to handle."
     }
   }
 }

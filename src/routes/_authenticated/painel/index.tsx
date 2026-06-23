@@ -35,6 +35,10 @@ type Evento = {
   descricao: string;
   inicio: string;
   fim: string | null;
+  prioridade: "urgente" | "normal";
+  estado: "aberto" | "fechado";
+  tarefa_pausada_id: string | null;
+  lido: boolean;
 };
 type Funcionario = {
   id: string;
@@ -70,6 +74,8 @@ function PainelPage() {
   const [now, setNow] = useState(() => Date.now());
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [urgOpen, setUrgOpen] = useState(false);
+  const [urgForm, setUrgForm] = useState({ funcionario_id: "", titulo: "", descricao: "", prioridade: "urgente" as "urgente" | "normal" });
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -138,7 +144,7 @@ function PainelPage() {
       const end = `${data}T23:59:59Z`;
       const { data: rows, error } = await supabase
         .from("eventos")
-        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim")
+        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim, prioridade, estado, tarefa_pausada_id, lido")
         .gte("inicio", start).lte("inicio", end)
         .order("inicio");
       if (error) throw error;
@@ -191,6 +197,27 @@ function PainelPage() {
       if (error) throw error;
     },
     onSuccess: () => setFeedback(t("painel.demo.cleared")),
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const dispararUrgencia = useMutation({
+    mutationFn: async () => {
+      if (!urgForm.funcionario_id || !urgForm.titulo.trim()) {
+        throw new Error(t("painel.urgencia.fillRequired"));
+      }
+      const { error } = await supabase.rpc("criar_urgencia_gestor", {
+        _funcionario_id: urgForm.funcionario_id,
+        _titulo: urgForm.titulo.trim(),
+        _descricao: urgForm.descricao.trim(),
+        _prioridade: urgForm.prioridade,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setFeedback(t("painel.urgencia.sent"));
+      setUrgOpen(false);
+      setUrgForm({ funcionario_id: "", titulo: "", descricao: "", prioridade: "urgente" });
+    },
     onError: (e: Error) => setFeedback(e.message),
   });
 
@@ -264,7 +291,7 @@ function PainelPage() {
     }
     const excedido = !!atual && decorridoMin > atual.minutos_previstos && atual.minutos_previstos > 0;
     const eventosFunc = eventos.filter((e) => e.funcionario_id === f.id);
-    const urgencia = eventosFunc.find((e) => e.tipo === "urgencia" && !e.fim) ?? null;
+    const urgencia = eventosFunc.find((e) => e.prioridade === "urgente" && e.estado === "aberto") ?? null;
     return {
       f,
       tarefas: fts,
@@ -282,6 +309,18 @@ function PainelPage() {
     };
   });
 
+  const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado === "aberto");
+  const tempoUrgenciasMin = (() => {
+    let total = 0;
+    for (const e of eventos) {
+      if (e.prioridade !== "urgente") continue;
+      const start = new Date(e.inicio).getTime();
+      const end = e.fim ? new Date(e.fim).getTime() : now;
+      total += Math.max(0, end - start);
+    }
+    return Math.round(total / 60000);
+  })();
+
   const metrics = {
     ativos: cartoes.filter((c) => c.execAberta && !c.pausada).length,
     concluidas: cartoes.reduce((s, c) => s + c.concluidas, 0),
@@ -291,7 +330,8 @@ function PainelPage() {
       return Math.round((ativas.filter((c) => !c.excedido).length / ativas.length) * 100);
     })(),
     pausas: cartoes.filter((c) => c.pausada).length,
-    urgencias: eventos.filter((e) => e.tipo === "urgencia" && !e.fim).length,
+    urgencias: urgenciasAbertas.length,
+    tempoUrg: tempoUrgenciasMin,
   };
 
   const dateFmt = new Intl.DateTimeFormat(i18n.language === "pt" ? "pt-PT" : "en-GB", {
@@ -305,7 +345,13 @@ function PainelPage() {
           <h1 className="text-3xl font-semibold text-foreground">{t("painel.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{dateFmt}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setUrgOpen((v) => !v)}
+            className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/15"
+          >
+            ⚠ {t("painel.urgencia.trigger")}
+          </button>
           <button
             onClick={() => gerarDemo.mutate()}
             disabled={gerarDemo.isPending}
@@ -323,6 +369,65 @@ function PainelPage() {
         </div>
       </div>
 
+      {urgOpen && (
+        <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 p-4">
+          <h3 className="text-sm font-semibold text-foreground">{t("painel.urgencia.title")}</h3>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <label className="text-sm">
+              <span className="block text-muted-foreground text-xs mb-1">{t("painel.urgencia.funcionario")}</span>
+              <select
+                value={urgForm.funcionario_id}
+                onChange={(e) => setUrgForm({ ...urgForm, funcionario_id: e.target.value })}
+                className="w-full rounded border border-input bg-background px-2 py-1.5"
+              >
+                <option value="">—</option>
+                {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.nome}</option>)}
+              </select>
+            </label>
+            <label className="text-sm">
+              <span className="block text-muted-foreground text-xs mb-1">{t("painel.urgencia.prioridade")}</span>
+              <select
+                value={urgForm.prioridade}
+                onChange={(e) => setUrgForm({ ...urgForm, prioridade: e.target.value as "urgente" | "normal" })}
+                className="w-full rounded border border-input bg-background px-2 py-1.5"
+              >
+                <option value="urgente">{t("painel.urgencia.urgente")}</option>
+                <option value="normal">{t("painel.urgencia.normal")}</option>
+              </select>
+            </label>
+            <label className="text-sm sm:col-span-2">
+              <span className="block text-muted-foreground text-xs mb-1">{t("painel.urgencia.tituloLabel")}</span>
+              <input
+                value={urgForm.titulo}
+                onChange={(e) => setUrgForm({ ...urgForm, titulo: e.target.value })}
+                className="w-full rounded border border-input bg-background px-2 py-1.5"
+              />
+            </label>
+            <label className="text-sm sm:col-span-2">
+              <span className="block text-muted-foreground text-xs mb-1">{t("painel.urgencia.descricaoLabel")}</span>
+              <textarea
+                value={urgForm.descricao}
+                onChange={(e) => setUrgForm({ ...urgForm, descricao: e.target.value })}
+                rows={2}
+                className="w-full rounded border border-input bg-background px-2 py-1.5"
+              />
+            </label>
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => dispararUrgencia.mutate()}
+              disabled={dispararUrgencia.isPending}
+              className="rounded-md bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
+            >
+              {dispararUrgencia.isPending ? t("painel.urgencia.submitting") : t("painel.urgencia.submit")}
+            </button>
+            <button onClick={() => setUrgOpen(false)} className="text-sm text-muted-foreground hover:underline">
+              {t("common.cancel")}
+            </button>
+          </div>
+        </div>
+      )}
+
       {feedback && (
         <div className="mt-4 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
           {feedback}
@@ -332,13 +437,15 @@ function PainelPage() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         <Metric label={t("painel.metrics.ativos")} value={metrics.ativos} />
         <Metric label={t("painel.metrics.concluidas")} value={metrics.concluidas} />
         <Metric label={t("painel.metrics.dentroPct")} value={`${metrics.dentroPct}%`} />
         <Metric label={t("painel.metrics.pausas")} value={metrics.pausas} />
         <Metric label={t("painel.metrics.urgencias")} value={metrics.urgencias} tone={metrics.urgencias > 0 ? "danger" : undefined} />
+        <Metric label={t("painel.metrics.tempoUrg")} value={`${metrics.tempoUrg}m`} />
       </div>
+
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {cartoes.map((c) => <FuncionarioCard key={c.f.id} c={c} t={t} />)}
@@ -376,17 +483,26 @@ function PainelPage() {
                         {t("painel.eventos")}
                       </h4>
                       <ul className="mt-2 space-y-1 text-sm">
-                        {c.eventosFunc.map((e) => (
-                          <li key={e.id} className="flex items-center justify-between border-b border-border/50 py-1">
-                            <span className="text-foreground">
-                              <span className="text-xs uppercase tracking-wide text-muted-foreground mr-2">{t(`painel.eventoTipo.${e.tipo}`)}</span>
-                              {e.titulo}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(e.inicio).toLocaleTimeString()}{e.fim ? " → " + new Date(e.fim).toLocaleTimeString() : " · " + t("painel.aberto")}
-                            </span>
-                          </li>
-                        ))}
+                        {c.eventosFunc.map((e) => {
+                          const start = new Date(e.inicio).getTime();
+                          const end = e.fim ? new Date(e.fim).getTime() : now;
+                          const min = Math.round((end - start) / 60000);
+                          const isUrg = e.prioridade === "urgente";
+                          return (
+                            <li key={e.id} className="flex items-center justify-between border-b border-border/50 py-1 gap-2">
+                              <span className="text-foreground flex items-center gap-2 min-w-0">
+                                {isUrg && <span className="text-xs px-1.5 py-0.5 rounded bg-destructive/15 text-destructive font-semibold">URG</span>}
+                                <span className="text-xs uppercase tracking-wide text-muted-foreground">{t(`painel.eventoTipo.${e.tipo}`)}</span>
+                                <span className="truncate">{e.titulo}</span>
+                              </span>
+                              <span className="text-xs text-muted-foreground shrink-0">
+                                {e.estado === "aberto"
+                                  ? `${t("painel.eventosAbertos")} · ${t("painel.ha", { m: min })}`
+                                  : `${min}m`}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </>
                   )}
