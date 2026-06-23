@@ -12,8 +12,11 @@ import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
 
+const APP_NAME = "UP Móveis";
+
 export function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
+  const tf = (key: string, defaultValue: string) => t(key, { defaultValue });
   const user = useAuthUser();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -65,16 +68,16 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
 
   const items: Item[] = isGestor
     ? [
-        { to: "/painel", label: t("nav.painel"), icon: LayoutDashboard },
-        { to: "/equipa", label: t("nav.equipa"), icon: Users },
-        { to: "/atividades", label: t("nav.atividades"), icon: ListChecks },
-        { to: "/questoes", label: t("nav.questoes"), icon: MessageCircleQuestion, badge: unread },
-        { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
-        { to: "/gerar", label: t("nav.gerar"), icon: CalendarPlus },
+        { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
+        { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
+        { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
+        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+        { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
       ]
     : [
-        { to: "/hoje", label: t("nav.hoje"), icon: ClipboardList },
-        { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
+        { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
+        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
       ];
 
   async function handleSignOut() {
@@ -89,13 +92,13 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           <Button
             variant="ghost"
             size="icon"
-            aria-label={t("nav.openMenu")}
+            aria-label={tf("nav.openMenu", "Abrir menu")}
             onClick={() => setOpen(true)}
           >
             <Menu className="h-5 w-5" />
           </Button>
           <Link to={isGestor ? "/painel" : "/hoje"} className="font-semibold tracking-tight truncate">
-            {t("app.name")}
+            {APP_NAME}
           </Link>
         </div>
         <div className="flex items-center gap-2">
@@ -103,8 +106,8 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             <Link
               to="/questoes"
               className="relative inline-flex items-center justify-center rounded-md border border-input bg-background h-9 w-9 hover:bg-accent"
-              aria-label={t("nav.questoes")}
-              title={t("nav.questoes")}
+              aria-label={tf("nav.questoes", "Questões")}
+              title={tf("nav.questoes", "Questões")}
             >
               <Bell className="h-4 w-4" />
               {unread > 0 && (
@@ -122,7 +125,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             className="gap-1.5"
           >
             <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("common.signOut")}</span>
+            <span className="hidden sm:inline">{tf("common.signOut", "Terminar sessão")}</span>
           </Button>
         </div>
       </header>
@@ -130,8 +133,8 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="px-5 py-4 border-b border-border text-left">
-            <SheetTitle>{t("app.name")}</SheetTitle>
-            <SheetDescription>{t("app.tagline")}</SheetDescription>
+            <SheetTitle>{APP_NAME}</SheetTitle>
+            <SheetDescription>{tf("app.tagline", "Controlo de rotina diária")}</SheetDescription>
           </SheetHeader>
           <nav className="p-2 flex flex-col gap-1">
             {items.map((it) => {

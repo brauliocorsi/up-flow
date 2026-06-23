@@ -1,32 +1,28 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
 import pt from "./locales/pt.json";
 import en from "./locales/en.json";
 
 const savedLanguage =
   typeof window !== "undefined" ? window.localStorage.getItem("up-moveis-lang") : null;
 
+const initialLng = savedLanguage === "en" ? "en" : "pt";
+
 if (!i18n.isInitialized) {
-  i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      resources: {
-        pt: { translation: pt },
-        en: { translation: en },
-      },
-      lng: savedLanguage === "en" ? "en" : "pt",
-      fallbackLng: "pt",
-      supportedLngs: ["pt", "en"],
-      load: "languageOnly",
-      interpolation: { escapeValue: false },
-      detection: {
-        order: ["localStorage"],
-        caches: ["localStorage"],
-        lookupLocalStorage: "up-moveis-lang",
-      },
-    });
+  i18n.use(initReactI18next).init({
+    resources: {
+      pt: { translation: pt },
+      en: { translation: en },
+    },
+    lng: initialLng,
+    fallbackLng: "pt",
+    supportedLngs: ["pt", "en"],
+    load: "languageOnly",
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+    returnNull: false,
+    returnEmptyString: false,
+  });
 }
 
 export default i18n;
