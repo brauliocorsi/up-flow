@@ -83,8 +83,11 @@
       "papel": "App role",
       "estado": "Status",
       "login": "Login",
+      "cor": "Color",
       "actions": "Actions"
     },
+    "corLabel": "Employee color",
+    "corChanged": "Color updated.",
     "criar": {
       "openButton": "Create employee with access",
       "title": "Create employee with access",
