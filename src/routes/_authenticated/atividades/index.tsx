@@ -174,8 +174,8 @@ function AtividadesPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {lista.map((a) => (
-                      <>
-                      <tr key={a.id} className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
+                      <Fragment key={a.id}>
+                      <tr className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
                         <td className="px-3 py-2 font-medium">{a.nome}</td>
                         <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
                         <td className="px-3 py-2 text-right tabular-nums">{a.duracao_padrao_min}</td>
