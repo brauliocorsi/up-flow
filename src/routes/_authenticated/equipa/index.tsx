@@ -258,7 +258,22 @@ function EquipaPage() {
           <tbody className="divide-y divide-border">
             {funcionarios.map((f) => (
               <tr key={f.id} className="text-foreground">
-                <td className="px-3 py-2 font-medium">{f.nome}</td>
+                <td className="px-3 py-2 font-medium">
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      className="inline-block h-3 w-3 rounded-full ring-1 ring-border"
+                      style={{ backgroundColor: corFuncionario(f.cor) }}
+                      aria-hidden
+                    />
+                    {f.nome}
+                  </span>
+                </td>
+                <td className="px-3 py-2">
+                  <CorPicker
+                    value={f.cor}
+                    onChange={(cor) => updateCor.mutate({ id: f.id, cor })}
+                  />
+                </td>
                 <td className="px-3 py-2 text-muted-foreground">{f.funcao?.nome ?? "—"}</td>
                 <td className="px-3 py-2">{t(`roles.${f.papel}`)}</td>
                 <td className="px-3 py-2">
