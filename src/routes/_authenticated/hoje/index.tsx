@@ -34,6 +34,19 @@ type Execucao = {
   motivo_pausa_id: string | null;
 };
 type Motivo = { id: string; label: string };
+type Evento = {
+  id: string;
+  funcionario_id: string;
+  tipo: "recebimento" | "levantamento" | "urgencia" | "outro";
+  titulo: string;
+  descricao: string;
+  inicio: string;
+  fim: string | null;
+  prioridade: "urgente" | "normal";
+  estado: "aberto" | "fechado";
+  tarefa_pausada_id: string | null;
+  lido: boolean;
+};
 
 function todayISO(): string {
   const d = new Date();
@@ -65,6 +78,12 @@ function HojePage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [pausingId, setPausingId] = useState<string | null>(null);
   const [pausaMotivoId, setPausaMotivoId] = useState<string>("");
+  const [bellOpen, setBellOpen] = useState(false);
+  const [retomarPrompt, setRetomarPrompt] = useState<{ tarefaId: string; titulo: string } | null>(null);
+  const [novoEvOpen, setNovoEvOpen] = useState(false);
+  const [novoEv, setNovoEv] = useState<{ tipo: "recebimento" | "levantamento" | "outro"; titulo: string; descricao: string }>(
+    { tipo: "recebimento", titulo: "", descricao: "" },
+  );
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
