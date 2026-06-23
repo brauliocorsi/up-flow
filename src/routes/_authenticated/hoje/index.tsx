@@ -285,6 +285,47 @@ function HojePage() {
     };
   }, [me, data, qc]);
 
+  // Minhas questões
+  const minhasQuestoesQ = useQuery({
+    enabled: !!me,
+    queryKey: ["questoes-minhas", me?.id],
+    queryFn: async () => {
+      const { data: rows, error } = await supabase
+        .from("questoes")
+        .select("*")
+        .eq("funcionario_id", me!.id)
+        .order("updated_at", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      const ids = (rows ?? []).map((r) => r.id);
+      let unreadMap = new Map<string, number>();
+      if (ids.length > 0) {
+        const { data: msgs } = await supabase
+          .from("questao_mensagens")
+          .select("questao_id")
+          .in("questao_id", ids)
+          .eq("autor_papel", "gestor")
+          .eq("lida_pelo_operador", false);
+        (msgs ?? []).forEach((m: { questao_id: string }) => unreadMap.set(m.questao_id, (unreadMap.get(m.questao_id) ?? 0) + 1));
+      }
+      return (rows ?? []).map((r) => ({ ...r, unread: unreadMap.get(r.id) ?? 0 })) as (QuestaoBase & { unread: number })[];
+    },
+  });
+
+  useEffect(() => {
+    if (!me) return;
+    const inv = () => {
+      qc.invalidateQueries({ queryKey: ["questoes-minhas", me.id] });
+    };
+    const ch = supabase
+      .channel(`hoje-questoes-${me.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "questoes", filter: `funcionario_id=eq.${me.id}` }, inv)
+      .on("postgres_changes", { event: "*", schema: "public", table: "questao_mensagens" }, inv)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [me, qc]);
+
+
   const tarefas = tarefasQuery.data ?? [];
   const execucoes = execucoesQuery.data ?? [];
   const execByTarefa = useMemo(() => {
