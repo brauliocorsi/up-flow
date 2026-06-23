@@ -187,7 +187,23 @@
     },
     "eventosAbertos": "Open",
     "eventosFechados": "Closed today",
-    "ha": "{{m}}m ago"
+    "ha": "{{m}}m ago",
+    "historicNoLive": "No live data (historic mode).",
+    "mode": {
+      "live": "Live",
+      "historic": "Historic",
+      "today": "today",
+      "historicOnly": "Available only on today"
+    },
+    "nav": {
+      "prev": "Previous day",
+      "next": "Next day",
+      "today": "Today"
+    },
+    "future": {
+      "empty": "Tasks not yet generated for this day",
+      "hint": "Tasks are generated on the day itself for each active employee."
+    }
   },
   "hoje": {
     "title": "My routine for today",
