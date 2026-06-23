@@ -346,6 +346,58 @@ function HojePage() {
     onError: (e: Error) => setFeedback(e.message),
   });
 
+  const fecharEvento = useMutation({
+    mutationFn: async (args: { eventoId: string; retomar: boolean; tarefaTitulo?: string; tarefaId?: string | null }) => {
+      const { error } = await supabase.rpc("fechar_evento", {
+        _evento_id: args.eventoId,
+        _retomar: args.retomar,
+      });
+      if (error) throw error;
+    },
+    onSuccess: (_d, vars) => {
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-tarefas", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-execucoes", me?.id, data] });
+      if (!vars.retomar && vars.tarefaId && vars.tarefaTitulo) {
+        setRetomarPrompt({ tarefaId: vars.tarefaId, titulo: vars.tarefaTitulo });
+      } else {
+        setRetomarPrompt(null);
+      }
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const registarEvento = useMutation({
+    mutationFn: async () => {
+      if (!novoEv.titulo.trim()) throw new Error(t("hoje.eventos.fillRequired"));
+      const { error } = await supabase.from("eventos").insert({
+        funcionario_id: me!.id,
+        tipo: novoEv.tipo,
+        titulo: novoEv.titulo.trim(),
+        descricao: novoEv.descricao.trim(),
+        criado_por: "funcionario",
+        prioridade: "normal",
+        estado: "aberto",
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setNovoEvOpen(false);
+      setNovoEv({ tipo: "recebimento", titulo: "", descricao: "" });
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] });
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const marcarLidos = useMutation({
+    mutationFn: async () => {
+      if (!me) return;
+      const { error } = await supabase.rpc("marcar_eventos_lidos", { _funcionario_id: me.id });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] }),
+  });
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
