@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "UP Móveis",
+    "tagline": "Controlo de rotina diária"
+  },
+  "common": {
+    "loading": "A carregar…",
+    "signOut": "Terminar sessão",
+    "language": "Idioma"
+  },
+  "auth": {
+    "title": "Entrar",
+    "subtitle": "Acede à tua rotina diária na UP Móveis.",
+    "email": "Email",
+    "password": "Palavra-passe",
+    "signIn": "Entrar",
+    "signingIn": "A entrar…",
+    "errorGeneric": "Não foi possível iniciar sessão. Verifica as credenciais.",
+    "fillFields": "Preenche o email e a palavra-passe."
+  },
+  "home": {
+    "hello": "Olá, {{name}}",
+    "yourRole": "A tua função na app",
+    "unlinked": "Esta conta ainda não está associada a um funcionário. Pede ao gestor para te associar.",
+    "funcao": "Função operacional"
+  },
+  "roles": {
+    "gestor": "Gestor",
+    "funcionario": "Funcionário"
+  }
+}
