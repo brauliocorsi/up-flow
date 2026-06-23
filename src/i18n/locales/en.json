@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "UP Móveis",
+    "tagline": "Daily routine control"
+  },
+  "common": {
+    "loading": "Loading…",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "auth": {
+    "title": "Sign in",
+    "subtitle": "Access your daily routine at UP Móveis.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "errorGeneric": "Could not sign in. Please check your credentials.",
+    "fillFields": "Please fill in email and password."
+  },
+  "home": {
+    "hello": "Hello, {{name}}",
+    "yourRole": "Your role in the app",
+    "unlinked": "This account is not yet linked to an employee. Ask the manager to link it.",
+    "funcao": "Operational role"
+  },
+  "roles": {
+    "gestor": "Manager",
+    "funcionario": "Employee"
+  }
+}
