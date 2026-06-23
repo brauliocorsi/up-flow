@@ -146,6 +146,21 @@ function EquipaPage() {
     onError: (e: Error) => setFeedback(e.message),
   });
 
+  const updateCor = useMutation({
+    mutationFn: async (args: { id: string; cor: string }) => {
+      const { error } = await supabase
+        .from("funcionarios")
+        .update({ cor: args.cor })
+        .eq("id", args.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setFeedback(t("equipa.corChanged"));
+      invalidateAll();
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
   if (loadingRole) return <Shell><p className="text-muted-foreground">{t("common.loading")}</p></Shell>;
   if (!isGestor) {
     return (
