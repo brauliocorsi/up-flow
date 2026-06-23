@@ -170,5 +170,24 @@
       "generated": "Dados de demonstração gerados para hoje.",
       "cleared": "Dados de demonstração removidos."
     }
+  },
+  "hoje": {
+    "title": "A minha rotina de hoje",
+    "progresso": "Progresso",
+    "tarefaAtual": "Tarefa atual",
+    "sessaoAtual": "Sessão atual",
+    "tempoTotal": "Tempo total",
+    "listaTarefas": "Tarefas do dia",
+    "semTarefasHoje": "Sem tarefas atribuídas para hoje.",
+    "tudoConcluido": "Tudo concluído!",
+    "motivoPausa": "Motivo da pausa",
+    "confirmarPausa": "Confirmar pausa",
+    "acao": {
+      "iniciar": "Iniciar",
+      "retomar": "Retomar",
+      "concluir": "Concluir",
+      "pausar": "Pausar",
+      "saltar": "Saltar"
+    }
   }
 }
