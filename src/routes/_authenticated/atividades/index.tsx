@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/route";
+import { MacrosSection } from "@/components/MacrosSection";
 
 export const Route = createFileRoute("/_authenticated/atividades/")({
   component: AtividadesPage,
