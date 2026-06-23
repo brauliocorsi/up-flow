@@ -327,6 +327,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      associar_user_a_funcionario: {
+        Args: { _funcionario_id: string; _user_id: string }
+        Returns: undefined
+      }
+      desassociar_user_de_funcionario: {
+        Args: { _funcionario_id: string }
+        Returns: undefined
+      }
+      funcionario_tem_historico: {
+        Args: { _funcionario_id: string }
+        Returns: boolean
+      }
       gerar_tarefas_do_dia: {
         Args: { _data: string; _funcionario_id: string }
         Returns: {
@@ -345,6 +357,13 @@ export type Database = {
         Returns: boolean
       }
       is_my_funcionario: { Args: { _funcionario_id: string }; Returns: boolean }
+      listar_users_nao_associados: {
+        Args: never
+        Returns: {
+          email: string
+          id: string
+        }[]
+      }
       tarefa_pertence_a_mim: {
         Args: { _tarefa_dia_id: string }
         Returns: boolean

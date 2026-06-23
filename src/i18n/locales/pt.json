@@ -6,7 +6,16 @@
   "common": {
     "loading": "A carregar…",
     "signOut": "Terminar sessão",
-    "language": "Idioma"
+    "language": "Idioma",
+    "save": "Guardar",
+    "saving": "A guardar…",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "dismiss": "Fechar"
+  },
+  "nav": {
+    "equipa": "Equipa",
+    "gerar": "Gerar tarefas"
   },
   "auth": {
     "title": "Entrar",
@@ -39,5 +48,40 @@
     "noFuncionarios": "Não há funcionários ativos.",
     "forbidden": "Apenas gestores podem aceder a esta página.",
     "backHome": "Voltar"
+  },
+  "equipa": {
+    "title": "Equipa",
+    "subtitle": "Gere os funcionários da UP Móveis e associa os respetivos logins.",
+    "add": "Adicionar funcionário",
+    "addTitle": "Novo funcionário",
+    "editTitle": "Editar funcionário",
+    "edit": "Editar",
+    "delete": "Apagar",
+    "deactivate": "Desativar",
+    "activate": "Ativar",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "linked": "Associado",
+    "unlink": "Desassociar",
+    "pickUser": "Escolher login…",
+    "empty": "Ainda não há funcionários.",
+    "forbidden": "Apenas gestores podem aceder a esta página.",
+    "fillRequired": "Preenche o nome e a função.",
+    "cannotDelete": "Este funcionário tem tarefas ou eventos registados. Desativa-o em vez de apagar.",
+    "deleted": "Funcionário apagado.",
+    "linkOk": "Login associado.",
+    "unlinkOk": "Login desassociado.",
+    "confirmDelete": "Apagar {{name}}? Esta ação não pode ser desfeita.",
+    "helpTitle": "Como dar acesso a um funcionário",
+    "helpStep1": "Cria o login do funcionário em Lovable Cloud → Users (email + palavra-passe).",
+    "helpStep2": "Volta aqui e seleciona esse email na coluna Login do funcionário correspondente.",
+    "col": {
+      "nome": "Nome",
+      "funcao": "Função",
+      "papel": "Papel",
+      "estado": "Estado",
+      "login": "Login",
+      "actions": "Ações"
+    }
   }
 }

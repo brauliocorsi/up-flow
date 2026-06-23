@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
+import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 
 const AuthRoute = AuthRouteImport.update({
@@ -34,6 +35,12 @@ const AuthenticatedGerarIndexRoute = AuthenticatedGerarIndexRouteImport.update({
   path: '/gerar/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEquipaIndexRoute =
+  AuthenticatedEquipaIndexRouteImport.update({
+    id: '/equipa/',
+    path: '/equipa/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/app/',
   path: '/app/',
@@ -44,12 +51,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
 }
 export interface FileRoutesById {
@@ -58,19 +67,21 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/app/' | '/gerar/'
+  fullPaths: '/' | '/auth' | '/app/' | '/equipa/' | '/gerar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app' | '/gerar'
+  to: '/' | '/auth' | '/app' | '/equipa' | '/gerar'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/app/'
+    | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
   fileRoutesById: FileRoutesById
 }
@@ -110,6 +121,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGerarIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/equipa/': {
+      id: '/_authenticated/equipa/'
+      path: '/equipa'
+      fullPath: '/equipa/'
+      preLoaderRoute: typeof AuthenticatedEquipaIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
       path: '/app'
@@ -122,11 +140,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
 }
 

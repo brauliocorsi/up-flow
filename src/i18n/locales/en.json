@@ -6,7 +6,16 @@
   "common": {
     "loading": "Loading…",
     "signOut": "Sign out",
-    "language": "Language"
+    "language": "Language",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "back": "Back",
+    "dismiss": "Dismiss"
+  },
+  "nav": {
+    "equipa": "Team",
+    "gerar": "Generate tasks"
   },
   "auth": {
     "title": "Sign in",
@@ -39,5 +48,40 @@
     "noFuncionarios": "No active employees.",
     "forbidden": "Only managers can access this page.",
     "backHome": "Back"
+  },
+  "equipa": {
+    "title": "Team",
+    "subtitle": "Manage UP Móveis employees and link their logins.",
+    "add": "Add employee",
+    "addTitle": "New employee",
+    "editTitle": "Edit employee",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "active": "Active",
+    "inactive": "Inactive",
+    "linked": "Linked",
+    "unlink": "Unlink",
+    "pickUser": "Pick login…",
+    "empty": "No employees yet.",
+    "forbidden": "Only managers can access this page.",
+    "fillRequired": "Fill in name and role.",
+    "cannotDelete": "This employee has tasks or events recorded. Deactivate instead of deleting.",
+    "deleted": "Employee deleted.",
+    "linkOk": "Login linked.",
+    "unlinkOk": "Login unlinked.",
+    "confirmDelete": "Delete {{name}}? This cannot be undone.",
+    "helpTitle": "How to give an employee access",
+    "helpStep1": "Create their login in Lovable Cloud → Users (email + password).",
+    "helpStep2": "Come back here and select that email in the Login column for the matching employee.",
+    "col": {
+      "nome": "Name",
+      "funcao": "Role",
+      "papel": "App role",
+      "estado": "Status",
+      "login": "Login",
+      "actions": "Actions"
+    }
   }
 }

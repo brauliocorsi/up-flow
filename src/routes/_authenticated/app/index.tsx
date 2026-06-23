@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +34,16 @@ function HomePage() {
     },
   });
 
+  const { data: isGestor } = useQuery({
+    queryKey: ["is-gestor", user.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_roles").select("role").eq("user_id", user.id).eq("role", "gestor").maybeSingle();
+      if (error) throw error;
+      return !!data;
+    },
+  });
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
@@ -47,6 +57,16 @@ function HomePage() {
           <p className="text-xs text-muted-foreground">{t("app.tagline")}</p>
         </div>
         <div className="flex items-center gap-4">
+          {isGestor && (
+            <nav className="flex items-center gap-3 text-sm">
+              <Link to="/equipa" className="text-muted-foreground hover:text-foreground">
+                {t("nav.equipa")}
+              </Link>
+              <Link to="/gerar" className="text-muted-foreground hover:text-foreground">
+                {t("nav.gerar")}
+              </Link>
+            </nav>
+          )}
           <LanguageSwitcher />
           <button
             onClick={handleSignOut}
