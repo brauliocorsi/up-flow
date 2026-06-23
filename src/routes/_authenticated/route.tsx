@@ -21,9 +21,13 @@ function AuthGate() {
       if (cancelled) return;
       if (!data.user) {
         navigate({ to: "/auth", replace: true });
-      } else {
-        setUser(data.user);
+        return;
       }
+      if (data.user.user_metadata?.must_change_password === true) {
+        navigate({ to: "/trocar-password", replace: true });
+        return;
+      }
+      setUser(data.user);
     });
     return () => {
       cancelled = true;
