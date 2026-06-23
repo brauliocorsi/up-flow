@@ -35,6 +35,10 @@ type Evento = {
   descricao: string;
   inicio: string;
   fim: string | null;
+  prioridade: "urgente" | "normal";
+  estado: "aberto" | "fechado";
+  tarefa_pausada_id: string | null;
+  lido: boolean;
 };
 type Funcionario = {
   id: string;
@@ -138,7 +142,7 @@ function PainelPage() {
       const end = `${data}T23:59:59Z`;
       const { data: rows, error } = await supabase
         .from("eventos")
-        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim")
+        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim, prioridade, estado, tarefa_pausada_id, lido")
         .gte("inicio", start).lte("inicio", end)
         .order("inicio");
       if (error) throw error;
