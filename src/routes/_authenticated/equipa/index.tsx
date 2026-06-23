@@ -213,6 +213,18 @@ function EquipaPage() {
         />
       )}
 
+      {creatingWithAccess && (
+        <CriarFuncionarioForm
+          funcoes={funcoes}
+          onCancel={() => setCreatingWithAccess(false)}
+          onCreated={(msg) => {
+            setCreatingWithAccess(false);
+            setFeedback(msg);
+            invalidateAll();
+          }}
+        />
+      )}
+
       <div className="mt-8 overflow-hidden rounded-lg border border-border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
