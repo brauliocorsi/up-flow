@@ -71,6 +71,9 @@ function HomePage() {
                 <Link to="/equipa" className="text-muted-foreground hover:text-foreground">
                   {t("nav.equipa")}
                 </Link>
+                <Link to="/atividades" className="text-muted-foreground hover:text-foreground">
+                  {t("nav.atividades")}
+                </Link>
                 <Link to="/gerar" className="text-muted-foreground hover:text-foreground">
                   {t("nav.gerar")}
                 </Link>
