@@ -68,16 +68,16 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
 
   const items: Item[] = isGestor
     ? [
-        { to: "/painel", label: t("nav.painel"), icon: LayoutDashboard },
-        { to: "/equipa", label: t("nav.equipa"), icon: Users },
-        { to: "/atividades", label: t("nav.atividades"), icon: ListChecks },
-        { to: "/questoes", label: t("nav.questoes"), icon: MessageCircleQuestion, badge: unread },
-        { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
-        { to: "/gerar", label: t("nav.gerar"), icon: CalendarPlus },
+        { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
+        { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
+        { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
+        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+        { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
       ]
     : [
-        { to: "/hoje", label: t("nav.hoje"), icon: ClipboardList },
-        { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
+        { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
+        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
       ];
 
   async function handleSignOut() {
