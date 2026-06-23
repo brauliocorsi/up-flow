@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
+import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
 
 export const Route = createFileRoute("/_authenticated/equipa/")({
   component: EquipaPage,
