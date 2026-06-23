@@ -372,28 +372,69 @@ function FuncionarioForm({
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
+  const initialSetores = initial?.setores?.map((s) => s.funcao_id)
+    ?? (initial?.funcao_id ? [initial.funcao_id] : []);
   const [nome, setNome] = useState(initial?.nome ?? "");
-  const [funcaoId, setFuncaoId] = useState(initial?.funcao_id ?? funcoes[0]?.id ?? "");
+  const [setorIds, setSetorIds] = useState<string[]>(
+    initialSetores.length ? initialSetores : (funcoes[0] ? [funcoes[0].id] : []),
+  );
   const [papel, setPapel] = useState<Papel>(initial?.papel ?? "funcionario");
   const [ativo, setAtivo] = useState<boolean>(initial?.ativo ?? true);
   const [error, setError] = useState<string | null>(null);
 
+  function toggleSetor(id: string) {
+    setSetorIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
+
+  async function syncSetores(funcionarioId: string) {
+    const { data: existing, error: e1 } = await supabase
+      .from("funcionario_setores")
+      .select("funcao_id")
+      .eq("funcionario_id", funcionarioId);
+    if (e1) throw e1;
+    const existingIds = new Set((existing ?? []).map((r) => r.funcao_id));
+    const desired = new Set(setorIds);
+    const toAdd = [...desired].filter((id) => !existingIds.has(id));
+    const toRemove = [...existingIds].filter((id) => !desired.has(id));
+    if (toAdd.length) {
+      const { error } = await supabase
+        .from("funcionario_setores")
+        .insert(toAdd.map((funcao_id) => ({ funcionario_id: funcionarioId, funcao_id })));
+      if (error) throw error;
+    }
+    if (toRemove.length) {
+      const { error } = await supabase
+        .from("funcionario_setores")
+        .delete()
+        .eq("funcionario_id", funcionarioId)
+        .in("funcao_id", toRemove);
+      if (error) throw error;
+    }
+  }
+
   const save = useMutation({
     mutationFn: async () => {
       const cleanNome = nome.trim();
-      if (!cleanNome || !funcaoId) throw new Error(t("equipa.fillRequired"));
+      if (!cleanNome || setorIds.length === 0) throw new Error(t("equipa.fillRequired"));
+      const principal = setorIds[0];
+      let funcionarioId: string;
       if (initial) {
         const { error } = await supabase
           .from("funcionarios")
-          .update({ nome: cleanNome, funcao_id: funcaoId, papel, ativo })
+          .update({ nome: cleanNome, funcao_id: principal, papel, ativo })
           .eq("id", initial.id);
         if (error) throw error;
+        funcionarioId = initial.id;
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("funcionarios")
-          .insert({ nome: cleanNome, funcao_id: funcaoId, papel, ativo: true });
-        if (error) throw error;
+          .insert({ nome: cleanNome, funcao_id: principal, papel, ativo: true })
+          .select("id")
+          .single();
+        if (error || !data) throw error ?? new Error("insert_failed");
+        funcionarioId = data.id;
       }
+      await syncSetores(funcionarioId);
     },
     onSuccess: onSaved,
     onError: (e: Error) => setError(e.message),
@@ -415,18 +456,6 @@ function FuncionarioForm({
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.col.funcao")}</span>
-          <select
-            value={funcaoId}
-            onChange={(e) => setFuncaoId(e.target.value)}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
-          >
-            {funcoes.map((f) => (
-              <option key={f.id} value={f.id}>{f.nome}</option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
           <span className="text-muted-foreground">{t("equipa.col.papel")}</span>
           <select
             value={papel}
@@ -437,8 +466,24 @@ function FuncionarioForm({
             <option value="gestor">{t("roles.gestor")}</option>
           </select>
         </label>
+        <div className="sm:col-span-2 flex flex-col gap-1 text-sm">
+          <span className="text-muted-foreground">{t("equipa.setoresLabel")}</span>
+          <div className="flex flex-wrap gap-3 rounded border border-input bg-background px-3 py-2">
+            {funcoes.map((f) => (
+              <label key={f.id} className="inline-flex items-center gap-2 text-foreground">
+                <input
+                  type="checkbox"
+                  checked={setorIds.includes(f.id)}
+                  onChange={() => toggleSetor(f.id)}
+                />
+                {f.nome}
+              </label>
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground">{t("equipa.setoresHint")}</span>
+        </div>
         {initial && (
-          <label className="flex items-center gap-2 text-sm text-foreground mt-6">
+          <label className="flex items-center gap-2 text-sm text-foreground">
             <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} />
             {t("equipa.active")}
           </label>
@@ -463,6 +508,7 @@ function FuncionarioForm({
     </div>
   );
 }
+
 
 function Shell({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
