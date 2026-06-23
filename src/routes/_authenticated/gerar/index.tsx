@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useAuthUser } from "@/routes/_authenticated/route";
 
 export const Route = createFileRoute("/_authenticated/gerar/")({
   component: GerarPage,
@@ -20,7 +21,7 @@ function todayISO() {
 
 function GerarPage() {
   const { t } = useTranslation();
-  const { user } = Route.useRouteContext();
+  const user = useAuthUser();
   const [results, setResults] = useState<ResultRow[] | null>(null);
 
   const { data: isGestor, isLoading: loadingRole } = useQuery({
