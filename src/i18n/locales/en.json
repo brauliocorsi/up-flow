@@ -340,6 +340,31 @@
       "submitting": "Logging…",
       "fillRequired": "Provide a title.",
       "semAbertos": "No events to handle."
-    }
+    },
+    "hojeLabel": "Today",
+    "folga": "Today is a day off."
+  },
+  "horario": {
+    "title": "Work schedule",
+    "subtitle": "Set the start and end of the day. Sunday is off.",
+    "pausasTitle": "Fixed breaks",
+    "pausasSubtitle": "Lunch and other recurring breaks.",
+    "tipoDia": {
+      "util": "Weekdays (Mon–Fri)",
+      "sabado": "Saturday"
+    },
+    "inicio": "Start",
+    "fim": "End",
+    "naoTrabalha": "Does not work",
+    "semHorario": "No schedule set for this day.",
+    "adicionarPausa": "Add break",
+    "semPausas": "No breaks defined.",
+    "nomePausa": "Name",
+    "nomePausaPh": "E.g. Lunch",
+    "dentroDe": "Must be between {{start}} and {{end}}",
+    "errInicioFim": "Start must be before end.",
+    "errForaHorario": "Break must fit inside the work schedule.",
+    "errNome": "Enter a name for the break.",
+    "warnSobreposicao": "Warning: this break overlaps with another."
   }
 }
