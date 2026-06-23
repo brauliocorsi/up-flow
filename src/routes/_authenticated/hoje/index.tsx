@@ -765,6 +765,19 @@ function HojePage() {
                   </p>
                 </div>
                 <EstadoBadge estado={tk.estado} t={t} />
+                {(() => {
+                  const macro = tarefaTemMacros(tk.titulo);
+                  return macro ? (
+                    <button
+                      onClick={() => setDuvidasTarefa({ titulo: tk.titulo, atividadeId: macro.atividadeId })}
+                      className="rounded-md border border-input bg-background p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground shrink-0"
+                      title={t("hoje.duvidas")}
+                      aria-label={t("hoje.duvidas")}
+                    >
+                      <HelpCircle className="h-4 w-4" />
+                    </button>
+                  ) : null;
+                })()}
                 <ActionsInline
                   estado={tk.estado}
                   cor={cor}
