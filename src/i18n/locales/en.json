@@ -142,6 +142,7 @@
     "linkOk": "Login linked.",
     "unlinkOk": "Login unlinked.",
     "confirmDelete": "Delete {{name}}? This cannot be undone.",
+    "confirmDeleteWithHistory": "{{name}} has tasks/events in history. Deleting will remove ALL history (tasks, events, questions, schedules, routines). Continue?",
     "helpTitle": "How to give an employee access",
     "helpStep1": "Use \"Create employee with access\" to create everything in one step (recommended).",
     "helpStep2": "Alternatively, create the login in Lovable Cloud → Users and link it here in the Login column.",
