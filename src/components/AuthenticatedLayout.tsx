@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
@@ -38,9 +38,13 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
         { to: "/painel", label: t("nav.painel"), icon: LayoutDashboard },
         { to: "/equipa", label: t("nav.equipa"), icon: Users },
         { to: "/atividades", label: t("nav.atividades"), icon: ListChecks },
+        { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
         { to: "/gerar", label: t("nav.gerar"), icon: CalendarPlus },
       ]
-    : [{ to: "/hoje", label: t("nav.hoje"), icon: ClipboardList }];
+    : [
+        { to: "/hoje", label: t("nav.hoje"), icon: ClipboardList },
+        { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
+      ];
 
   async function handleSignOut() {
     await supabase.auth.signOut();

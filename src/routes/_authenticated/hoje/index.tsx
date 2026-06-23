@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
@@ -84,6 +85,7 @@ function HojePage() {
   const [novoEv, setNovoEv] = useState<{ tipo: "recebimento" | "levantamento" | "outro"; titulo: string; descricao: string }>(
     { tipo: "recebimento", titulo: "", descricao: "" },
   );
+  const [duvidasTarefa, setDuvidasTarefa] = useState<{ titulo: string; atividadeId: string } | null>(null);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -190,6 +192,75 @@ function HojePage() {
       return (rows ?? []) as Evento[];
     },
   });
+
+  // Setores do meu funcionário (para atividades + macros contextuais)
+  const setoresQuery = useQuery({
+    enabled: !!me,
+    queryKey: ["meus-setores-ids", me?.id],
+    queryFn: async (): Promise<string[]> => {
+      const { data: rows, error } = await supabase
+        .from("funcionario_setores")
+        .select("funcao_id")
+        .eq("funcionario_id", me!.id);
+      if (error) throw error;
+      return (rows ?? []).map((r: { funcao_id: string }) => r.funcao_id);
+    },
+  });
+
+  // Atividades nos meus setores (para encontrar id por nome)
+  const atividadesQuery = useQuery({
+    enabled: !!setoresQuery.data && setoresQuery.data.length > 0,
+    queryKey: ["minhas-atividades", (setoresQuery.data ?? []).join(",")],
+    queryFn: async (): Promise<{ id: string; nome: string; funcao_id: string }[]> => {
+      const { data: rows, error } = await supabase
+        .from("atividades")
+        .select("id, nome, funcao_id")
+        .eq("ativo", true)
+        .in("funcao_id", setoresQuery.data ?? []);
+      if (error) throw error;
+      return rows ?? [];
+    },
+  });
+
+  // Contagem de macros por atividade (só para mostrar/ocultar botão)
+  const macrosCountQuery = useQuery({
+    enabled: !!atividadesQuery.data && atividadesQuery.data.length > 0,
+    queryKey: ["macros-count", (atividadesQuery.data ?? []).map((a) => a.id).join(",")],
+    queryFn: async (): Promise<Map<string, number>> => {
+      const ids = (atividadesQuery.data ?? []).map((a) => a.id);
+      const { data: rows, error } = await supabase
+        .from("macros")
+        .select("atividade_id")
+        .eq("ativo", true)
+        .in("atividade_id", ids);
+      if (error) throw error;
+      const m = new Map<string, number>();
+      (rows ?? []).forEach((r: { atividade_id: string | null }) => {
+        if (!r.atividade_id) return;
+        m.set(r.atividade_id, (m.get(r.atividade_id) ?? 0) + 1);
+      });
+      return m;
+    },
+  });
+
+  const atividadePorNome = useMemo(() => {
+    const m = new Map<string, string>();
+    (atividadesQuery.data ?? []).forEach((a) => {
+      m.set(a.nome.trim().toLowerCase(), a.id);
+    });
+    return m;
+  }, [atividadesQuery.data]);
+
+  function atividadeIdDaTarefa(titulo: string): string | null {
+    return atividadePorNome.get(titulo.trim().toLowerCase()) ?? null;
+  }
+  function tarefaTemMacros(titulo: string): { atividadeId: string } | null {
+    const aid = atividadeIdDaTarefa(titulo);
+    if (!aid) return null;
+    const count = macrosCountQuery.data?.get(aid) ?? 0;
+    return count > 0 ? { atividadeId: aid } : null;
+  }
+
 
   // Realtime
   useEffect(() => {
@@ -467,6 +538,14 @@ function HojePage() {
             </span>
           )}
         </button>
+        <Link
+          to="/ajuda"
+          className="ml-1 rounded-full border border-input bg-background p-2 hover:bg-accent text-muted-foreground hover:text-foreground"
+          aria-label={t("hoje.ajudaProcesso")}
+          title={t("hoje.ajudaProcesso")}
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Link>
       </div>
 
       {bellOpen && (
@@ -694,6 +773,19 @@ function HojePage() {
                   </p>
                 </div>
                 <EstadoBadge estado={tk.estado} t={t} />
+                {(() => {
+                  const macro = tarefaTemMacros(tk.titulo);
+                  return macro ? (
+                    <button
+                      onClick={() => setDuvidasTarefa({ titulo: tk.titulo, atividadeId: macro.atividadeId })}
+                      className="rounded-md border border-input bg-background p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground shrink-0"
+                      title={t("hoje.duvidas")}
+                      aria-label={t("hoje.duvidas")}
+                    >
+                      <HelpCircle className="h-4 w-4" />
+                    </button>
+                  ) : null;
+                })()}
                 <ActionsInline
                   estado={tk.estado}
                   cor={cor}
@@ -723,6 +815,14 @@ function HojePage() {
           <li className="text-sm text-muted-foreground">{t("hoje.semTarefasHoje")}</li>
         )}
       </ul>
+
+      {duvidasTarefa && (
+        <DuvidasModal
+          titulo={duvidasTarefa.titulo}
+          atividadeId={duvidasTarefa.atividadeId}
+          onClose={() => setDuvidasTarefa(null)}
+        />
+      )}
     </Shell>
   );
 }
@@ -969,6 +1069,76 @@ function Shell({ children, onSignOut }: { children: React.ReactNode; onSignOut: 
         </div>
       </header>
       <main className="flex-1 px-4 sm:px-6 py-6 max-w-3xl w-full mx-auto">{children}</main>
+    </div>
+  );
+}
+
+function DuvidasModal({
+  titulo,
+  atividadeId,
+  onClose,
+}: {
+  titulo: string;
+  atividadeId: string;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation();
+  const { data: macros = [], isLoading } = useQuery({
+    queryKey: ["macros", "atividade", atividadeId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("macros")
+        .select("id, titulo, conteudo, ordem")
+        .eq("ativo", true)
+        .eq("atividade_id", atividadeId)
+        .order("ordem");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/40 p-3"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg max-h-[85vh] overflow-auto rounded-xl bg-card border border-border p-4 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              {t("macros.sectionTitle")}
+            </p>
+            <h3 className="text-lg font-semibold text-foreground">{titulo}</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-md border border-input bg-background px-2 py-1 text-xs hover:bg-accent"
+          >
+            {t("common.close")}
+          </button>
+        </div>
+        <div className="mt-4 space-y-3">
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          )}
+          {!isLoading && macros.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t("macros.empty")}</p>
+          )}
+          {macros.map((m) => (
+            <div key={m.id} className="rounded-md border border-border bg-background p-3">
+              <h4 className="text-sm font-semibold text-foreground">{m.titulo}</h4>
+              {m.conteudo && (
+                <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
+                  {m.conteudo}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

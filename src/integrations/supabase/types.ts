@@ -255,6 +255,60 @@ export type Database = {
         }
         Relationships: []
       }
+      macros: {
+        Row: {
+          atividade_id: string | null
+          ativo: boolean
+          conteudo: string
+          created_at: string
+          created_by: string | null
+          funcao_id: string | null
+          id: string
+          ordem: number
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          atividade_id?: string | null
+          ativo?: boolean
+          conteudo?: string
+          created_at?: string
+          created_by?: string | null
+          funcao_id?: string | null
+          id?: string
+          ordem?: number
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          atividade_id?: string | null
+          ativo?: boolean
+          conteudo?: string
+          created_at?: string
+          created_by?: string | null
+          funcao_id?: string | null
+          id?: string
+          ordem?: number
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "macros_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "macros_funcao_id_fkey"
+            columns: ["funcao_id"]
+            isOneToOne: false
+            referencedRelation: "funcoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       motivos_pausa: {
         Row: {
           ativo: boolean

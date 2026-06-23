@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/route";
+import { MacrosSection } from "@/components/MacrosSection";
 
 export const Route = createFileRoute("/_authenticated/atividades/")({
   component: AtividadesPage,
@@ -173,7 +174,8 @@ function AtividadesPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {lista.map((a) => (
-                      <tr key={a.id} className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
+                      <Fragment key={a.id}>
+                      <tr className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
                         <td className="px-3 py-2 font-medium">{a.nome}</td>
                         <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
                         <td className="px-3 py-2 text-right tabular-nums">{a.duracao_padrao_min}</td>
@@ -199,6 +201,22 @@ function AtividadesPage() {
                           </button>
                         </td>
                       </tr>
+                      <tr key={a.id + "-macros"}>
+                        <td colSpan={6} className="px-3 pb-3 pt-0">
+                          <details className="rounded border border-border bg-muted/20 p-2">
+                            <summary className="cursor-pointer text-xs font-medium text-foreground select-none">
+                              {t("macros.sectionTitle")}
+                            </summary>
+                            <div className="mt-3">
+                              <MacrosSection
+                                canManage
+                                scope={{ kind: "atividade", atividadeId: a.id }}
+                              />
+                            </div>
+                          </details>
+                        </td>
+                      </tr>
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>

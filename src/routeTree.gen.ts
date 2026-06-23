@@ -19,6 +19,7 @@ import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
 import { Route as AuthenticatedAtividadesIndexRouteImport } from './routes/_authenticated/atividades/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
+import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda/index'
 
 const TrocarPasswordRoute = TrocarPasswordRouteImport.update({
   id: '/trocar-password',
@@ -72,11 +73,17 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAjudaIndexRoute = AuthenticatedAjudaIndexRouteImport.update({
+  id: '/ajuda/',
+  path: '/ajuda/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/atividades/': typeof AuthenticatedAtividadesIndexRoute
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/ajuda': typeof AuthenticatedAjudaIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/atividades': typeof AuthenticatedAtividadesIndexRoute
   '/equipa': typeof AuthenticatedEquipaIndexRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/atividades/': typeof AuthenticatedAtividadesIndexRoute
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/trocar-password'
+    | '/ajuda/'
     | '/app/'
     | '/atividades/'
     | '/equipa/'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/trocar-password'
+    | '/ajuda'
     | '/app'
     | '/atividades'
     | '/equipa'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/trocar-password'
+    | '/_authenticated/ajuda/'
     | '/_authenticated/app/'
     | '/_authenticated/atividades/'
     | '/_authenticated/equipa/'
@@ -224,10 +236,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ajuda/': {
+      id: '/_authenticated/ajuda/'
+      path: '/ajuda'
+      fullPath: '/ajuda/'
+      preLoaderRoute: typeof AuthenticatedAjudaIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAtividadesIndexRoute: typeof AuthenticatedAtividadesIndexRoute
   AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
@@ -237,6 +257,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAjudaIndexRoute: AuthenticatedAjudaIndexRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAtividadesIndexRoute: AuthenticatedAtividadesIndexRoute,
   AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
