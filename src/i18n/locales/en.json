@@ -170,5 +170,24 @@
       "generated": "Demo data generated for today.",
       "cleared": "Demo data removed."
     }
+  },
+  "hoje": {
+    "title": "My routine for today",
+    "progresso": "Progress",
+    "tarefaAtual": "Current task",
+    "sessaoAtual": "Current session",
+    "tempoTotal": "Total time",
+    "listaTarefas": "Today's tasks",
+    "semTarefasHoje": "No tasks assigned for today.",
+    "tudoConcluido": "All done!",
+    "motivoPausa": "Pause reason",
+    "confirmarPausa": "Confirm pause",
+    "acao": {
+      "iniciar": "Start",
+      "retomar": "Resume",
+      "concluir": "Finish",
+      "pausar": "Pause",
+      "saltar": "Skip"
+    }
   }
 }
