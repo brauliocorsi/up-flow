@@ -12,8 +12,11 @@ import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
 
+const APP_NAME = "UP Móveis";
+
 export function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
+  const tf = (key: string, defaultValue: string) => t(key, { defaultValue });
   const user = useAuthUser();
   const navigate = useNavigate();
   const qc = useQueryClient();
