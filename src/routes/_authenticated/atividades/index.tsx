@@ -174,6 +174,7 @@ function AtividadesPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {lista.map((a) => (
+                      <>
                       <tr key={a.id} className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
                         <td className="px-3 py-2 font-medium">{a.nome}</td>
                         <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
@@ -200,6 +201,22 @@ function AtividadesPage() {
                           </button>
                         </td>
                       </tr>
+                      <tr key={a.id + "-macros"}>
+                        <td colSpan={6} className="px-3 pb-3 pt-0">
+                          <details className="rounded border border-border bg-muted/20 p-2">
+                            <summary className="cursor-pointer text-xs font-medium text-foreground select-none">
+                              {t("macros.sectionTitle")}
+                            </summary>
+                            <div className="mt-3">
+                              <MacrosSection
+                                canManage
+                                scope={{ kind: "atividade", atividadeId: a.id }}
+                              />
+                            </div>
+                          </details>
+                        </td>
+                      </tr>
+                      </>
                     ))}
                   </tbody>
                 </table>
