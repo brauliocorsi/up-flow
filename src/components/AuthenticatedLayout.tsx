@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle, MessageCircleQuestion, Bell } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle, MessageCircleQuestion, Bell, LayoutGrid } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
