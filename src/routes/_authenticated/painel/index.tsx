@@ -74,6 +74,8 @@ function PainelPage() {
   const [now, setNow] = useState(() => Date.now());
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [urgOpen, setUrgOpen] = useState(false);
+  const [urgForm, setUrgForm] = useState({ funcionario_id: "", titulo: "", descricao: "", prioridade: "urgente" as "urgente" | "normal" });
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -195,6 +197,27 @@ function PainelPage() {
       if (error) throw error;
     },
     onSuccess: () => setFeedback(t("painel.demo.cleared")),
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const dispararUrgencia = useMutation({
+    mutationFn: async () => {
+      if (!urgForm.funcionario_id || !urgForm.titulo.trim()) {
+        throw new Error(t("painel.urgencia.fillRequired"));
+      }
+      const { error } = await supabase.rpc("criar_urgencia_gestor", {
+        _funcionario_id: urgForm.funcionario_id,
+        _titulo: urgForm.titulo.trim(),
+        _descricao: urgForm.descricao.trim(),
+        _prioridade: urgForm.prioridade,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setFeedback(t("painel.urgencia.sent"));
+      setUrgOpen(false);
+      setUrgForm({ funcionario_id: "", titulo: "", descricao: "", prioridade: "urgente" });
+    },
     onError: (e: Error) => setFeedback(e.message),
   });
 
