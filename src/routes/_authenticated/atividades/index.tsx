@@ -1,9 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { MacrosSection } from "@/components/MacrosSection";
 
@@ -376,22 +375,7 @@ function AtividadeForm({
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  const { t } = useTranslation();
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
-        <div>
-          <p className="font-semibold text-foreground tracking-tight">{t("app.name")}</p>
-          <p className="text-xs text-muted-foreground">{t("app.tagline")}</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">
-            {t("common.back")}
-          </Link>
-          <LanguageSwitcher />
-        </div>
-      </header>
-      <main className="flex-1 px-6 py-10 max-w-5xl w-full mx-auto">{children}</main>
-    </div>
+    <main className="px-4 sm:px-6 py-6 sm:py-10 max-w-5xl w-full mx-auto">{children}</main>
   );
 }
