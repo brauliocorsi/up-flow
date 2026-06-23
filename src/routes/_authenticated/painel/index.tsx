@@ -357,7 +357,12 @@ function PainelPage() {
                 onClick={() => setExpanded((s) => ({ ...s, [c.f.id]: !open }))}
                 className="w-full flex items-center justify-between px-4 py-3 bg-muted/30 hover:bg-muted/50"
               >
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium text-foreground inline-flex items-center gap-2">
+                  <span
+                    className="inline-block h-3 w-3 rounded-full ring-1 ring-border"
+                    style={{ backgroundColor: corFuncionario(c.f.cor) }}
+                    aria-hidden
+                  />
                   {c.f.nome} <span className="text-muted-foreground">· {c.concluidas}/{c.tarefas.length}</span>
                 </span>
                 <span className="text-xs text-muted-foreground">{open ? "▾" : "▸"}</span>
