@@ -783,97 +783,112 @@ function CriarFuncionarioForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-primary/40 bg-card p-4">
-      <h2 className="text-lg font-medium text-foreground">{t("equipa.criar.title")}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{t("equipa.criar.subtitle")}</p>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.col.nome")}</span>
+    <form onSubmit={handleSubmit} className="mt-6 surface-card border-primary/30 p-6 animate-fade-in">
+      <div className="flex items-center gap-3 border-b border-border pb-4">
+        <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
+          <KeyRound className="h-4 w-4" />
+        </span>
+        <div>
+          <h2 className="font-display text-lg font-semibold tracking-tight text-foreground">{t("equipa.criar.title")}</h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">{t("equipa.criar.subtitle")}</p>
+        </div>
+      </div>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <Field label={t("equipa.col.nome")}>
           <input
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             maxLength={120}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+            className="h-10 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground focus-ring"
           />
-        </label>
-        <div className="sm:col-span-2 flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.setoresLabel")}</span>
-          <div className="flex flex-wrap gap-3 rounded border border-input bg-background px-3 py-2">
-            {funcoes.map((f) => (
-              <label key={f.id} className="inline-flex items-center gap-2 text-foreground">
-                <input
-                  type="checkbox"
-                  checked={setorIds.includes(f.id)}
-                  onChange={() =>
-                    setSetorIds((prev) =>
-                      prev.includes(f.id) ? prev.filter((x) => x !== f.id) : [...prev, f.id],
-                    )
-                  }
-                />
-                {f.nome}
-              </label>
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">{t("equipa.setoresHint")}</span>
-        </div>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.col.papel")}</span>
-          <select
-            value={papel}
-            onChange={(e) => setPapel(e.target.value as Papel)}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
-          >
+        </Field>
+        <Field label={t("equipa.col.papel")}>
+          <SelectField value={papel} onChange={(v) => setPapel(v as Papel)}>
             <option value="funcionario">{t("roles.funcionario")}</option>
             <option value="gestor">{t("roles.gestor")}</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.criar.emailLabel")}</span>
-          <input
-            type="email"
-            autoComplete="off"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm sm:col-span-2">
-          <span className="text-muted-foreground">{t("equipa.criar.passwordLabel")}</span>
-          <input
-            type="text"
-            autoComplete="off"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            minLength={8}
-            className="rounded border border-input bg-background px-3 py-2 font-mono text-foreground"
-          />
-          <span className="text-xs text-muted-foreground">{t("equipa.criar.passwordHint")}</span>
-        </label>
-        <label className="flex items-center gap-2 text-sm text-foreground sm:col-span-2">
+          </SelectField>
+        </Field>
+        <div className="sm:col-span-2">
+          <Field label={t("equipa.setoresLabel")} hint={t("equipa.setoresHint")}>
+            <div className="flex flex-wrap gap-2 rounded-md border border-input bg-card p-3">
+              {funcoes.map((f) => {
+                const checked = setorIds.includes(f.id);
+                return (
+                  <label
+                    key={f.id}
+                    className={cn(
+                      "inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
+                      checked
+                        ? "border-primary bg-primary-soft text-primary"
+                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={checked}
+                      onChange={() =>
+                        setSetorIds((prev) =>
+                          prev.includes(f.id) ? prev.filter((x) => x !== f.id) : [...prev, f.id],
+                        )
+                      }
+                    />
+                    {f.nome}
+                  </label>
+                );
+              })}
+            </div>
+          </Field>
+        </div>
+        <Field label={t("equipa.criar.emailLabel")}>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="email"
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm text-foreground focus-ring"
+            />
+          </div>
+        </Field>
+        <div className="sm:col-span-2">
+          <Field label={t("equipa.criar.passwordLabel")} hint={t("equipa.criar.passwordHint")}>
+            <div className="relative">
+              <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                autoComplete="off"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={8}
+                className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 font-mono text-sm text-foreground focus-ring"
+              />
+            </div>
+          </Field>
+        </div>
+        <label className="inline-flex items-center gap-2 text-sm text-foreground sm:col-span-2">
           <input
             type="checkbox"
             checked={mustChange}
             onChange={(e) => setMustChange(e.target.checked)}
+            className="h-4 w-4 rounded border-input accent-[var(--primary)]"
           />
           {t("equipa.criar.mustChange")}
         </label>
       </div>
-      {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
-      <div className="mt-4 flex gap-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        >
+      {error && (
+        <p className="mt-4 rounded-md bg-destructive-soft px-3 py-2 text-sm text-destructive">{error}</p>
+      )}
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button type="submit" disabled={loading} className="gap-2 rounded-full">
+          <UserPlus className="h-4 w-4" />
           {loading ? t("equipa.criar.submitting") : t("equipa.criar.submit")}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
-        >
+        </Button>
+        <Button type="button" onClick={onCancel} variant="outline" className="gap-2 rounded-full">
+          <X className="h-4 w-4" />
           {t("common.cancel")}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -889,17 +904,16 @@ function CorPicker({
   const { t } = useTranslation();
   const current = corFuncionario(value);
   return (
-    <label className="inline-flex items-center gap-2 text-xs" title={t("equipa.corLabel")}>
+    <div className="inline-flex items-center gap-2" title={t("equipa.corLabel")}>
       <span
-        className="inline-block h-5 w-5 rounded-full ring-1 ring-border shrink-0"
-        style={{ backgroundColor: current }}
+        className="inline-block h-5 w-5 rounded-full ring-2 ring-background shrink-0"
+        style={{ backgroundColor: current, boxShadow: `0 0 0 1px ${current}55` }}
+        aria-hidden
       />
-      <select
+      <SelectField
         value={CORES_FUNCIONARIO.some((c) => c.value === value) ? (value ?? "") : ""}
-        onChange={(e) => {
-          if (e.target.value) onChange(e.target.value);
-        }}
-        className="rounded border border-input bg-background px-2 py-1 text-xs"
+        onChange={(v) => { if (v) onChange(v); }}
+        compact
       >
         {!CORES_FUNCIONARIO.some((c) => c.value === value) && (
           <option value="">—</option>
@@ -907,7 +921,7 @@ function CorPicker({
         {CORES_FUNCIONARIO.map((c) => (
           <option key={c.value} value={c.value}>{c.label}</option>
         ))}
-      </select>
-    </label>
+      </SelectField>
+    </div>
   );
 }
