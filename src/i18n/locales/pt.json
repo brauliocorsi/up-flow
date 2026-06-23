@@ -132,7 +132,8 @@
       "concluidas": "Tarefas concluídas",
       "dentroPct": "Dentro do tempo",
       "pausas": "Em pausa",
-      "urgencias": "Urgências"
+      "urgencias": "Urgências abertas",
+      "tempoUrg": "Tempo em urgências"
     },
     "badge": {
       "ativo": "Ativo",
@@ -169,7 +170,24 @@
       "clearing": "A limpar…",
       "generated": "Dados de demonstração gerados para hoje.",
       "cleared": "Dados de demonstração removidos."
-    }
+    },
+    "urgencia": {
+      "trigger": "Disparar urgência",
+      "title": "Disparar urgência",
+      "funcionario": "Funcionário",
+      "tituloLabel": "Título",
+      "descricaoLabel": "Descrição",
+      "prioridade": "Prioridade",
+      "urgente": "Urgente (pausa a tarefa atual)",
+      "normal": "Normal (apenas notifica)",
+      "submit": "Enviar",
+      "submitting": "A enviar…",
+      "sent": "Evento enviado.",
+      "fillRequired": "Escolhe um funcionário e indica o título."
+    },
+    "eventosAbertos": "Abertos",
+    "eventosFechados": "Fechados de hoje",
+    "ha": "há {{m}}m"
   },
   "hoje": {
     "title": "A minha rotina de hoje",
@@ -188,6 +206,25 @@
       "concluir": "Concluir",
       "pausar": "Pausar",
       "saltar": "Saltar"
+    },
+    "eventos": {
+      "sino": "Notificações",
+      "urgenciaTitulo": "URGÊNCIA",
+      "concluirUrgencia": "Concluir urgência",
+      "aAtender": "A atender",
+      "concluir": "Concluir",
+      "retomarPergunta": "Retomar “{{titulo}}”?",
+      "retomar": "Sim, retomar",
+      "naoRetomar": "Agora não",
+      "registar": "Registar evento",
+      "novoEvento": "Novo evento",
+      "tipo": "Tipo",
+      "tituloLabel": "Título",
+      "descricaoLabel": "Descrição",
+      "submit": "Registar",
+      "submitting": "A registar…",
+      "fillRequired": "Indica um título.",
+      "semAbertos": "Sem eventos por atender."
     }
   }
 }
