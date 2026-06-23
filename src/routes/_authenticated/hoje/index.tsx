@@ -174,17 +174,36 @@ function HojePage() {
     [motivosQuery.data],
   );
 
-  // Realtime: refletir alterações feitas noutros sítios
+  const eventosQuery = useQuery({
+    enabled: !!me,
+    queryKey: ["hoje-eventos", me?.id, data],
+    queryFn: async (): Promise<Evento[]> => {
+      const start = `${data}T00:00:00Z`;
+      const end = `${data}T23:59:59Z`;
+      const { data: rows, error } = await supabase
+        .from("eventos")
+        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim, prioridade, estado, tarefa_pausada_id, lido")
+        .eq("funcionario_id", me!.id)
+        .gte("inicio", start).lte("inicio", end)
+        .order("inicio", { ascending: false });
+      if (error) throw error;
+      return (rows ?? []) as Evento[];
+    },
+  });
+
+  // Realtime
   useEffect(() => {
     if (!me) return;
     const invalidate = () => {
       qc.invalidateQueries({ queryKey: ["hoje-tarefas", me.id, data] });
       qc.invalidateQueries({ queryKey: ["hoje-execucoes", me.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me.id, data] });
     };
     const ch = supabase
       .channel(`hoje-${me.id}-${data}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "tarefas_dia", filter: `funcionario_id=eq.${me.id}` }, invalidate)
       .on("postgres_changes", { event: "*", schema: "public", table: "execucoes" }, invalidate)
+      .on("postgres_changes", { event: "*", schema: "public", table: "eventos", filter: `funcionario_id=eq.${me.id}` }, invalidate)
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
