@@ -93,7 +93,7 @@ function PainelPage() {
     queryFn: async (): Promise<Funcionario[]> => {
       const { data, error } = await supabase
         .from("funcionarios")
-        .select("id, nome, papel, funcao:funcoes(nome)")
+        .select("id, nome, papel, cor, funcao:funcoes(nome)")
         .eq("ativo", true)
         .order("nome");
       if (error) throw error;
