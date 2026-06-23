@@ -1072,3 +1072,73 @@ function Shell({ children, onSignOut }: { children: React.ReactNode; onSignOut: 
     </div>
   );
 }
+
+function DuvidasModal({
+  titulo,
+  atividadeId,
+  onClose,
+}: {
+  titulo: string;
+  atividadeId: string;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation();
+  const { data: macros = [], isLoading } = useQuery({
+    queryKey: ["macros", "atividade", atividadeId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("macros")
+        .select("id, titulo, conteudo, ordem")
+        .eq("ativo", true)
+        .eq("atividade_id", atividadeId)
+        .order("ordem");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/40 p-3"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg max-h-[85vh] overflow-auto rounded-xl bg-card border border-border p-4 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              {t("macros.sectionTitle")}
+            </p>
+            <h3 className="text-lg font-semibold text-foreground">{titulo}</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-md border border-input bg-background px-2 py-1 text-xs hover:bg-accent"
+          >
+            {t("common.close")}
+          </button>
+        </div>
+        <div className="mt-4 space-y-3">
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          )}
+          {!isLoading && macros.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t("macros.empty")}</p>
+          )}
+          {macros.map((m) => (
+            <div key={m.id} className="rounded-md border border-border bg-background p-3">
+              <h4 className="text-sm font-semibold text-foreground">{m.titulo}</h4>
+              {m.conteudo && (
+                <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
+                  {m.conteudo}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
