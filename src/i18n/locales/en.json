@@ -11,7 +11,10 @@
     "saving": "Saving…",
     "cancel": "Cancel",
     "back": "Back",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close"
   },
   "nav": {
     "equipa": "Team",
@@ -19,8 +22,30 @@
     "painel": "Dashboard",
     "hoje": "My routine",
     "atividades": "Activities",
+    "ajuda": "Help",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
+  },
+  "macros": {
+    "sectionTitle": "Questions / Help",
+    "add": "New entry",
+    "empty": "No help entries yet.",
+    "titulo": "Title",
+    "conteudo": "Content",
+    "ordem": "Order",
+    "setor": "Sector (optional)",
+    "setorAll": "All sectors",
+    "fillRequired": "Provide a title.",
+    "confirmDelete": "Delete this entry?"
+  },
+  "ajuda": {
+    "title": "Process help",
+    "subtitle": "Read frequently asked questions and help entries written by the manager.",
+    "gerais": "General help",
+    "geraisHint": "Help about the overall process.",
+    "porAtividade": "By activity",
+    "porAtividadeHint": "Help entries linked to each activity.",
+    "semContexto": "No contextual help available."
   },
   "auth": {
     "title": "Sign in",
