@@ -94,7 +94,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <Link to="/app" className="font-semibold tracking-tight truncate">
+          <Link to={isGestor ? "/painel" : "/hoje"} className="font-semibold tracking-tight truncate">
             {t("app.name")}
           </Link>
         </div>
