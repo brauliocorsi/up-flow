@@ -327,6 +327,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      gerar_tarefas_do_dia: {
+        Args: { _data: string; _funcionario_id: string }
+        Returns: {
+          estado: string
+          id: string
+          minutos_previstos: number
+          ordem: number
+          titulo: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
