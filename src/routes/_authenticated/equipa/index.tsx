@@ -167,12 +167,20 @@ function EquipaPage() {
           <h1 className="text-3xl font-semibold text-foreground">{t("equipa.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("equipa.subtitle")}</p>
         </div>
-        <button
-          onClick={() => { setAdding(true); setEditing(null); }}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          {t("equipa.add")}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setCreatingWithAccess(true); setAdding(false); setEditing(null); }}
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            {t("equipa.criar.openButton")}
+          </button>
+          <button
+            onClick={() => { setAdding(true); setEditing(null); setCreatingWithAccess(false); }}
+            className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
+          >
+            {t("equipa.add")}
+          </button>
+        </div>
       </div>
 
       <div className="mt-6 rounded-lg border border-border bg-muted/30 p-4">
