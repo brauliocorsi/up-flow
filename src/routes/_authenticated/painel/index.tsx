@@ -40,6 +40,7 @@ type Funcionario = {
   id: string;
   nome: string;
   papel: "gestor" | "funcionario";
+  cor: string | null;
   funcao: { nome: string } | null;
 };
 type Motivo = { id: string; label: string };
