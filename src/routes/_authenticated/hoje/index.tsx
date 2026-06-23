@@ -514,7 +514,10 @@ function TarefaAtualCard(props: {
       </div>
 
       <div className="mt-3 h-2 rounded-full bg-muted overflow-hidden">
-        <div className="h-full transition-all" style={{ width: `${pct}%`, backgroundColor: excedido ? undefined : cor, background: excedido ? "var(--destructive)" : cor }} />
+        <div
+          className={`h-full transition-all ${excedido ? "bg-destructive" : ""}`}
+          style={{ width: `${pct}%`, backgroundColor: excedido ? undefined : cor }}
+        />
       </div>
 
       {/* Botões grandes */}
