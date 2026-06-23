@@ -2,7 +2,19 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle, MessageCircleQuestion, Bell, LayoutGrid } from "lucide-react";
+import {
+  Menu,
+  LogOut,
+  LayoutDashboard,
+  Users,
+  ListChecks,
+  CalendarPlus,
+  ClipboardList,
+  HelpCircle,
+  MessageCircleQuestion,
+  Bell,
+  LayoutGrid,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
@@ -37,7 +49,6 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
     },
   });
 
-  // Unread questions count (gestor only) — abertas/respondidas com mensagens do operador por ler
   const unreadQ = useQuery({
     enabled: !!isGestor,
     queryKey: ["questoes-unread-gestor"],
@@ -87,57 +98,94 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-40 flex items-center justify-between gap-2 border-b border-border bg-background/95 backdrop-blur px-3 sm:px-4 h-14">
-        <div className="flex items-center gap-2 min-w-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={tf("nav.openMenu", "Abrir menu")}
-            onClick={() => setOpen(true)}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <Link to={isGestor ? "/painel" : "/hoje"} className="font-semibold tracking-tight truncate">
-            {APP_NAME}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2">
-          {isGestor && (
-            <Link
-              to="/questoes"
-              className="relative inline-flex items-center justify-center rounded-md border border-input bg-background h-9 w-9 hover:bg-accent"
-              aria-label={tf("nav.questoes", "Questões")}
-              title={tf("nav.questoes", "Questões")}
+    <div className="min-h-screen bg-background flex flex-col font-sans">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="flex items-center gap-3 min-w-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={tf("nav.openMenu", "Abrir menu")}
+              onClick={() => setOpen(true)}
+              className="rounded-full"
             >
-              <Bell className="h-4 w-4" />
-              {unread > 0 && (
-                <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
-                  {unread}
+              <Menu className="h-5 w-5" />
+            </Button>
+            <Link
+              to={isGestor ? "/painel" : "/hoje"}
+              className="group flex items-center gap-2.5 min-w-0"
+            >
+              <span
+                aria-hidden
+                className="grid h-8 w-8 place-items-center rounded-md bg-foreground text-background font-display font-bold text-sm tracking-tight transition-transform group-hover:scale-105"
+              >
+                UP
+              </span>
+              <span className="flex flex-col leading-none truncate">
+                <span className="font-display text-[15px] font-semibold tracking-tight text-foreground truncate">
+                  {APP_NAME}
                 </span>
-              )}
+                <span className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
+                  {tf("app.tagline", "Rotina diária")}
+                </span>
+              </span>
             </Link>
-          )}
-          <LanguageSwitcher />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSignOut}
-            className="gap-1.5"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">{tf("common.signOut", "Terminar sessão")}</span>
-          </Button>
+          </div>
+
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {isGestor && (
+              <Link
+                to="/questoes"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground focus-ring"
+                aria-label={tf("nav.questoes", "Questões")}
+                title={tf("nav.questoes", "Questões")}
+              >
+                <Bell className="h-4 w-4" />
+                {unread > 0 && (
+                  <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold text-destructive-foreground ring-2 ring-background">
+                    {unread}
+                  </span>
+                )}
+              </Link>
+            )}
+            <LanguageSwitcher />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSignOut}
+              className="gap-1.5 rounded-full"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">{tf("common.signOut", "Sair")}</span>
+            </Button>
+          </div>
         </div>
       </header>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-72 p-0">
-          <SheetHeader className="px-5 py-4 border-b border-border text-left">
-            <SheetTitle>{APP_NAME}</SheetTitle>
-            <SheetDescription>{tf("app.tagline", "Controlo de rotina diária")}</SheetDescription>
+        <SheetContent side="left" className="w-80 p-0 border-r border-border">
+          <SheetHeader className="border-b border-border px-6 py-5 text-left">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="grid h-9 w-9 place-items-center rounded-md bg-foreground text-background font-display font-bold text-sm tracking-tight"
+              >
+                UP
+              </span>
+              <div className="flex flex-col">
+                <SheetTitle className="font-display text-base font-semibold tracking-tight">
+                  {APP_NAME}
+                </SheetTitle>
+                <SheetDescription className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  {tf("app.tagline", "Rotina diária")}
+                </SheetDescription>
+              </div>
+            </div>
           </SheetHeader>
-          <nav className="p-2 flex flex-col gap-1">
+          <nav className="p-3 flex flex-col gap-0.5">
+            <span className="px-3 pt-2 pb-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              {tf("nav.section", "Navegação")}
+            </span>
             {items.map((it) => {
               const active = pathname === it.to || pathname.startsWith(it.to + "/");
               const Icon = it.icon;
@@ -147,16 +195,19 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                   to={it.to}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium",
                     active
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span className="flex-1">{it.label}</span>
+                  <Icon className={cn("h-4 w-4 shrink-0", active ? "" : "text-muted-foreground group-hover:text-foreground")} />
+                  <span className="flex-1 truncate">{it.label}</span>
                   {it.badge && it.badge > 0 ? (
-                    <span className="inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                    <span className={cn(
+                      "inline-flex h-5 min-w-5 px-1.5 items-center justify-center rounded-full text-[10px] font-semibold",
+                      active ? "bg-background text-foreground" : "bg-destructive text-destructive-foreground",
+                    )}>
                       {it.badge}
                     </span>
                   ) : null}
@@ -164,10 +215,14 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
+          <div className="mt-auto border-t border-border px-5 py-4 text-[11px] text-muted-foreground">
+            <p className="truncate">{user.email}</p>
+            <p className="mt-1 uppercase tracking-[0.18em] text-[10px]">{isGestor ? tf("roles.gestor", "Gestor") : tf("roles.funcionario", "Operador")}</p>
+          </div>
         </SheetContent>
       </Sheet>
 
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 page-enter">{children}</main>
     </div>
   );
 }
