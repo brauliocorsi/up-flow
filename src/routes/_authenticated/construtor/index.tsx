@@ -251,7 +251,11 @@ function ConstrutorPage() {
     mutationFn: async (payload: { id: string; startMin: number; endMin: number; atividade_id?: string }) => {
       const conflict = checkConflict(payload.startMin, payload.endMin, payload.id);
       if (conflict) throw new Error(conflict);
-      const upd: Record<string, unknown> = {
+      const upd: {
+        hora_inicio: string;
+        hora_fim: string;
+        atividade_id?: string;
+      } = {
         hora_inicio: minToHm(payload.startMin),
         hora_fim: minToHm(payload.endMin),
       };
