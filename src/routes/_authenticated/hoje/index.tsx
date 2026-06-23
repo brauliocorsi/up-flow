@@ -869,11 +869,64 @@ function HojePage() {
         )}
       </ul>
 
+      {/* As minhas questões */}
+      <div className="mt-10 flex items-center justify-between gap-2">
+        <h2 className="text-lg font-semibold text-foreground">{t("questoes.minhasQuestoes")}</h2>
+        <button
+          onClick={() => setNovaQuestao({ atividadeId: null, tarefaDiaId: null })}
+          className="rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent inline-flex items-center gap-1.5"
+        >
+          <MessageCircleQuestion className="h-4 w-4" /> {t("questoes.novaQuestao")}
+        </button>
+      </div>
+      <ul className="mt-3 space-y-2">
+        {(minhasQuestoesQ.data ?? []).length === 0 && (
+          <li className="text-sm text-muted-foreground">{t("questoes.semQuestoes")}</li>
+        )}
+        {(minhasQuestoesQ.data ?? []).map((q) => (
+          <li
+            key={q.id}
+            className="rounded-lg border border-border bg-card p-3 cursor-pointer hover:bg-accent/40"
+            onClick={() => setQuestaoAberta(q)}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-muted">{t(`questoes.tipo.${q.tipo}`)}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">{t(`questoes.estado.${q.estado}`)}</span>
+              {q.unread > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
+                  {t("questoes.novaRespostaBadge")}
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-sm font-medium text-foreground truncate">{q.assunto}</p>
+          </li>
+        ))}
+      </ul>
+
       {duvidasTarefa && (
         <DuvidasModal
           titulo={duvidasTarefa.titulo}
           atividadeId={duvidasTarefa.atividadeId}
           onClose={() => setDuvidasTarefa(null)}
+        />
+      )}
+
+      {novaQuestao && me && (
+        <NovaQuestaoDialog
+          funcionarioId={me.id}
+          atividadeId={novaQuestao.atividadeId}
+          tarefaDiaId={novaQuestao.tarefaDiaId}
+          contextoTitulo={novaQuestao.titulo}
+          onClose={() => setNovaQuestao(null)}
+        />
+      )}
+
+      {questaoAberta && me && (
+        <QuestaoConversa
+          questao={questaoAberta}
+          meuFuncionarioId={me.id}
+          papel="operador"
+          onClose={() => setQuestaoAberta(null)}
         />
       )}
     </Shell>
