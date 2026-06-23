@@ -21,9 +21,10 @@ type Funcionario = {
   papel: Papel;
   ativo: boolean;
   user_id: string | null;
-  funcao_id: string;
+  funcao_id: string | null;
   cor: string | null;
   funcao: { nome: string } | null;
+  setores: { funcao_id: string }[];
 };
 type AuthUser = { id: string; email: string };
 
@@ -66,7 +67,7 @@ function EquipaPage() {
     queryFn: async (): Promise<Funcionario[]> => {
       const { data, error } = await supabase
         .from("funcionarios")
-        .select("id, nome, papel, ativo, user_id, funcao_id, cor, funcao:funcoes(nome)")
+        .select("id, nome, papel, ativo, user_id, funcao_id, cor, funcao:funcoes(nome), setores:funcionario_setores(funcao_id)")
         .order("nome");
       if (error) throw error;
       return (data ?? []) as unknown as Funcionario[];
