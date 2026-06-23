@@ -1152,28 +1152,9 @@ function EstadoBadge({ estado, t }: { estado: Estado; t: TFn }) {
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${map[estado]}`}>{t(`painel.estado.${estado}`)}</span>;
 }
 
-function Shell({ children, onSignOut }: { children: React.ReactNode; onSignOut: () => void }) {
-  const { t } = useTranslation();
+function Shell({ children }: { children: React.ReactNode; onSignOut?: () => void }) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border">
-        <div>
-          <p className="font-semibold text-foreground tracking-tight">{t("app.name")}</p>
-          <p className="text-xs text-muted-foreground">{t("hoje.title")}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">
-            {t("common.back")}
-          </Link>
-          <LanguageSwitcher />
-          <button
-            onClick={onSignOut}
-            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium text-foreground hover:bg-accent"
-          >
-            {t("common.signOut")}
-          </button>
-        </div>
-      </header>
       <main className="flex-1 px-4 sm:px-6 py-6 max-w-3xl w-full mx-auto">{children}</main>
     </div>
   );
