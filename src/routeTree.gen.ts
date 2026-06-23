@@ -17,6 +17,7 @@ import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authenticated/hoje/index'
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
+import { Route as AuthenticatedAtividadesIndexRouteImport } from './routes/_authenticated/atividades/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 
 const TrocarPasswordRoute = TrocarPasswordRouteImport.update({
@@ -60,6 +61,12 @@ const AuthenticatedEquipaIndexRoute =
     path: '/equipa/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAtividadesIndexRoute =
+  AuthenticatedAtividadesIndexRouteImport.update({
+    id: '/atividades/',
+    path: '/atividades/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/app/',
   path: '/app/',
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/atividades/': typeof AuthenticatedAtividadesIndexRoute
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
   '/hoje/': typeof AuthenticatedHojeIndexRoute
@@ -81,6 +89,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/atividades': typeof AuthenticatedAtividadesIndexRoute
   '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
   '/hoje': typeof AuthenticatedHojeIndexRoute
@@ -93,6 +102,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/atividades/': typeof AuthenticatedAtividadesIndexRoute
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
   '/_authenticated/hoje/': typeof AuthenticatedHojeIndexRoute
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/trocar-password'
     | '/app/'
+    | '/atividades/'
     | '/equipa/'
     | '/gerar/'
     | '/hoje/'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/trocar-password'
     | '/app'
+    | '/atividades'
     | '/equipa'
     | '/gerar'
     | '/hoje'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/trocar-password'
     | '/_authenticated/app/'
+    | '/_authenticated/atividades/'
     | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
     | '/_authenticated/hoje/'
@@ -197,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEquipaIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/atividades/': {
+      id: '/_authenticated/atividades/'
+      path: '/atividades'
+      fullPath: '/atividades/'
+      preLoaderRoute: typeof AuthenticatedAtividadesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
       path: '/app'
@@ -209,6 +229,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAtividadesIndexRoute: typeof AuthenticatedAtividadesIndexRoute
   AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
   AuthenticatedHojeIndexRoute: typeof AuthenticatedHojeIndexRoute
@@ -217,6 +238,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAtividadesIndexRoute: AuthenticatedAtividadesIndexRoute,
   AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
   AuthenticatedHojeIndexRoute: AuthenticatedHojeIndexRoute,

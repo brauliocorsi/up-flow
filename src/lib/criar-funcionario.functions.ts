@@ -5,6 +5,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const inputSchema = z.object({
   nome: z.string().trim().min(1).max(120),
   funcao_id: z.string().uuid(),
+  setor_ids: z.array(z.string().uuid()).min(1).max(20).optional(),
   papel: z.enum(["gestor", "funcionario"]),
   email: z.string().trim().email().max(255),
   password: z.string().min(8).max(128),
@@ -83,6 +84,16 @@ export const criarFuncionario = createServerFn({ method: "POST" })
           { onConflict: "user_id,role", ignoreDuplicates: true },
         );
       if (roleInsErr) throw new Error("role_insert_failed");
+
+      // Sync funcionario_setores (multi-setor). Inclui sempre o funcao_id principal.
+      const setorIds = Array.from(
+        new Set([data.funcao_id, ...((data.setor_ids ?? []) as string[])]),
+      );
+      const { error: setoresErr } = await supabaseAdmin
+        .from("funcionario_setores")
+        .insert(setorIds.map((funcao_id) => ({ funcionario_id: funcRow.id, funcao_id })));
+      if (setoresErr) throw new Error("setores_insert_failed");
+
 
       return {
         funcionario_id: funcRow.id,

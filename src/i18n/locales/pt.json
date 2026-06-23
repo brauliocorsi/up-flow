@@ -17,7 +17,8 @@
     "equipa": "Equipa",
     "gerar": "Gerar tarefas",
     "painel": "Painel",
-    "hoje": "A minha rotina"
+    "hoje": "A minha rotina",
+    "atividades": "Atividades"
   },
   "auth": {
     "title": "Entrar",
@@ -33,7 +34,7 @@
     "hello": "Olá, {{name}}",
     "yourRole": "A tua função na app",
     "unlinked": "Esta conta ainda não está associada a um funcionário. Pede ao gestor para te associar.",
-    "funcao": "Função operacional"
+    "funcao": "Setor"
   },
   "roles": {
     "gestor": "Gestor",
@@ -79,13 +80,16 @@
     "helpStep2": "Em alternativa, cria o login em Lovable Cloud → Users e associa-o aqui na coluna Login.",
     "col": {
       "nome": "Nome",
-      "funcao": "Função",
+      "funcao": "Setor",
+      "setores": "Setores",
       "papel": "Papel",
       "estado": "Estado",
       "login": "Login",
       "cor": "Cor",
       "actions": "Ações"
     },
+    "setoresLabel": "Setores",
+    "setoresHint": "Seleciona um ou mais setores. O primeiro é considerado o principal.",
     "corLabel": "Cor do funcionário",
     "corChanged": "Cor atualizada.",
     "criar": {
@@ -103,10 +107,39 @@
         "email_exists": "Já existe um utilizador com este email.",
         "weak_password": "Palavra-passe demasiado fraca.",
         "forbidden": "Apenas gestores podem criar funcionários.",
-        "funcao_not_found": "Função inválida.",
+        "funcao_not_found": "Setor inválido.",
         "generic": "Não foi possível criar. Tenta novamente."
       }
     }
+  },
+  "atividades": {
+    "title": "Biblioteca de atividades",
+    "subtitle": "Catálogo reutilizável de atividades, organizado por setor.",
+    "forbidden": "Apenas gestores podem aceder a esta página.",
+    "add": "Nova atividade",
+    "addTitle": "Nova atividade",
+    "editTitle": "Editar atividade",
+    "empty": "Sem atividades neste setor.",
+    "emptyAll": "Ainda não há atividades. Cria a primeira.",
+    "col": {
+      "nome": "Nome",
+      "descricao": "Descrição",
+      "duracao": "Duração (min)",
+      "cor": "Cor",
+      "setor": "Setor",
+      "estado": "Estado",
+      "actions": "Ações"
+    },
+    "edit": "Editar",
+    "deactivate": "Desativar",
+    "activate": "Ativar",
+    "ativa": "Ativa",
+    "inativa": "Inativa",
+    "fillRequired": "Indica o nome, o setor e uma duração válida.",
+    "saved": "Atividade guardada.",
+    "stateChanged": "Estado atualizado.",
+    "corNone": "Herda do setor",
+    "corCustom": "Personalizada"
   },
   "trocar": {
     "title": "Definir nova palavra-passe",

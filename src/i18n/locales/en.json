@@ -17,7 +17,8 @@
     "equipa": "Team",
     "gerar": "Generate tasks",
     "painel": "Dashboard",
-    "hoje": "My routine"
+    "hoje": "My routine",
+    "atividades": "Activities"
   },
   "auth": {
     "title": "Sign in",
@@ -33,7 +34,7 @@
     "hello": "Hello, {{name}}",
     "yourRole": "Your role in the app",
     "unlinked": "This account is not yet linked to an employee. Ask the manager to link it.",
-    "funcao": "Operational role"
+    "funcao": "Sector"
   },
   "roles": {
     "gestor": "Manager",
@@ -79,13 +80,16 @@
     "helpStep2": "Alternatively, create the login in Lovable Cloud → Users and link it here in the Login column.",
     "col": {
       "nome": "Name",
-      "funcao": "Role",
+      "funcao": "Sector",
+      "setores": "Sectors",
       "papel": "App role",
       "estado": "Status",
       "login": "Login",
       "cor": "Color",
       "actions": "Actions"
     },
+    "setoresLabel": "Sectors",
+    "setoresHint": "Pick one or more sectors. The first one is treated as the primary.",
     "corLabel": "Employee color",
     "corChanged": "Color updated.",
     "criar": {
@@ -103,10 +107,39 @@
         "email_exists": "A user with this email already exists.",
         "weak_password": "Password too weak.",
         "forbidden": "Only managers can create employees.",
-        "funcao_not_found": "Invalid role.",
+        "funcao_not_found": "Invalid sector.",
         "generic": "Could not create. Please try again."
       }
     }
+  },
+  "atividades": {
+    "title": "Activity library",
+    "subtitle": "Reusable catalogue of activities, grouped by sector.",
+    "forbidden": "Only managers can access this page.",
+    "add": "New activity",
+    "addTitle": "New activity",
+    "editTitle": "Edit activity",
+    "empty": "No activities in this sector.",
+    "emptyAll": "No activities yet. Create the first one.",
+    "col": {
+      "nome": "Name",
+      "descricao": "Description",
+      "duracao": "Duration (min)",
+      "cor": "Color",
+      "setor": "Sector",
+      "estado": "Status",
+      "actions": "Actions"
+    },
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "ativa": "Active",
+    "inativa": "Inactive",
+    "fillRequired": "Provide a name, a sector, and a valid duration.",
+    "saved": "Activity saved.",
+    "stateChanged": "Status updated.",
+    "corNone": "Inherits from sector",
+    "corCustom": "Custom"
   },
   "trocar": {
     "title": "Set a new password",
