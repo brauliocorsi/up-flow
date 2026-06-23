@@ -417,10 +417,17 @@ function FuncionarioCard({ c, t }: { c: ReturnType<typeof makeCartaoType>; t: (k
   else if (c.excedido) { badgeLabel = t("painel.badge.excedido"); badgeClass = "bg-destructive/15 text-destructive"; }
   else if (c.execAberta) { badgeLabel = t("painel.badge.ativo"); badgeClass = "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"; }
 
+  const cor = corFuncionario(c.f.cor);
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div
+      className="rounded-lg border bg-card p-4"
+      style={{ borderColor: "var(--border)", borderLeftColor: cor, borderLeftWidth: 4 }}
+    >
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+        <div
+          className="h-10 w-10 rounded-full text-white flex items-center justify-center text-sm font-semibold shrink-0"
+          style={{ backgroundColor: cor }}
+        >
           {initials(c.f.nome)}
         </div>
         <div className="flex-1 min-w-0">
