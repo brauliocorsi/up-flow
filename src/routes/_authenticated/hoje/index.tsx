@@ -538,6 +538,14 @@ function HojePage() {
             </span>
           )}
         </button>
+        <Link
+          to="/ajuda"
+          className="ml-1 rounded-full border border-input bg-background p-2 hover:bg-accent text-muted-foreground hover:text-foreground"
+          aria-label={t("hoje.ajudaProcesso")}
+          title={t("hoje.ajudaProcesso")}
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Link>
       </div>
 
       {bellOpen && (
