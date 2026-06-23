@@ -112,5 +112,59 @@
     "submit": "Save and continue",
     "tooShort": "Password must be at least 8 characters.",
     "mismatch": "Passwords do not match."
+  },
+  "painel": {
+    "title": "Live dashboard",
+    "forbidden": "Only managers can access this page.",
+    "empty": "No active employees.",
+    "details": "Per-employee detail",
+    "tarefaAtual": "Current task",
+    "semTarefa": "No task in progress.",
+    "progressoDia": "Day progress",
+    "eventos": "Today's events",
+    "aberto": "in progress",
+    "metrics": {
+      "ativos": "Active now",
+      "concluidas": "Tasks done",
+      "dentroPct": "On time",
+      "pausas": "On pause",
+      "urgencias": "Urgencies"
+    },
+    "badge": {
+      "ativo": "Active",
+      "pausa": "Paused",
+      "excedido": "Over time",
+      "urgencia": "Urgency",
+      "idle": "Idle"
+    },
+    "estado": {
+      "pendente": "Pending",
+      "a_decorrer": "Running",
+      "pausada": "Paused",
+      "saltada": "Skipped",
+      "concluida": "Done"
+    },
+    "eventoTipo": {
+      "recebimento": "Delivery",
+      "levantamento": "Pickup",
+      "urgencia": "Urgency",
+      "outro": "Other"
+    },
+    "tabela": {
+      "titulo": "Task",
+      "estado": "Status",
+      "previsto": "Planned",
+      "real": "Actual",
+      "desvio": "Delta",
+      "semTarefas": "No tasks for today."
+    },
+    "demo": {
+      "generate": "Generate demo data",
+      "generating": "Generating…",
+      "clear": "Clear demo data",
+      "clearing": "Clearing…",
+      "generated": "Demo data generated for today.",
+      "cleared": "Demo data removed."
+    }
   }
 }
