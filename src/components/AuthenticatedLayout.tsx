@@ -71,6 +71,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
         { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
         { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
         { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
+        { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
         { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
         { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
         { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
