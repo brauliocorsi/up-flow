@@ -142,6 +142,7 @@
     "linkOk": "Login associado.",
     "unlinkOk": "Login desassociado.",
     "confirmDelete": "Apagar {{name}}? Esta ação não pode ser desfeita.",
+    "confirmDeleteWithHistory": "{{name}} tem tarefas/eventos no histórico. Apagar mesmo assim irá remover TODO o histórico (tarefas, eventos, dúvidas, horários, rotinas). Continuar?",
     "helpTitle": "Como dar acesso a um funcionário",
     "helpStep1": "Usa \"Criar funcionário com acesso\" para criar tudo num só passo (recomendado).",
     "helpStep2": "Em alternativa, cria o login em Lovable Cloud → Users e associa-o aqui na coluna Login.",

@@ -120,11 +120,12 @@ function EquipaPage() {
 
   const remove = useMutation({
     mutationFn: async (f: Funcionario) => {
-      const { data: hasHist, error: e1 } = await supabase.rpc("funcionario_tem_historico", {
-        _funcionario_id: f.id,
-      });
-      if (e1) throw e1;
-      if (hasHist) throw new Error(t("equipa.cannotDelete"));
+      if (f.user_id) {
+        const { error: eDis } = await supabase.rpc("desassociar_user_de_funcionario", {
+          _funcionario_id: f.id,
+        });
+        if (eDis) throw eDis;
+      }
       const { error } = await supabase.from("funcionarios").delete().eq("id", f.id);
       if (error) throw error;
     },
@@ -337,8 +338,14 @@ function EquipaPage() {
                     {f.ativo ? t("equipa.deactivate") : t("equipa.activate")}
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(t("equipa.confirmDelete", { name: f.nome }))) remove.mutate(f);
+                    onClick={async () => {
+                      const { data: hasHist } = await supabase.rpc("funcionario_tem_historico", {
+                        _funcionario_id: f.id,
+                      });
+                      const msg = hasHist
+                        ? t("equipa.confirmDeleteWithHistory", { name: f.nome })
+                        : t("equipa.confirmDelete", { name: f.nome });
+                      if (confirm(msg)) remove.mutate(f);
                     }}
                     className="text-xs text-destructive hover:underline"
                   >
