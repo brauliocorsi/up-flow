@@ -92,13 +92,13 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           <Button
             variant="ghost"
             size="icon"
-            aria-label={t("nav.openMenu")}
+            aria-label={tf("nav.openMenu", "Abrir menu")}
             onClick={() => setOpen(true)}
           >
             <Menu className="h-5 w-5" />
           </Button>
           <Link to={isGestor ? "/painel" : "/hoje"} className="font-semibold tracking-tight truncate">
-            {t("app.name")}
+            {APP_NAME}
           </Link>
         </div>
         <div className="flex items-center gap-2">
