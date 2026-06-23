@@ -339,6 +339,7 @@ export type Database = {
         Args: { _funcionario_id: string }
         Returns: boolean
       }
+      gerar_dados_demo: { Args: { _data: string }; Returns: undefined }
       gerar_tarefas_do_dia: {
         Args: { _data: string; _funcionario_id: string }
         Returns: {
@@ -357,6 +358,7 @@ export type Database = {
         Returns: boolean
       }
       is_my_funcionario: { Args: { _funcionario_id: string }; Returns: boolean }
+      limpar_dados_demo: { Args: { _data: string }; Returns: undefined }
       listar_users_nao_associados: {
         Args: never
         Returns: {
