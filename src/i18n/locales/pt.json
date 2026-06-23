@@ -15,7 +15,8 @@
   },
   "nav": {
     "equipa": "Equipa",
-    "gerar": "Gerar tarefas"
+    "gerar": "Gerar tarefas",
+    "painel": "Painel"
   },
   "auth": {
     "title": "Entrar",
@@ -111,5 +112,59 @@
     "submit": "Guardar e continuar",
     "tooShort": "A palavra-passe tem de ter pelo menos 8 caracteres.",
     "mismatch": "As palavras-passe não coincidem."
+  },
+  "painel": {
+    "title": "Painel em tempo real",
+    "forbidden": "Apenas gestores podem aceder a esta página.",
+    "empty": "Não há funcionários ativos.",
+    "details": "Detalhe por funcionário",
+    "tarefaAtual": "Tarefa atual",
+    "semTarefa": "Sem tarefa em curso.",
+    "progressoDia": "Progresso do dia",
+    "eventos": "Eventos do dia",
+    "aberto": "em curso",
+    "metrics": {
+      "ativos": "Ativos agora",
+      "concluidas": "Tarefas concluídas",
+      "dentroPct": "Dentro do tempo",
+      "pausas": "Em pausa",
+      "urgencias": "Urgências"
+    },
+    "badge": {
+      "ativo": "Ativo",
+      "pausa": "Em pausa",
+      "excedido": "Excedido",
+      "urgencia": "Urgência",
+      "idle": "Sem execução"
+    },
+    "estado": {
+      "pendente": "Pendente",
+      "a_decorrer": "A decorrer",
+      "pausada": "Pausada",
+      "saltada": "Saltada",
+      "concluida": "Concluída"
+    },
+    "eventoTipo": {
+      "recebimento": "Recebimento",
+      "levantamento": "Levantamento",
+      "urgencia": "Urgência",
+      "outro": "Outro"
+    },
+    "tabela": {
+      "titulo": "Tarefa",
+      "estado": "Estado",
+      "previsto": "Previsto",
+      "real": "Real",
+      "desvio": "Desvio",
+      "semTarefas": "Sem tarefas para hoje."
+    },
+    "demo": {
+      "generate": "Gerar dados de demonstração",
+      "generating": "A gerar…",
+      "clear": "Limpar dados de demonstração",
+      "clearing": "A limpar…",
+      "generated": "Dados de demonstração gerados para hoje.",
+      "cleared": "Dados de demonstração removidos."
+    }
   }
 }
