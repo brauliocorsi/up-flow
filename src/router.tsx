@@ -20,7 +20,7 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
     defaultPendingComponent: DefaultPending,
     defaultPendingMs: 0,
-    defaultSsr: false,
+    
   });
 
   return router;
