@@ -254,7 +254,6 @@ function PainelPage() {
     return (
       <Shell>
         <p className="text-muted-foreground">{t("painel.forbidden")}</p>
-        <Link to="/app" className="text-sm text-primary underline mt-2 inline-block">{t("common.back")}</Link>
       </Shell>
     );
   }
