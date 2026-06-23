@@ -193,6 +193,75 @@ function HojePage() {
     },
   });
 
+  // Setores do meu funcionário (para atividades + macros contextuais)
+  const setoresQuery = useQuery({
+    enabled: !!me,
+    queryKey: ["meus-setores-ids", me?.id],
+    queryFn: async (): Promise<string[]> => {
+      const { data: rows, error } = await supabase
+        .from("funcionario_setores")
+        .select("funcao_id")
+        .eq("funcionario_id", me!.id);
+      if (error) throw error;
+      return (rows ?? []).map((r: { funcao_id: string }) => r.funcao_id);
+    },
+  });
+
+  // Atividades nos meus setores (para encontrar id por nome)
+  const atividadesQuery = useQuery({
+    enabled: !!setoresQuery.data && setoresQuery.data.length > 0,
+    queryKey: ["minhas-atividades", (setoresQuery.data ?? []).join(",")],
+    queryFn: async (): Promise<{ id: string; nome: string; funcao_id: string }[]> => {
+      const { data: rows, error } = await supabase
+        .from("atividades")
+        .select("id, nome, funcao_id")
+        .eq("ativo", true)
+        .in("funcao_id", setoresQuery.data ?? []);
+      if (error) throw error;
+      return rows ?? [];
+    },
+  });
+
+  // Contagem de macros por atividade (só para mostrar/ocultar botão)
+  const macrosCountQuery = useQuery({
+    enabled: !!atividadesQuery.data && atividadesQuery.data.length > 0,
+    queryKey: ["macros-count", (atividadesQuery.data ?? []).map((a) => a.id).join(",")],
+    queryFn: async (): Promise<Map<string, number>> => {
+      const ids = (atividadesQuery.data ?? []).map((a) => a.id);
+      const { data: rows, error } = await supabase
+        .from("macros")
+        .select("atividade_id")
+        .eq("ativo", true)
+        .in("atividade_id", ids);
+      if (error) throw error;
+      const m = new Map<string, number>();
+      (rows ?? []).forEach((r: { atividade_id: string | null }) => {
+        if (!r.atividade_id) return;
+        m.set(r.atividade_id, (m.get(r.atividade_id) ?? 0) + 1);
+      });
+      return m;
+    },
+  });
+
+  const atividadePorNome = useMemo(() => {
+    const m = new Map<string, string>();
+    (atividadesQuery.data ?? []).forEach((a) => {
+      m.set(a.nome.trim().toLowerCase(), a.id);
+    });
+    return m;
+  }, [atividadesQuery.data]);
+
+  function atividadeIdDaTarefa(titulo: string): string | null {
+    return atividadePorNome.get(titulo.trim().toLowerCase()) ?? null;
+  }
+  function tarefaTemMacros(titulo: string): { atividadeId: string } | null {
+    const aid = atividadeIdDaTarefa(titulo);
+    if (!aid) return null;
+    const count = macrosCountQuery.data?.get(aid) ?? 0;
+    return count > 0 ? { atividadeId: aid } : null;
+  }
+
+
   // Realtime
   useEffect(() => {
     if (!me) return;
