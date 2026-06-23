@@ -491,6 +491,11 @@ function FuncionarioForm({
         )}
       </div>
       {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+      {initial && (
+        <div className="mt-6 border-t border-border pt-6">
+          <HorarioEditor funcionarioId={initial.id} />
+        </div>
+      )}
       <div className="mt-4 flex gap-2">
         <button
           onClick={() => save.mutate()}
