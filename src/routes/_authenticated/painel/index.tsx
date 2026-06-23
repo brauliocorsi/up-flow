@@ -291,7 +291,7 @@ function PainelPage() {
     }
     const excedido = !!atual && decorridoMin > atual.minutos_previstos && atual.minutos_previstos > 0;
     const eventosFunc = eventos.filter((e) => e.funcionario_id === f.id);
-    const urgencia = eventosFunc.find((e) => e.tipo === "urgencia" && !e.fim) ?? null;
+    const urgencia = eventosFunc.find((e) => e.prioridade === "urgente" && e.estado === "aberto") ?? null;
     return {
       f,
       tarefas: fts,
