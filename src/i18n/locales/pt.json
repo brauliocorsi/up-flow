@@ -15,7 +15,8 @@
   },
   "nav": {
     "equipa": "Equipa",
-    "gerar": "Gerar tarefas"
+    "gerar": "Gerar tarefas",
+    "painel": "Painel"
   },
   "auth": {
     "title": "Entrar",

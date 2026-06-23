@@ -15,7 +15,8 @@
   },
   "nav": {
     "equipa": "Team",
-    "gerar": "Generate tasks"
+    "gerar": "Generate tasks",
+    "painel": "Dashboard"
   },
   "auth": {
     "title": "Sign in",
