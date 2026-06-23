@@ -187,7 +187,23 @@
     },
     "eventosAbertos": "Abertos",
     "eventosFechados": "Fechados de hoje",
-    "ha": "há {{m}}m"
+    "ha": "há {{m}}m",
+    "historicNoLive": "Sem dados ao vivo (modo histórico).",
+    "mode": {
+      "live": "Ao vivo",
+      "historic": "Histórico",
+      "today": "hoje",
+      "historicOnly": "Disponível apenas no dia de hoje"
+    },
+    "nav": {
+      "prev": "Dia anterior",
+      "next": "Dia seguinte",
+      "today": "Hoje"
+    },
+    "future": {
+      "empty": "Tarefas ainda não geradas para este dia",
+      "hint": "As tarefas são geradas no próprio dia para cada funcionário ativo."
+    }
   },
   "hoje": {
     "title": "A minha rotina de hoje",
