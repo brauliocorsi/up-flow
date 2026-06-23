@@ -31,6 +31,7 @@ function EquipaPage() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Funcionario | null>(null);
   const [adding, setAdding] = useState(false);
+  const [creatingWithAccess, setCreatingWithAccess] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const { data: isGestor, isLoading: loadingRole } = useQuery({
