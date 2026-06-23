@@ -614,83 +614,115 @@ function FuncionarioForm({
   });
 
   return (
-    <div className="mt-6 rounded-lg border border-border bg-card p-4">
-      <h2 className="text-lg font-medium text-foreground">
-        {initial ? t("equipa.editTitle") : t("equipa.addTitle")}
-      </h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.col.nome")}</span>
+    <div className="mt-6 surface-card p-6 animate-fade-in">
+      <div className="flex items-center gap-3 border-b border-border pb-4">
+        <span className="grid h-9 w-9 place-items-center rounded-md bg-accent text-accent-foreground">
+          {initial ? <UserCog className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+        </span>
+        <h2 className="font-display text-lg font-semibold tracking-tight text-foreground">
+          {initial ? t("equipa.editTitle") : t("equipa.addTitle")}
+        </h2>
+      </div>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <Field label={t("equipa.col.nome")}>
           <input
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             maxLength={120}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+            className="h-10 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground focus-ring"
           />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.col.papel")}</span>
-          <select
-            value={papel}
-            onChange={(e) => setPapel(e.target.value as Papel)}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
-          >
+        </Field>
+        <Field label={t("equipa.col.papel")}>
+          <SelectField value={papel} onChange={(v) => setPapel(v as Papel)}>
             <option value="funcionario">{t("roles.funcionario")}</option>
             <option value="gestor">{t("roles.gestor")}</option>
-          </select>
-        </label>
-        <div className="sm:col-span-2 flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.setoresLabel")}</span>
-          <div className="flex flex-wrap gap-3 rounded border border-input bg-background px-3 py-2">
-            {funcoes.map((f) => (
-              <label key={f.id} className="inline-flex items-center gap-2 text-foreground">
-                <input
-                  type="checkbox"
-                  checked={setorIds.includes(f.id)}
-                  onChange={() => toggleSetor(f.id)}
-                />
-                {f.nome}
-              </label>
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">{t("equipa.setoresHint")}</span>
+          </SelectField>
+        </Field>
+        <div className="sm:col-span-2">
+          <Field label={t("equipa.setoresLabel")} hint={t("equipa.setoresHint")}>
+            <div className="flex flex-wrap gap-2 rounded-md border border-input bg-card p-3">
+              {funcoes.map((f) => {
+                const checked = setorIds.includes(f.id);
+                return (
+                  <label
+                    key={f.id}
+                    className={cn(
+                      "inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
+                      checked
+                        ? "border-primary bg-primary-soft text-primary"
+                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={checked}
+                      onChange={() => toggleSetor(f.id)}
+                    />
+                    {f.nome}
+                  </label>
+                );
+              })}
+            </div>
+          </Field>
         </div>
         {initial && (
-          <label className="flex items-center gap-2 text-sm text-foreground">
-            <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} />
+          <label className="inline-flex items-center gap-2 text-sm text-foreground">
+            <input
+              type="checkbox"
+              checked={ativo}
+              onChange={(e) => setAtivo(e.target.checked)}
+              className="h-4 w-4 rounded border-input accent-[var(--primary)]"
+            />
             {t("equipa.active")}
           </label>
         )}
       </div>
-      {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+      {error && (
+        <p className="mt-4 rounded-md bg-destructive-soft px-3 py-2 text-sm text-destructive">{error}</p>
+      )}
       {initial && (
         <div className="mt-6 border-t border-border pt-6">
           <HorarioEditor funcionarioId={initial.id} />
         </div>
       )}
-      <div className="mt-4 flex gap-2">
-        <button
-          onClick={() => save.mutate()}
-          disabled={save.isPending}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        >
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button onClick={() => save.mutate()} disabled={save.isPending} className="gap-2 rounded-full">
+          <Save className="h-4 w-4" />
           {save.isPending ? t("common.saving") : t("common.save")}
-        </button>
-        <button
-          onClick={onCancel}
-          className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
-        >
+        </Button>
+        <Button onClick={onCancel} variant="outline" className="gap-2 rounded-full">
+          <X className="h-4 w-4" />
           {t("common.cancel")}
-        </button>
+        </Button>
       </div>
     </div>
   );
 }
 
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex flex-col gap-1.5 text-sm">
+      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </span>
+      {children}
+      {hint && <span className="text-[11px] text-muted-foreground">{hint}</span>}
+    </label>
+  );
+}
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="px-4 sm:px-6 py-6 sm:py-10 max-w-5xl w-full mx-auto">{children}</main>
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">{children}</div>
   );
 }
 
