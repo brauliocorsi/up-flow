@@ -55,7 +55,7 @@ export function MacrosSection({ canManage, scope, readOnly }: Props) {
         q = q.is("atividade_id", null);
         if (scope.funcaoFilterIds && scope.funcaoFilterIds.length > 0) {
           // include global (funcao_id null) + within sectors
-          const ids = scope.funcaoFilterIds.map((id) => `"${id}"`).join(",");
+          const ids = scope.funcaoFilterIds.join(",");
           q = q.or(`funcao_id.is.null,funcao_id.in.(${ids})`);
         }
       }
