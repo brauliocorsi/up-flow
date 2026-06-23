@@ -16,7 +16,8 @@
   "nav": {
     "equipa": "Equipa",
     "gerar": "Gerar tarefas",
-    "painel": "Painel"
+    "painel": "Painel",
+    "hoje": "A minha rotina"
   },
   "auth": {
     "title": "Entrar",
