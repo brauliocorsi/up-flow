@@ -83,8 +83,11 @@
       "papel": "Papel",
       "estado": "Estado",
       "login": "Login",
+      "cor": "Cor",
       "actions": "Ações"
     },
+    "corLabel": "Cor do funcionário",
+    "corChanged": "Cor atualizada.",
     "criar": {
       "openButton": "Criar funcionário com acesso",
       "title": "Criar funcionário com acesso",
