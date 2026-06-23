@@ -23,8 +23,45 @@
     "hoje": "A minha rotina",
     "atividades": "Atividades",
     "ajuda": "Ajuda",
+    "questoes": "Questões",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu"
+  },
+  "questoes": {
+    "title": "Questões",
+    "subtitle": "Pedidos levantados pelos operadores.",
+    "novaQuestao": "Nova questão",
+    "tenhoQuestao": "Tenho uma questão",
+    "minhasQuestoes": "As minhas questões",
+    "semQuestoes": "Sem questões.",
+    "semMensagens": "Sem mensagens.",
+    "assunto": "Assunto",
+    "descreveQuestao": "Descreve a questão",
+    "tipoLabel": "Tipo",
+    "contexto": "Contexto",
+    "ligadaA": "Ligada a",
+    "enviar": "Enviar",
+    "aEnviar": "A enviar…",
+    "fillRequired": "Preenche o assunto e a descrição.",
+    "marcarFechada": "Marcar como resolvida",
+    "questaoFechada": "Questão fechada.",
+    "placeholderResposta": "Escreve aqui…",
+    "todas": "Todas",
+    "todosFuncionarios": "Todos os funcionários",
+    "novaRespostaBadge": "Nova",
+    "tipo": {
+      "duvida": "Dúvida",
+      "autorizacao": "Autorização"
+    },
+    "estado": {
+      "aberta": "Aberta",
+      "respondida": "Respondida",
+      "fechada": "Fechada"
+    },
+    "papel": {
+      "gestor": "Gestor",
+      "operador": "Operador"
+    }
   },
   "macros": {
     "sectionTitle": "Dúvidas / Ajuda",
