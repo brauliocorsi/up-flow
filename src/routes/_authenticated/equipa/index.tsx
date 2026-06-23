@@ -247,6 +247,7 @@ function EquipaPage() {
           <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-3 py-2">{t("equipa.col.nome")}</th>
+              <th className="px-3 py-2">{t("equipa.col.cor")}</th>
               <th className="px-3 py-2">{t("equipa.col.funcao")}</th>
               <th className="px-3 py-2">{t("equipa.col.papel")}</th>
               <th className="px-3 py-2">{t("equipa.col.estado")}</th>
