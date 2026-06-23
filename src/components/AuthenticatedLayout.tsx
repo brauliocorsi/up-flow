@@ -106,8 +106,8 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             <Link
               to="/questoes"
               className="relative inline-flex items-center justify-center rounded-md border border-input bg-background h-9 w-9 hover:bg-accent"
-              aria-label={t("nav.questoes")}
-              title={t("nav.questoes")}
+              aria-label={tf("nav.questoes", "Questões")}
+              title={tf("nav.questoes", "Questões")}
             >
               <Bell className="h-4 w-4" />
               {unread > 0 && (
@@ -125,7 +125,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             className="gap-1.5"
           >
             <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("common.signOut")}</span>
+            <span className="hidden sm:inline">{tf("common.signOut", "Terminar sessão")}</span>
           </Button>
         </div>
       </header>
@@ -133,8 +133,8 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="px-5 py-4 border-b border-border text-left">
-            <SheetTitle>{t("app.name")}</SheetTitle>
-            <SheetDescription>{t("app.tagline")}</SheetDescription>
+            <SheetTitle>{APP_NAME}</SheetTitle>
+            <SheetDescription>{tf("app.tagline", "Controlo de rotina diária")}</SheetDescription>
           </SheetHeader>
           <nav className="p-2 flex flex-col gap-1">
             {items.map((it) => {
