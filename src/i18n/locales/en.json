@@ -23,8 +23,45 @@
     "hoje": "My routine",
     "atividades": "Activities",
     "ajuda": "Help",
+    "questoes": "Questions",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
+  },
+  "questoes": {
+    "title": "Questions",
+    "subtitle": "Requests raised by operators.",
+    "novaQuestao": "New question",
+    "tenhoQuestao": "I have a question",
+    "minhasQuestoes": "My questions",
+    "semQuestoes": "No questions.",
+    "semMensagens": "No messages.",
+    "assunto": "Subject",
+    "descreveQuestao": "Describe your question",
+    "tipoLabel": "Type",
+    "contexto": "Context",
+    "ligadaA": "Linked to",
+    "enviar": "Send",
+    "aEnviar": "Sending…",
+    "fillRequired": "Fill in the subject and description.",
+    "marcarFechada": "Mark as resolved",
+    "questaoFechada": "Question closed.",
+    "placeholderResposta": "Write here…",
+    "todas": "All",
+    "todosFuncionarios": "All employees",
+    "novaRespostaBadge": "New",
+    "tipo": {
+      "duvida": "Question",
+      "autorizacao": "Authorization"
+    },
+    "estado": {
+      "aberta": "Open",
+      "respondida": "Replied",
+      "fechada": "Closed"
+    },
+    "papel": {
+      "gestor": "Manager",
+      "operador": "Operator"
+    }
   },
   "macros": {
     "sectionTitle": "Questions / Help",

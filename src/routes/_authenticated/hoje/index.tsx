@@ -2,11 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, MessageCircleQuestion } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { corFuncionario } from "@/lib/cores";
+import { NovaQuestaoDialog } from "@/components/NovaQuestaoDialog";
+import { QuestaoConversa, type QuestaoBase } from "@/components/QuestaoConversa";
 
 export const Route = createFileRoute("/_authenticated/hoje/")({
   component: HojePage,
@@ -86,6 +88,8 @@ function HojePage() {
     { tipo: "recebimento", titulo: "", descricao: "" },
   );
   const [duvidasTarefa, setDuvidasTarefa] = useState<{ titulo: string; atividadeId: string } | null>(null);
+  const [novaQuestao, setNovaQuestao] = useState<{ atividadeId: string | null; tarefaDiaId: string | null; titulo?: string } | null>(null);
+  const [questaoAberta, setQuestaoAberta] = useState<QuestaoBase | null>(null);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -280,6 +284,47 @@ function HojePage() {
       supabase.removeChannel(ch);
     };
   }, [me, data, qc]);
+
+  // Minhas questões
+  const minhasQuestoesQ = useQuery({
+    enabled: !!me,
+    queryKey: ["questoes-minhas", me?.id],
+    queryFn: async () => {
+      const { data: rows, error } = await supabase
+        .from("questoes")
+        .select("*")
+        .eq("funcionario_id", me!.id)
+        .order("updated_at", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      const ids = (rows ?? []).map((r) => r.id);
+      let unreadMap = new Map<string, number>();
+      if (ids.length > 0) {
+        const { data: msgs } = await supabase
+          .from("questao_mensagens")
+          .select("questao_id")
+          .in("questao_id", ids)
+          .eq("autor_papel", "gestor")
+          .eq("lida_pelo_operador", false);
+        (msgs ?? []).forEach((m: { questao_id: string }) => unreadMap.set(m.questao_id, (unreadMap.get(m.questao_id) ?? 0) + 1));
+      }
+      return (rows ?? []).map((r) => ({ ...r, unread: unreadMap.get(r.id) ?? 0 })) as (QuestaoBase & { unread: number })[];
+    },
+  });
+
+  useEffect(() => {
+    if (!me) return;
+    const inv = () => {
+      qc.invalidateQueries({ queryKey: ["questoes-minhas", me.id] });
+    };
+    const ch = supabase
+      .channel(`hoje-questoes-${me.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "questoes", filter: `funcionario_id=eq.${me.id}` }, inv)
+      .on("postgres_changes", { event: "*", schema: "public", table: "questao_mensagens" }, inv)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [me, qc]);
+
 
   const tarefas = tarefasQuery.data ?? [];
   const execucoes = execucoesQuery.data ?? [];
@@ -786,6 +831,14 @@ function HojePage() {
                     </button>
                   ) : null;
                 })()}
+                <button
+                  onClick={() => setNovaQuestao({ atividadeId: atividadeIdDaTarefa(tk.titulo), tarefaDiaId: tk.id, titulo: tk.titulo })}
+                  className="rounded-md border border-input bg-background p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground shrink-0"
+                  title={t("questoes.tenhoQuestao")}
+                  aria-label={t("questoes.tenhoQuestao")}
+                >
+                  <MessageCircleQuestion className="h-4 w-4" />
+                </button>
                 <ActionsInline
                   estado={tk.estado}
                   cor={cor}
@@ -816,11 +869,64 @@ function HojePage() {
         )}
       </ul>
 
+      {/* As minhas questões */}
+      <div className="mt-10 flex items-center justify-between gap-2">
+        <h2 className="text-lg font-semibold text-foreground">{t("questoes.minhasQuestoes")}</h2>
+        <button
+          onClick={() => setNovaQuestao({ atividadeId: null, tarefaDiaId: null })}
+          className="rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent inline-flex items-center gap-1.5"
+        >
+          <MessageCircleQuestion className="h-4 w-4" /> {t("questoes.novaQuestao")}
+        </button>
+      </div>
+      <ul className="mt-3 space-y-2">
+        {(minhasQuestoesQ.data ?? []).length === 0 && (
+          <li className="text-sm text-muted-foreground">{t("questoes.semQuestoes")}</li>
+        )}
+        {(minhasQuestoesQ.data ?? []).map((q) => (
+          <li
+            key={q.id}
+            className="rounded-lg border border-border bg-card p-3 cursor-pointer hover:bg-accent/40"
+            onClick={() => setQuestaoAberta(q)}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-muted">{t(`questoes.tipo.${q.tipo}`)}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">{t(`questoes.estado.${q.estado}`)}</span>
+              {q.unread > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
+                  {t("questoes.novaRespostaBadge")}
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-sm font-medium text-foreground truncate">{q.assunto}</p>
+          </li>
+        ))}
+      </ul>
+
       {duvidasTarefa && (
         <DuvidasModal
           titulo={duvidasTarefa.titulo}
           atividadeId={duvidasTarefa.atividadeId}
           onClose={() => setDuvidasTarefa(null)}
+        />
+      )}
+
+      {novaQuestao && me && (
+        <NovaQuestaoDialog
+          funcionarioId={me.id}
+          atividadeId={novaQuestao.atividadeId}
+          tarefaDiaId={novaQuestao.tarefaDiaId}
+          contextoTitulo={novaQuestao.titulo}
+          onClose={() => setNovaQuestao(null)}
+        />
+      )}
+
+      {questaoAberta && me && (
+        <QuestaoConversa
+          questao={questaoAberta}
+          meuFuncionarioId={me.id}
+          papel="operador"
+          onClose={() => setQuestaoAberta(null)}
         />
       )}
     </Shell>

@@ -13,6 +13,7 @@ import { Route as TrocarPasswordRouteImport } from './routes/trocar-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedQuestoesIndexRouteImport } from './routes/_authenticated/questoes/index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel/index'
 import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authenticated/hoje/index'
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
@@ -40,6 +41,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedQuestoesIndexRoute =
+  AuthenticatedQuestoesIndexRouteImport.update({
+    id: '/questoes/',
+    path: '/questoes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPainelIndexRoute =
   AuthenticatedPainelIndexRouteImport.update({
     id: '/painel/',
@@ -90,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/gerar/': typeof AuthenticatedGerarIndexRoute
   '/hoje/': typeof AuthenticatedHojeIndexRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
+  '/questoes/': typeof AuthenticatedQuestoesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/gerar': typeof AuthenticatedGerarIndexRoute
   '/hoje': typeof AuthenticatedHojeIndexRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
+  '/questoes': typeof AuthenticatedQuestoesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +125,7 @@ export interface FileRoutesById {
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
   '/_authenticated/hoje/': typeof AuthenticatedHojeIndexRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
+  '/_authenticated/questoes/': typeof AuthenticatedQuestoesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/gerar/'
     | '/hoje/'
     | '/painel/'
+    | '/questoes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/gerar'
     | '/hoje'
     | '/painel'
+    | '/questoes'
   id:
     | '__root__'
     | '/'
@@ -155,6 +167,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gerar/'
     | '/_authenticated/hoje/'
     | '/_authenticated/painel/'
+    | '/_authenticated/questoes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/questoes/': {
+      id: '/_authenticated/questoes/'
+      path: '/questoes'
+      fullPath: '/questoes/'
+      preLoaderRoute: typeof AuthenticatedQuestoesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/': {
       id: '/_authenticated/painel/'
@@ -254,6 +274,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
   AuthenticatedHojeIndexRoute: typeof AuthenticatedHojeIndexRoute
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
+  AuthenticatedQuestoesIndexRoute: typeof AuthenticatedQuestoesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -264,6 +285,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
   AuthenticatedHojeIndexRoute: AuthenticatedHojeIndexRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
+  AuthenticatedQuestoesIndexRoute: AuthenticatedQuestoesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -1,8 +1,8 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle, MessageCircleQuestion, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
@@ -10,12 +10,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type Item = { to: string; label: string; icon: typeof Menu };
+type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
 
 export function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
   const user = useAuthUser();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
@@ -33,11 +34,41 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
     },
   });
 
+  // Unread questions count (gestor only) — abertas/respondidas com mensagens do operador por ler
+  const unreadQ = useQuery({
+    enabled: !!isGestor,
+    queryKey: ["questoes-unread-gestor"],
+    queryFn: async (): Promise<number> => {
+      const { count, error } = await supabase
+        .from("questao_mensagens")
+        .select("id", { count: "exact", head: true })
+        .eq("autor_papel", "operador")
+        .eq("lida_pelo_gestor", false);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  useEffect(() => {
+    if (!isGestor) return;
+    const ch = supabase
+      .channel("layout-questoes-badge")
+      .on("postgres_changes", { event: "*", schema: "public", table: "questao_mensagens" },
+        () => qc.invalidateQueries({ queryKey: ["questoes-unread-gestor"] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "questoes" },
+        () => qc.invalidateQueries({ queryKey: ["questoes-unread-gestor"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [isGestor, qc]);
+
+  const unread = unreadQ.data ?? 0;
+
   const items: Item[] = isGestor
     ? [
         { to: "/painel", label: t("nav.painel"), icon: LayoutDashboard },
         { to: "/equipa", label: t("nav.equipa"), icon: Users },
         { to: "/atividades", label: t("nav.atividades"), icon: ListChecks },
+        { to: "/questoes", label: t("nav.questoes"), icon: MessageCircleQuestion, badge: unread },
         { to: "/ajuda", label: t("nav.ajuda"), icon: HelpCircle },
         { to: "/gerar", label: t("nav.gerar"), icon: CalendarPlus },
       ]
@@ -68,6 +99,21 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           </Link>
         </div>
         <div className="flex items-center gap-2">
+          {isGestor && (
+            <Link
+              to="/questoes"
+              className="relative inline-flex items-center justify-center rounded-md border border-input bg-background h-9 w-9 hover:bg-accent"
+              aria-label={t("nav.questoes")}
+              title={t("nav.questoes")}
+            >
+              <Bell className="h-4 w-4" />
+              {unread > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                  {unread}
+                </span>
+              )}
+            </Link>
+          )}
           <LanguageSwitcher />
           <Button
             variant="outline"
@@ -104,7 +150,12 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                   )}
                 >
                   <Icon className="h-4 w-4" />
-                  {it.label}
+                  <span className="flex-1">{it.label}</span>
+                  {it.badge && it.badge > 0 ? (
+                    <span className="inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                      {it.badge}
+                    </span>
+                  ) : null}
                 </Link>
               );
             })}
