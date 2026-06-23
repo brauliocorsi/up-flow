@@ -16,7 +16,8 @@
   "nav": {
     "equipa": "Team",
     "gerar": "Generate tasks",
-    "painel": "Dashboard"
+    "painel": "Dashboard",
+    "hoje": "My routine"
   },
   "auth": {
     "title": "Sign in",
