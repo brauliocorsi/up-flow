@@ -624,6 +624,24 @@ function HojePage() {
         </Link>
       </div>
 
+      {horarioQuery.data && (horarioQuery.data.horario || horarioQuery.data.tipoDia === null) && (
+        <p className="mt-2 px-1 text-xs text-muted-foreground">
+          {horarioQuery.data.tipoDia === null
+            ? t("hoje.folga")
+            : (() => {
+                const h = horarioQuery.data.horario!;
+                const parts = [
+                  `${t("hoje.hojeLabel")}: ${h.hora_inicio.slice(0,5)}–${h.hora_fim.slice(0,5)}`,
+                  ...horarioQuery.data.pausas.map(
+                    (p) => `${p.nome} ${p.hora_inicio.slice(0,5)}–${p.hora_fim.slice(0,5)}`,
+                  ),
+                ];
+                return parts.join(" · ");
+              })()}
+        </p>
+      )}
+
+
       {bellOpen && (
         <div className="mt-3 rounded-lg border border-border bg-card p-3">
           <div className="flex items-center justify-between">
