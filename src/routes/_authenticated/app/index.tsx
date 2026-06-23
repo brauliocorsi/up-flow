@@ -57,19 +57,26 @@ function HomePage() {
           <p className="text-xs text-muted-foreground">{t("app.tagline")}</p>
         </div>
         <div className="flex items-center gap-4">
-          {isGestor && (
-            <nav className="flex items-center gap-3 text-sm">
-              <Link to="/painel" className="text-muted-foreground hover:text-foreground">
-                {t("nav.painel")}
+          <nav className="flex items-center gap-3 text-sm">
+            {data && (
+              <Link to="/hoje" className="text-muted-foreground hover:text-foreground">
+                {t("nav.hoje")}
               </Link>
-              <Link to="/equipa" className="text-muted-foreground hover:text-foreground">
-                {t("nav.equipa")}
-              </Link>
-              <Link to="/gerar" className="text-muted-foreground hover:text-foreground">
-                {t("nav.gerar")}
-              </Link>
-            </nav>
-          )}
+            )}
+            {isGestor && (
+              <>
+                <Link to="/painel" className="text-muted-foreground hover:text-foreground">
+                  {t("nav.painel")}
+                </Link>
+                <Link to="/equipa" className="text-muted-foreground hover:text-foreground">
+                  {t("nav.equipa")}
+                </Link>
+                <Link to="/gerar" className="text-muted-foreground hover:text-foreground">
+                  {t("nav.gerar")}
+                </Link>
+              </>
+            )}
+          </nav>
           <LanguageSwitcher />
           <button
             onClick={handleSignOut}
