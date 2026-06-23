@@ -59,6 +59,9 @@ function HomePage() {
         <div className="flex items-center gap-4">
           {isGestor && (
             <nav className="flex items-center gap-3 text-sm">
+              <Link to="/painel" className="text-muted-foreground hover:text-foreground">
+                {t("nav.painel")}
+              </Link>
               <Link to="/equipa" className="text-muted-foreground hover:text-foreground">
                 {t("nav.equipa")}
               </Link>
