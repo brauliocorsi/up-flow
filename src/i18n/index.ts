@@ -4,6 +4,9 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import pt from "./locales/pt.json";
 import en from "./locales/en.json";
 
+const savedLanguage =
+  typeof window !== "undefined" ? window.localStorage.getItem("up-moveis-lang") : null;
+
 if (!i18n.isInitialized) {
   i18n
     .use(LanguageDetector)
@@ -13,6 +16,7 @@ if (!i18n.isInitialized) {
         pt: { translation: pt },
         en: { translation: en },
       },
+      lng: savedLanguage === "en" ? "en" : "pt",
       fallbackLng: "pt",
       supportedLngs: ["pt", "en"],
       load: "languageOnly",
