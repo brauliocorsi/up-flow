@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      atividades: {
+        Row: {
+          ativo: boolean
+          cor: string | null
+          created_at: string
+          descricao: string
+          duracao_padrao_min: number
+          funcao_id: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean
+          cor?: string | null
+          created_at?: string
+          descricao?: string
+          duracao_padrao_min?: number
+          funcao_id: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean
+          cor?: string | null
+          created_at?: string
+          descricao?: string
+          duracao_padrao_min?: number
+          funcao_id?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_funcao_id_fkey"
+            columns: ["funcao_id"]
+            isOneToOne: false
+            referencedRelation: "funcoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eventos: {
         Row: {
           created_at: string
@@ -115,6 +156,42 @@ export type Database = {
             columns: ["tarefa_dia_id"]
             isOneToOne: false
             referencedRelation: "tarefas_dia"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funcionario_setores: {
+        Row: {
+          created_at: string
+          funcao_id: string
+          funcionario_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          funcao_id: string
+          funcionario_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          funcao_id?: string
+          funcionario_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funcionario_setores_funcao_id_fkey"
+            columns: ["funcao_id"]
+            isOneToOne: false
+            referencedRelation: "funcoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "funcionario_setores_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
             referencedColumns: ["id"]
           },
         ]
