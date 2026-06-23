@@ -2,6 +2,9 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { AuthUserContext, useAuthUser } from "./auth-context";
+
+export { useAuthUser };
 
 function PendingScreen() {
   return (
@@ -35,15 +38,11 @@ function AuthGate() {
   }, [navigate]);
 
   if (!user) return <PendingScreen />;
-  return <AuthContext.Provider value={user}><Outlet /></AuthContext.Provider>;
-}
-
-import { createContext, useContext } from "react";
-const AuthContext = createContext<User | null>(null);
-export function useAuthUser(): User {
-  const u = useContext(AuthContext);
-  if (!u) throw new Error("useAuthUser must be used inside _authenticated");
-  return u;
+  return (
+    <AuthUserContext.Provider value={user}>
+      <Outlet />
+    </AuthUserContext.Provider>
+  );
 }
 
 export const Route = createFileRoute("/_authenticated")({
