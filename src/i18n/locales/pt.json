@@ -18,7 +18,9 @@
     "gerar": "Gerar tarefas",
     "painel": "Painel",
     "hoje": "A minha rotina",
-    "atividades": "Atividades"
+    "atividades": "Atividades",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu"
   },
   "auth": {
     "title": "Entrar",

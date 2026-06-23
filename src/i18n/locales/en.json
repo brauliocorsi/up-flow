@@ -18,7 +18,9 @@
     "gerar": "Generate tasks",
     "painel": "Dashboard",
     "hoje": "My routine",
-    "atividades": "Activities"
+    "atividades": "Activities",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "auth": {
     "title": "Sign in",

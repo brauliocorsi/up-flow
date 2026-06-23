@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthUserContext, useAuthUser } from "./auth-context";
+import { AuthenticatedLayout } from "@/components/AuthenticatedLayout";
 
 export { useAuthUser };
 
@@ -40,7 +41,9 @@ function AuthGate() {
   if (!user) return <PendingScreen />;
   return (
     <AuthUserContext.Provider value={user}>
-      <Outlet />
+      <AuthenticatedLayout>
+        <Outlet />
+      </AuthenticatedLayout>
     </AuthUserContext.Provider>
   );
 }
