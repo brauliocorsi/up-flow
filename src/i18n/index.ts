@@ -18,7 +18,7 @@ if (!i18n.isInitialized) {
       load: "languageOnly",
       interpolation: { escapeValue: false },
       detection: {
-        order: ["localStorage", "navigator"],
+        order: ["localStorage"],
         caches: ["localStorage"],
         lookupLocalStorage: "up-moveis-lang",
       },
