@@ -17,7 +17,8 @@
     "equipa": "Equipa",
     "gerar": "Gerar tarefas",
     "painel": "Painel",
-    "hoje": "A minha rotina"
+    "hoje": "A minha rotina",
+    "atividades": "Atividades"
   },
   "auth": {
     "title": "Entrar",
@@ -33,7 +34,7 @@
     "hello": "Olá, {{name}}",
     "yourRole": "A tua função na app",
     "unlinked": "Esta conta ainda não está associada a um funcionário. Pede ao gestor para te associar.",
-    "funcao": "Função operacional"
+    "funcao": "Setor"
   },
   "roles": {
     "gestor": "Gestor",
