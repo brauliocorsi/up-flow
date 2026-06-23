@@ -640,13 +640,6 @@ function HojePage() {
           </ul>
         </div>
       )}
-        <div className="mt-4 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
-          {feedback}
-          <button onClick={() => setFeedback(null)} className="ml-2 text-xs text-muted-foreground hover:underline">
-            {t("common.dismiss")}
-          </button>
-        </div>
-      )}
 
       {/* TAREFA ATUAL em destaque */}
       {atual ? (
