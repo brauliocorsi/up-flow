@@ -23,6 +23,7 @@ export type QuestaoBase = {
   tipo: "duvida" | "autorizacao";
   estado: "aberta" | "respondida" | "fechada";
   created_at: string;
+  updated_at?: string;
 };
 
 /**
