@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/route";
+import { criarFuncionario } from "@/lib/criar-funcionario.functions";
 
 export const Route = createFileRoute("/_authenticated/equipa/")({
   component: EquipaPage,
@@ -29,6 +31,7 @@ function EquipaPage() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Funcionario | null>(null);
   const [adding, setAdding] = useState(false);
+  const [creatingWithAccess, setCreatingWithAccess] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const { data: isGestor, isLoading: loadingRole } = useQuery({
@@ -164,12 +167,20 @@ function EquipaPage() {
           <h1 className="text-3xl font-semibold text-foreground">{t("equipa.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("equipa.subtitle")}</p>
         </div>
-        <button
-          onClick={() => { setAdding(true); setEditing(null); }}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          {t("equipa.add")}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setCreatingWithAccess(true); setAdding(false); setEditing(null); }}
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            {t("equipa.criar.openButton")}
+          </button>
+          <button
+            onClick={() => { setAdding(true); setEditing(null); setCreatingWithAccess(false); }}
+            className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
+          >
+            {t("equipa.add")}
+          </button>
+        </div>
       </div>
 
       <div className="mt-6 rounded-lg border border-border bg-muted/30 p-4">
@@ -197,6 +208,18 @@ function EquipaPage() {
           onSaved={() => {
             setAdding(false);
             setEditing(null);
+            invalidateAll();
+          }}
+        />
+      )}
+
+      {creatingWithAccess && (
+        <CriarFuncionarioForm
+          funcoes={funcoes}
+          onCancel={() => setCreatingWithAccess(false)}
+          onCreated={(msg) => {
+            setCreatingWithAccess(false);
+            setFeedback(msg);
             invalidateAll();
           }}
         />
@@ -410,5 +433,149 @@ function Shell({ children }: { children: React.ReactNode }) {
       </header>
       <main className="flex-1 px-6 py-10 max-w-5xl w-full mx-auto">{children}</main>
     </div>
+  );
+}
+
+function CriarFuncionarioForm({
+  funcoes,
+  onCreated,
+  onCancel,
+}: {
+  funcoes: Funcao[];
+  onCreated: (msg: string) => void;
+  onCancel: () => void;
+}) {
+  const { t } = useTranslation();
+  const callCriar = useServerFn(criarFuncionario);
+  const [nome, setNome] = useState("");
+  const [funcaoId, setFuncaoId] = useState(funcoes[0]?.id ?? "");
+  const [papel, setPapel] = useState<Papel>("funcionario");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mustChange, setMustChange] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  function translateError(raw: string): string {
+    const key = `equipa.criar.errors.${raw}`;
+    const translated = t(key);
+    if (translated !== key) return translated;
+    return t("equipa.criar.errors.generic");
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!nome.trim() || !funcaoId || !email.trim() || password.length < 8) {
+      setError(t("equipa.criar.errors.generic"));
+      return;
+    }
+    setLoading(true);
+    try {
+      await callCriar({
+        data: {
+          nome: nome.trim(),
+          funcao_id: funcaoId,
+          papel,
+          email: email.trim(),
+          password,
+          must_change_password: mustChange,
+        },
+      });
+      onCreated(t("equipa.criar.success"));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "generic";
+      setError(translateError(msg));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-6 rounded-lg border border-primary/40 bg-card p-4">
+      <h2 className="text-lg font-medium text-foreground">{t("equipa.criar.title")}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{t("equipa.criar.subtitle")}</p>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="text-muted-foreground">{t("equipa.col.nome")}</span>
+          <input
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            maxLength={120}
+            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="text-muted-foreground">{t("equipa.col.funcao")}</span>
+          <select
+            value={funcaoId}
+            onChange={(e) => setFuncaoId(e.target.value)}
+            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+          >
+            {funcoes.map((f) => (
+              <option key={f.id} value={f.id}>{f.nome}</option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="text-muted-foreground">{t("equipa.col.papel")}</span>
+          <select
+            value={papel}
+            onChange={(e) => setPapel(e.target.value as Papel)}
+            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+          >
+            <option value="funcionario">{t("roles.funcionario")}</option>
+            <option value="gestor">{t("roles.gestor")}</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="text-muted-foreground">{t("equipa.criar.emailLabel")}</span>
+          <input
+            type="email"
+            autoComplete="off"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+          <span className="text-muted-foreground">{t("equipa.criar.passwordLabel")}</span>
+          <input
+            type="text"
+            autoComplete="off"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            minLength={8}
+            className="rounded border border-input bg-background px-3 py-2 font-mono text-foreground"
+          />
+          <span className="text-xs text-muted-foreground">{t("equipa.criar.passwordHint")}</span>
+        </label>
+        <label className="flex items-center gap-2 text-sm text-foreground sm:col-span-2">
+          <input
+            type="checkbox"
+            checked={mustChange}
+            onChange={(e) => setMustChange(e.target.checked)}
+          />
+          {t("equipa.criar.mustChange")}
+        </label>
+      </div>
+      {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+      <div className="mt-4 flex gap-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        >
+          {loading ? t("equipa.criar.submitting") : t("equipa.criar.submit")}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
+        >
+          {t("common.cancel")}
+        </button>
+      </div>
+    </form>
   );
 }

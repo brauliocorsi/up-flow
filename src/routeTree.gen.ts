@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrocarPasswordRouteImport } from './routes/trocar-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +17,11 @@ import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 
+const TrocarPasswordRoute = TrocarPasswordRouteImport.update({
+  id: '/trocar-password',
+  path: '/trocar-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -50,6 +56,7 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/trocar-password': typeof TrocarPasswordRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/trocar-password': typeof TrocarPasswordRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
@@ -66,20 +74,28 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/trocar-password': typeof TrocarPasswordRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/app/' | '/equipa/' | '/gerar/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/trocar-password'
+    | '/app/'
+    | '/equipa/'
+    | '/gerar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app' | '/equipa' | '/gerar'
+  to: '/' | '/auth' | '/trocar-password' | '/app' | '/equipa' | '/gerar'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/trocar-password'
     | '/_authenticated/app/'
     | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
@@ -89,10 +105,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  TrocarPasswordRoute: typeof TrocarPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trocar-password': {
+      id: '/trocar-password'
+      path: '/trocar-password'
+      fullPath: '/trocar-password'
+      preLoaderRoute: typeof TrocarPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -157,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  TrocarPasswordRoute: TrocarPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
