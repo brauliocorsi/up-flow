@@ -483,17 +483,26 @@ function PainelPage() {
                         {t("painel.eventos")}
                       </h4>
                       <ul className="mt-2 space-y-1 text-sm">
-                        {c.eventosFunc.map((e) => (
-                          <li key={e.id} className="flex items-center justify-between border-b border-border/50 py-1">
-                            <span className="text-foreground">
-                              <span className="text-xs uppercase tracking-wide text-muted-foreground mr-2">{t(`painel.eventoTipo.${e.tipo}`)}</span>
-                              {e.titulo}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(e.inicio).toLocaleTimeString()}{e.fim ? " → " + new Date(e.fim).toLocaleTimeString() : " · " + t("painel.aberto")}
-                            </span>
-                          </li>
-                        ))}
+                        {c.eventosFunc.map((e) => {
+                          const start = new Date(e.inicio).getTime();
+                          const end = e.fim ? new Date(e.fim).getTime() : now;
+                          const min = Math.round((end - start) / 60000);
+                          const isUrg = e.prioridade === "urgente";
+                          return (
+                            <li key={e.id} className="flex items-center justify-between border-b border-border/50 py-1 gap-2">
+                              <span className="text-foreground flex items-center gap-2 min-w-0">
+                                {isUrg && <span className="text-xs px-1.5 py-0.5 rounded bg-destructive/15 text-destructive font-semibold">URG</span>}
+                                <span className="text-xs uppercase tracking-wide text-muted-foreground">{t(`painel.eventoTipo.${e.tipo}`)}</span>
+                                <span className="truncate">{e.titulo}</span>
+                              </span>
+                              <span className="text-xs text-muted-foreground shrink-0">
+                                {e.estado === "aberto"
+                                  ? `${t("painel.eventosAbertos")} · ${t("painel.ha", { m: min })}`
+                                  : `${min}m`}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </>
                   )}
