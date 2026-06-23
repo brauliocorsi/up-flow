@@ -249,7 +249,7 @@ function EquipaPage() {
             <tr>
               <th className="px-3 py-2">{t("equipa.col.nome")}</th>
               <th className="px-3 py-2">{t("equipa.col.cor")}</th>
-              <th className="px-3 py-2">{t("equipa.col.funcao")}</th>
+              <th className="px-3 py-2">{t("equipa.col.setores")}</th>
               <th className="px-3 py-2">{t("equipa.col.papel")}</th>
               <th className="px-3 py-2">{t("equipa.col.estado")}</th>
               <th className="px-3 py-2">{t("equipa.col.login")}</th>
@@ -275,7 +275,22 @@ function EquipaPage() {
                     onChange={(cor) => updateCor.mutate({ id: f.id, cor })}
                   />
                 </td>
-                <td className="px-3 py-2 text-muted-foreground">{f.funcao?.nome ?? "—"}</td>
+                <td className="px-3 py-2 text-muted-foreground">
+                  <div className="flex flex-wrap gap-1">
+                    {(f.setores ?? []).length === 0 ? (
+                      <span>—</span>
+                    ) : (
+                      (f.setores ?? []).map((s) => {
+                        const nome = funcoes.find((fc) => fc.id === s.funcao_id)?.nome ?? "—";
+                        return (
+                          <span key={s.funcao_id} className="rounded bg-muted px-2 py-0.5 text-xs">
+                            {nome}
+                          </span>
+                        );
+                      })
+                    )}
+                  </div>
+                </td>
                 <td className="px-3 py-2">{t(`roles.${f.papel}`)}</td>
                 <td className="px-3 py-2">
                   <span className={f.ativo ? "text-foreground" : "text-muted-foreground"}>
