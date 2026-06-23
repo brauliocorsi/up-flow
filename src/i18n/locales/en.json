@@ -73,8 +73,8 @@
     "unlinkOk": "Login unlinked.",
     "confirmDelete": "Delete {{name}}? This cannot be undone.",
     "helpTitle": "How to give an employee access",
-    "helpStep1": "Create their login in Lovable Cloud → Users (email + password).",
-    "helpStep2": "Come back here and select that email in the Login column for the matching employee.",
+    "helpStep1": "Use \"Create employee with access\" to create everything in one step (recommended).",
+    "helpStep2": "Alternatively, create the login in Lovable Cloud → Users and link it here in the Login column.",
     "col": {
       "nome": "Name",
       "funcao": "Role",
@@ -82,6 +82,34 @@
       "estado": "Status",
       "login": "Login",
       "actions": "Actions"
+    },
+    "criar": {
+      "openButton": "Create employee with access",
+      "title": "Create employee with access",
+      "subtitle": "Create the employee, the login, and the role in one step.",
+      "emailLabel": "Login email",
+      "passwordLabel": "Initial password",
+      "passwordHint": "At least 8 characters. Set by you and shared with the employee.",
+      "mustChange": "Require password change on first sign-in",
+      "submit": "Create",
+      "submitting": "Creating…",
+      "success": "Employee created. You set the password — share it securely.",
+      "errors": {
+        "email_exists": "A user with this email already exists.",
+        "weak_password": "Password too weak.",
+        "forbidden": "Only managers can create employees.",
+        "funcao_not_found": "Invalid role.",
+        "generic": "Could not create. Please try again."
+      }
     }
+  },
+  "trocar": {
+    "title": "Set a new password",
+    "subtitle": "For security, set a new password before continuing.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submit": "Save and continue",
+    "tooShort": "Password must be at least 8 characters.",
+    "mismatch": "Passwords do not match."
   }
 }

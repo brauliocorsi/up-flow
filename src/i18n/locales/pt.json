@@ -73,8 +73,8 @@
     "unlinkOk": "Login desassociado.",
     "confirmDelete": "Apagar {{name}}? Esta ação não pode ser desfeita.",
     "helpTitle": "Como dar acesso a um funcionário",
-    "helpStep1": "Cria o login do funcionário em Lovable Cloud → Users (email + palavra-passe).",
-    "helpStep2": "Volta aqui e seleciona esse email na coluna Login do funcionário correspondente.",
+    "helpStep1": "Usa \"Criar funcionário com acesso\" para criar tudo num só passo (recomendado).",
+    "helpStep2": "Em alternativa, cria o login em Lovable Cloud → Users e associa-o aqui na coluna Login.",
     "col": {
       "nome": "Nome",
       "funcao": "Função",
@@ -82,6 +82,34 @@
       "estado": "Estado",
       "login": "Login",
       "actions": "Ações"
+    },
+    "criar": {
+      "openButton": "Criar funcionário com acesso",
+      "title": "Criar funcionário com acesso",
+      "subtitle": "Cria, num único passo, o funcionário, o login e o papel.",
+      "emailLabel": "Email do login",
+      "passwordLabel": "Palavra-passe inicial",
+      "passwordHint": "Mínimo 8 caracteres. Definida por ti e partilhada com o funcionário.",
+      "mustChange": "Obrigar a trocar palavra-passe no primeiro acesso",
+      "submit": "Criar",
+      "submitting": "A criar…",
+      "success": "Funcionário criado. Palavra-passe definida por ti — partilha-a com segurança.",
+      "errors": {
+        "email_exists": "Já existe um utilizador com este email.",
+        "weak_password": "Palavra-passe demasiado fraca.",
+        "forbidden": "Apenas gestores podem criar funcionários.",
+        "funcao_not_found": "Função inválida.",
+        "generic": "Não foi possível criar. Tenta novamente."
+      }
     }
+  },
+  "trocar": {
+    "title": "Definir nova palavra-passe",
+    "subtitle": "Por segurança, define uma nova palavra-passe antes de continuar.",
+    "newPassword": "Nova palavra-passe",
+    "confirmPassword": "Confirmar palavra-passe",
+    "submit": "Guardar e continuar",
+    "tooShort": "A palavra-passe tem de ter pelo menos 8 caracteres.",
+    "mismatch": "As palavras-passe não coincidem."
   }
 }
