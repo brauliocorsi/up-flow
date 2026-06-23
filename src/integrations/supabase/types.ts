@@ -521,6 +521,57 @@ export type Database = {
           },
         ]
       }
+      rotina_blocos: {
+        Row: {
+          atividade_id: string
+          created_at: string
+          dia_semana: number
+          funcionario_id: string
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          ordem: number
+          updated_at: string
+        }
+        Insert: {
+          atividade_id: string
+          created_at?: string
+          dia_semana: number
+          funcionario_id: string
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          ordem?: number
+          updated_at?: string
+        }
+        Update: {
+          atividade_id?: string
+          created_at?: string
+          dia_semana?: number
+          funcionario_id?: string
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          ordem?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rotina_blocos_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rotina_blocos_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rotina_templates: {
         Row: {
           created_at: string
@@ -673,6 +724,14 @@ export type Database = {
     Functions: {
       associar_user_a_funcionario: {
         Args: { _funcionario_id: string; _user_id: string }
+        Returns: undefined
+      }
+      copiar_rotina_dia: {
+        Args: {
+          _dia_origem: number
+          _dias_destino: number[]
+          _funcionario_id: string
+        }
         Returns: undefined
       }
       criar_urgencia_gestor: {

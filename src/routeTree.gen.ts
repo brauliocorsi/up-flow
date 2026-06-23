@@ -18,6 +18,7 @@ import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authenticated/hoje/index'
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
+import { Route as AuthenticatedConstrutorIndexRouteImport } from './routes/_authenticated/construtor/index'
 import { Route as AuthenticatedAtividadesIndexRouteImport } from './routes/_authenticated/atividades/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda/index'
@@ -69,6 +70,12 @@ const AuthenticatedEquipaIndexRoute =
     path: '/equipa/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConstrutorIndexRoute =
+  AuthenticatedConstrutorIndexRouteImport.update({
+    id: '/construtor/',
+    path: '/construtor/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAtividadesIndexRoute =
   AuthenticatedAtividadesIndexRouteImport.update({
     id: '/atividades/',
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/atividades/': typeof AuthenticatedAtividadesIndexRoute
+  '/construtor/': typeof AuthenticatedConstrutorIndexRoute
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
   '/hoje/': typeof AuthenticatedHojeIndexRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
   '/ajuda': typeof AuthenticatedAjudaIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/atividades': typeof AuthenticatedAtividadesIndexRoute
+  '/construtor': typeof AuthenticatedConstrutorIndexRoute
   '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
   '/hoje': typeof AuthenticatedHojeIndexRoute
@@ -121,6 +130,7 @@ export interface FileRoutesById {
   '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/atividades/': typeof AuthenticatedAtividadesIndexRoute
+  '/_authenticated/construtor/': typeof AuthenticatedConstrutorIndexRoute
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
   '/_authenticated/hoje/': typeof AuthenticatedHojeIndexRoute
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/ajuda/'
     | '/app/'
     | '/atividades/'
+    | '/construtor/'
     | '/equipa/'
     | '/gerar/'
     | '/hoje/'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/ajuda'
     | '/app'
     | '/atividades'
+    | '/construtor'
     | '/equipa'
     | '/gerar'
     | '/hoje'
@@ -163,6 +175,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ajuda/'
     | '/_authenticated/app/'
     | '/_authenticated/atividades/'
+    | '/_authenticated/construtor/'
     | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
     | '/_authenticated/hoje/'
@@ -242,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEquipaIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/construtor/': {
+      id: '/_authenticated/construtor/'
+      path: '/construtor'
+      fullPath: '/construtor/'
+      preLoaderRoute: typeof AuthenticatedConstrutorIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/atividades/': {
       id: '/_authenticated/atividades/'
       path: '/atividades'
@@ -270,6 +290,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAtividadesIndexRoute: typeof AuthenticatedAtividadesIndexRoute
+  AuthenticatedConstrutorIndexRoute: typeof AuthenticatedConstrutorIndexRoute
   AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
   AuthenticatedHojeIndexRoute: typeof AuthenticatedHojeIndexRoute
@@ -281,6 +302,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAjudaIndexRoute: AuthenticatedAjudaIndexRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAtividadesIndexRoute: AuthenticatedAtividadesIndexRoute,
+  AuthenticatedConstrutorIndexRoute: AuthenticatedConstrutorIndexRoute,
   AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
   AuthenticatedHojeIndexRoute: AuthenticatedHojeIndexRoute,

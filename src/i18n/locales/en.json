@@ -26,6 +26,7 @@
     "atividades": "Activities",
     "ajuda": "Help",
     "questoes": "Questions",
+    "construtor": "Builder",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
   },
@@ -368,5 +369,55 @@
     "errForaHorario": "Break must fit inside the work schedule.",
     "errNome": "Enter a name for the break.",
     "warnSobreposicao": "Warning: this break overlaps with another."
+  },
+  "construtor": {
+    "title": "Routine builder",
+    "subtitle": "Build each employee's weekly routine by dragging activities.",
+    "escolheFuncionario": "Employee",
+    "escolheDia": "Day of week",
+    "biblioteca": "Activity library",
+    "semAtividades": "No activities in this employee's sectors.",
+    "semHorario": "No schedule set for this day.",
+    "defineHorarioPrimeiro": "Set the work schedule on the employee first.",
+    "naoTrabalhaEsteDia": "The employee does not work on this day.",
+    "semBlocos": "No blocks. Drag or click an activity.",
+    "pausa": "Break",
+    "minutos": "{{m}} min",
+    "duracao": "Duration",
+    "horaInicio": "Start",
+    "horaFim": "End",
+    "adicionar": "Add to routine",
+    "atividade": "Activity",
+    "remover": "Remove block",
+    "editarBloco": "Edit block",
+    "sobrepoePausa": "Conflict: overlaps a fixed break.",
+    "sobrepoeBloco": "Conflict: overlaps another block.",
+    "foraHorario": "Outside the work schedule.",
+    "ordemInvalida": "Start must be before end.",
+    "guardado": "Block saved.",
+    "removido": "Block removed.",
+    "copiarTitulo": "Copy this day to…",
+    "copiarBtn": "Copy to other days",
+    "copiarAviso": "Will replace content on the chosen days.",
+    "copiarConfirmar": "Copy and replace",
+    "copiarSucesso": "Day copied.",
+    "copiarVazio": "Pick at least one target day.",
+    "diasCurtos": {
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    },
+    "dias": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+    "apenasGestor": "Only managers can use the builder."
   }
 }

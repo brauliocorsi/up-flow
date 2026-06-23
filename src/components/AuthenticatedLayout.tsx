@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle, MessageCircleQuestion, Bell } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Users, ListChecks, CalendarPlus, ClipboardList, HelpCircle, MessageCircleQuestion, Bell, LayoutGrid } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
@@ -71,6 +71,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
         { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
         { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
         { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
+        { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
         { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
         { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
         { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },

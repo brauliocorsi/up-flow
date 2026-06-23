@@ -26,6 +26,7 @@
     "atividades": "Atividades",
     "ajuda": "Ajuda",
     "questoes": "Questões",
+    "construtor": "Construtor",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu"
   },
@@ -368,5 +369,55 @@
     "errForaHorario": "A pausa tem de estar dentro do horário de trabalho.",
     "errNome": "Indica o nome da pausa.",
     "warnSobreposicao": "Atenção: esta pausa sobrepõe-se a outra."
+  },
+  "construtor": {
+    "title": "Construtor de rotinas",
+    "subtitle": "Monta a rotina semanal de cada funcionário arrastando atividades.",
+    "escolheFuncionario": "Funcionário",
+    "escolheDia": "Dia da semana",
+    "biblioteca": "Biblioteca de atividades",
+    "semAtividades": "Sem atividades nos setores deste funcionário.",
+    "semHorario": "Sem horário definido para este dia.",
+    "defineHorarioPrimeiro": "Define primeiro o horário de trabalho na ficha do funcionário.",
+    "naoTrabalhaEsteDia": "O funcionário não trabalha neste dia.",
+    "semBlocos": "Sem blocos. Arrasta ou clica numa atividade.",
+    "pausa": "Pausa",
+    "minutos": "{{m}} min",
+    "duracao": "Duração",
+    "horaInicio": "Início",
+    "horaFim": "Fim",
+    "adicionar": "Adicionar à rotina",
+    "atividade": "Atividade",
+    "remover": "Remover bloco",
+    "editarBloco": "Editar bloco",
+    "sobrepoePausa": "Conflito: sobrepõe uma pausa fixa.",
+    "sobrepoeBloco": "Conflito: sobrepõe outro bloco.",
+    "foraHorario": "Fora do horário de trabalho.",
+    "ordemInvalida": "O início tem de ser anterior ao fim.",
+    "guardado": "Bloco guardado.",
+    "removido": "Bloco removido.",
+    "copiarTitulo": "Copiar este dia para…",
+    "copiarBtn": "Copiar para outros dias",
+    "copiarAviso": "Vai substituir o conteúdo dos dias escolhidos.",
+    "copiarConfirmar": "Copiar e substituir",
+    "copiarSucesso": "Dia copiado.",
+    "copiarVazio": "Escolhe pelo menos um dia destino.",
+    "diasCurtos": {
+      "1": "Seg",
+      "2": "Ter",
+      "3": "Qua",
+      "4": "Qui",
+      "5": "Sex",
+      "6": "Sáb"
+    },
+    "dias": {
+      "1": "Segunda-feira",
+      "2": "Terça-feira",
+      "3": "Quarta-feira",
+      "4": "Quinta-feira",
+      "5": "Sexta-feira",
+      "6": "Sábado"
+    },
+    "apenasGestor": "Só o gestor pode usar o construtor."
   }
 }
