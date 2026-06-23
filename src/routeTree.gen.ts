@@ -13,8 +13,8 @@ import { Route as TrocarPasswordRouteImport } from './routes/trocar-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedQuestoesIndexRouteImport } from './routes/_authenticated/questoes/index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel/index'
+import { Route as AuthenticatedQuestoesIndexRouteImport } from './routes/_authenticated/questoes/index'
 import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authenticated/hoje/index'
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
@@ -41,16 +41,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedQuestoesIndexRoute =
-  AuthenticatedQuestoesIndexRouteImport.update({
-    id: '/questoes/',
-    path: '/questoes/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPainelIndexRoute =
   AuthenticatedPainelIndexRouteImport.update({
     id: '/painel/',
     path: '/painel/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuestoesIndexRoute =
+  AuthenticatedQuestoesIndexRouteImport.update({
+    id: '/questoes/',
+    path: '/questoes/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedHojeIndexRoute = AuthenticatedHojeIndexRouteImport.update({
@@ -96,8 +96,8 @@ export interface FileRoutesByFullPath {
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
   '/hoje/': typeof AuthenticatedHojeIndexRoute
-  '/painel/': typeof AuthenticatedPainelIndexRoute
   '/questoes/': typeof AuthenticatedQuestoesIndexRoute
+  '/painel/': typeof AuthenticatedPainelIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,8 +109,8 @@ export interface FileRoutesByTo {
   '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
   '/hoje': typeof AuthenticatedHojeIndexRoute
-  '/painel': typeof AuthenticatedPainelIndexRoute
   '/questoes': typeof AuthenticatedQuestoesIndexRoute
+  '/painel': typeof AuthenticatedPainelIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,8 +124,8 @@ export interface FileRoutesById {
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
   '/_authenticated/hoje/': typeof AuthenticatedHojeIndexRoute
-  '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/_authenticated/questoes/': typeof AuthenticatedQuestoesIndexRoute
+  '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,8 +139,8 @@ export interface FileRouteTypes {
     | '/equipa/'
     | '/gerar/'
     | '/hoje/'
-    | '/painel/'
     | '/questoes/'
+    | '/painel/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -152,8 +152,8 @@ export interface FileRouteTypes {
     | '/equipa'
     | '/gerar'
     | '/hoje'
-    | '/painel'
     | '/questoes'
+    | '/painel'
   id:
     | '__root__'
     | '/'
@@ -166,8 +166,8 @@ export interface FileRouteTypes {
     | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
     | '/_authenticated/hoje/'
-    | '/_authenticated/painel/'
     | '/_authenticated/questoes/'
+    | '/_authenticated/painel/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -207,18 +207,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/questoes/': {
-      id: '/_authenticated/questoes/'
-      path: '/questoes'
-      fullPath: '/questoes/'
-      preLoaderRoute: typeof AuthenticatedQuestoesIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/painel/': {
       id: '/_authenticated/painel/'
       path: '/painel'
       fullPath: '/painel/'
       preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/questoes/': {
+      id: '/_authenticated/questoes/'
+      path: '/questoes'
+      fullPath: '/questoes/'
+      preLoaderRoute: typeof AuthenticatedQuestoesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/hoje/': {
@@ -273,8 +273,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
   AuthenticatedHojeIndexRoute: typeof AuthenticatedHojeIndexRoute
-  AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
   AuthenticatedQuestoesIndexRoute: typeof AuthenticatedQuestoesIndexRoute
+  AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -284,8 +284,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
   AuthenticatedHojeIndexRoute: AuthenticatedHojeIndexRoute,
-  AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
   AuthenticatedQuestoesIndexRoute: AuthenticatedQuestoesIndexRoute,
+  AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
