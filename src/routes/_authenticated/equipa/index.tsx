@@ -543,7 +543,7 @@ function CriarFuncionarioForm({
   const { t } = useTranslation();
   const callCriar = useServerFn(criarFuncionario);
   const [nome, setNome] = useState("");
-  const [funcaoId, setFuncaoId] = useState(funcoes[0]?.id ?? "");
+  const [setorIds, setSetorIds] = useState<string[]>(funcoes[0] ? [funcoes[0].id] : []);
   const [papel, setPapel] = useState<Papel>("funcionario");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -561,7 +561,7 @@ function CriarFuncionarioForm({
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!nome.trim() || !funcaoId || !email.trim() || password.length < 8) {
+    if (!nome.trim() || setorIds.length === 0 || !email.trim() || password.length < 8) {
       setError(t("equipa.criar.errors.generic"));
       return;
     }
@@ -570,7 +570,8 @@ function CriarFuncionarioForm({
       await callCriar({
         data: {
           nome: nome.trim(),
-          funcao_id: funcaoId,
+          funcao_id: setorIds[0],
+          setor_ids: setorIds,
           papel,
           email: email.trim(),
           password,
@@ -600,18 +601,26 @@ function CriarFuncionarioForm({
             className="rounded border border-input bg-background px-3 py-2 text-foreground"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">{t("equipa.col.funcao")}</span>
-          <select
-            value={funcaoId}
-            onChange={(e) => setFuncaoId(e.target.value)}
-            className="rounded border border-input bg-background px-3 py-2 text-foreground"
-          >
+        <div className="sm:col-span-2 flex flex-col gap-1 text-sm">
+          <span className="text-muted-foreground">{t("equipa.setoresLabel")}</span>
+          <div className="flex flex-wrap gap-3 rounded border border-input bg-background px-3 py-2">
             {funcoes.map((f) => (
-              <option key={f.id} value={f.id}>{f.nome}</option>
+              <label key={f.id} className="inline-flex items-center gap-2 text-foreground">
+                <input
+                  type="checkbox"
+                  checked={setorIds.includes(f.id)}
+                  onChange={() =>
+                    setSetorIds((prev) =>
+                      prev.includes(f.id) ? prev.filter((x) => x !== f.id) : [...prev, f.id],
+                    )
+                  }
+                />
+                {f.nome}
+              </label>
             ))}
-          </select>
-        </label>
+          </div>
+          <span className="text-xs text-muted-foreground">{t("equipa.setoresHint")}</span>
+        </div>
         <label className="flex flex-col gap-1 text-sm">
           <span className="text-muted-foreground">{t("equipa.col.papel")}</span>
           <select
