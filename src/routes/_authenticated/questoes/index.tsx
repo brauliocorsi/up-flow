@@ -108,7 +108,7 @@ function QuestoesPage() {
   }
 
   if (isGestorQ.isLoading) return <div className="p-6 text-sm text-muted-foreground">{t("common.loading")}</div>;
-  if (!isGestorQ.data) return <Navigate to="/app" />;
+  if (!isGestorQ.data) return <Navigate to="/hoje" />;
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-4xl mx-auto">

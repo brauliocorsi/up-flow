@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -111,14 +111,11 @@ function AjudaPage() {
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-3xl w-full mx-auto">
-      <div className="flex items-center justify-between">
+      <div>
         <div>
           <h1 className="text-2xl font-semibold text-foreground">{t("ajuda.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("ajuda.subtitle")}</p>
         </div>
-        <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">
-          {t("common.back")}
-        </Link>
       </div>
 
       <section className="mt-8">
