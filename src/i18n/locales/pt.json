@@ -27,5 +27,17 @@
   "roles": {
     "gestor": "Gestor",
     "funcionario": "Funcionário"
+  },
+  "gerar": {
+    "title": "Gerar tarefas do dia",
+    "subtitle": "Cria as tarefas de hoje ({{date}}) para todos os funcionários ativos. Idempotente: se já existirem, não duplica.",
+    "action": "Gerar tarefas de hoje para a equipa",
+    "running": "A gerar…",
+    "results": "Resultado",
+    "tarefasCount_one": "{{count}} tarefa",
+    "tarefasCount_other": "{{count}} tarefas",
+    "noFuncionarios": "Não há funcionários ativos.",
+    "forbidden": "Apenas gestores podem aceder a esta página.",
+    "backHome": "Voltar"
   }
 }

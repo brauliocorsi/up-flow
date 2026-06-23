@@ -27,5 +27,17 @@
   "roles": {
     "gestor": "Manager",
     "funcionario": "Employee"
+  },
+  "gerar": {
+    "title": "Generate today's tasks",
+    "subtitle": "Create today's tasks ({{date}}) for every active employee. Idempotent: existing tasks are kept.",
+    "action": "Generate today's tasks for the team",
+    "running": "Generating…",
+    "results": "Result",
+    "tarefasCount_one": "{{count}} task",
+    "tarefasCount_other": "{{count}} tasks",
+    "noFuncionarios": "No active employees.",
+    "forbidden": "Only managers can access this page.",
+    "backHome": "Back"
   }
 }
