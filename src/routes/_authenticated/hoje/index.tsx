@@ -88,6 +88,8 @@ function HojePage() {
     { tipo: "recebimento", titulo: "", descricao: "" },
   );
   const [duvidasTarefa, setDuvidasTarefa] = useState<{ titulo: string; atividadeId: string } | null>(null);
+  const [novaQuestao, setNovaQuestao] = useState<{ atividadeId: string | null; tarefaDiaId: string | null; titulo?: string } | null>(null);
+  const [questaoAberta, setQuestaoAberta] = useState<QuestaoBase | null>(null);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
