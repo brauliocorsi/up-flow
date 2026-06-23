@@ -216,7 +216,7 @@ function AtividadesPage() {
                           </details>
                         </td>
                       </tr>
-                      </>
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>
