@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { HorarioEditor } from "@/components/HorarioEditor";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
 import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
