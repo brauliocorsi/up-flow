@@ -3,11 +3,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
+import {
+  UserPlus, UserCog, Pencil, Power, Trash2, Link2, Link2Off,
+  Users, X, Save, Info, ChevronDown, KeyRound, Mail, Lock,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HorarioEditor } from "@/components/HorarioEditor";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
 import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/equipa/")({
   component: EquipaPage,
