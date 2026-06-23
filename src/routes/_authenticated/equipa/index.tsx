@@ -612,3 +612,36 @@ function CriarFuncionarioForm({
     </form>
   );
 }
+
+function CorPicker({
+  value,
+  onChange,
+}: {
+  value: string | null;
+  onChange: (cor: string) => void;
+}) {
+  const { t } = useTranslation();
+  const current = corFuncionario(value);
+  return (
+    <label className="inline-flex items-center gap-2 text-xs" title={t("equipa.corLabel")}>
+      <span
+        className="inline-block h-5 w-5 rounded-full ring-1 ring-border shrink-0"
+        style={{ backgroundColor: current }}
+      />
+      <select
+        value={CORES_FUNCIONARIO.some((c) => c.value === value) ? (value ?? "") : ""}
+        onChange={(e) => {
+          if (e.target.value) onChange(e.target.value);
+        }}
+        className="rounded border border-input bg-background px-2 py-1 text-xs"
+      >
+        {!CORES_FUNCIONARIO.some((c) => c.value === value) && (
+          <option value="">—</option>
+        )}
+        {CORES_FUNCIONARIO.map((c) => (
+          <option key={c.value} value={c.value}>{c.label}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
