@@ -11,7 +11,10 @@
     "saving": "A guardar…",
     "cancel": "Cancelar",
     "back": "Voltar",
-    "dismiss": "Fechar"
+    "dismiss": "Fechar",
+    "edit": "Editar",
+    "delete": "Apagar",
+    "close": "Fechar"
   },
   "nav": {
     "equipa": "Equipa",
@@ -19,8 +22,30 @@
     "painel": "Painel",
     "hoje": "A minha rotina",
     "atividades": "Atividades",
+    "ajuda": "Ajuda",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu"
+  },
+  "macros": {
+    "sectionTitle": "Dúvidas / Ajuda",
+    "add": "Nova dúvida",
+    "empty": "Sem dúvidas registadas.",
+    "titulo": "Título",
+    "conteudo": "Conteúdo",
+    "ordem": "Ordem",
+    "setor": "Setor (opcional)",
+    "setorAll": "Todos os setores",
+    "fillRequired": "Indica um título.",
+    "confirmDelete": "Apagar esta dúvida?"
+  },
+  "ajuda": {
+    "title": "Ajuda do processo",
+    "subtitle": "Consulta as dúvidas frequentes e ajudas escritas pelo gestor.",
+    "gerais": "Dúvidas gerais",
+    "geraisHint": "Ajudas sobre o processo em geral.",
+    "porAtividade": "Por atividade",
+    "porAtividadeHint": "Ajudas associadas a cada atividade.",
+    "semContexto": "Sem ajudas contextuais disponíveis."
   },
   "auth": {
     "title": "Entrar",
