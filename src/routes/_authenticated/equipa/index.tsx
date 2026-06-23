@@ -338,8 +338,14 @@ function EquipaPage() {
                     {f.ativo ? t("equipa.deactivate") : t("equipa.activate")}
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(t("equipa.confirmDelete", { name: f.nome }))) remove.mutate(f);
+                    onClick={async () => {
+                      const { data: hasHist } = await supabase.rpc("funcionario_tem_historico", {
+                        _funcionario_id: f.id,
+                      });
+                      const msg = hasHist
+                        ? t("equipa.confirmDeleteWithHistory", { name: f.nome })
+                        : t("equipa.confirmDelete", { name: f.nome });
+                      if (confirm(msg)) remove.mutate(f);
                     }}
                     className="text-xs text-destructive hover:underline"
                   >
