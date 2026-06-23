@@ -815,6 +815,14 @@ function HojePage() {
           <li className="text-sm text-muted-foreground">{t("hoje.semTarefasHoje")}</li>
         )}
       </ul>
+
+      {duvidasTarefa && (
+        <DuvidasModal
+          titulo={duvidasTarefa.titulo}
+          atividadeId={duvidasTarefa.atividadeId}
+          onClose={() => setDuvidasTarefa(null)}
+        />
+      )}
     </Shell>
   );
 }
