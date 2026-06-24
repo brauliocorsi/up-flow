@@ -558,7 +558,14 @@ function HojePage() {
   if (!me) {
     return (
       <Shell onSignOut={handleSignOut}>
-        <p className="text-muted-foreground">{t("home.unlinked")}</p>
+        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+          <p className="font-medium text-foreground">{t("home.unlinked", { defaultValue: "A sua conta não está associada a um funcionário." })}</p>
+          <p className="mt-2">
+            {t("hoje.gestorHint", { defaultValue: "Se é gestor, abra o " })}
+            <Link to="/painel" className="underline font-medium text-foreground">{t("nav.painel", "Painel")}</Link>
+            {t("hoje.gestorHint2", { defaultValue: " para ver a rotina de toda a equipa." })}
+          </p>
+        </div>
       </Shell>
     );
   }

@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
+type Section = { label: string; items: Item[] };
 
 const APP_NAME = "UP Móveis";
 
@@ -77,19 +78,35 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
 
   const unread = unreadQ.data ?? 0;
 
-  const items: Item[] = isGestor
+  const sections: Section[] = isGestor
     ? [
-        { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
-        { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
-        { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
-        { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
-        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
-        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
-        { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
+        {
+          label: tf("nav.sectionGestao", "Gestão"),
+          items: [
+            { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
+            { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
+            { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
+            { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
+            { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+            { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+            { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
+          ],
+        },
+        {
+          label: tf("nav.sectionOperador", "Operador"),
+          items: [
+            { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
+          ],
+        },
       ]
     : [
-        { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
-        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+        {
+          label: tf("nav.section", "Navegação"),
+          items: [
+            { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
+            { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+          ],
+        },
       ];
 
   async function handleSignOut() {
@@ -130,6 +147,11 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                 </span>
               </span>
             </Link>
+            {isGestor && (
+              <span className="hidden sm:inline-flex items-center rounded-full border border-foreground/20 bg-foreground/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">
+                {tf("roles.admin", "Administrador")}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
@@ -182,38 +204,42 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
           </SheetHeader>
-          <nav className="p-3 flex flex-col gap-0.5">
-            <span className="px-3 pt-2 pb-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-              {tf("nav.section", "Navegação")}
-            </span>
-            {items.map((it) => {
-              const active = pathname === it.to || pathname.startsWith(it.to + "/");
-              const Icon = it.icon;
-              return (
-                <Link
-                  key={it.to}
-                  to={it.to}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium",
-                    active
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  <Icon className={cn("h-4 w-4 shrink-0", active ? "" : "text-muted-foreground group-hover:text-foreground")} />
-                  <span className="flex-1 truncate">{it.label}</span>
-                  {it.badge && it.badge > 0 ? (
-                    <span className={cn(
-                      "inline-flex h-5 min-w-5 px-1.5 items-center justify-center rounded-full text-[10px] font-semibold",
-                      active ? "bg-background text-foreground" : "bg-destructive text-destructive-foreground",
-                    )}>
-                      {it.badge}
-                    </span>
-                  ) : null}
-                </Link>
-              );
-            })}
+          <nav className="p-3 flex flex-col gap-2">
+            {sections.map((section) => (
+              <div key={section.label} className="flex flex-col gap-0.5">
+                <span className="px-3 pt-2 pb-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  {section.label}
+                </span>
+                {section.items.map((it) => {
+                  const active = pathname === it.to || pathname.startsWith(it.to + "/");
+                  const Icon = it.icon;
+                  return (
+                    <Link
+                      key={it.to}
+                      to={it.to}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium",
+                        active
+                          ? "bg-foreground text-background"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      )}
+                    >
+                      <Icon className={cn("h-4 w-4 shrink-0", active ? "" : "text-muted-foreground group-hover:text-foreground")} />
+                      <span className="flex-1 truncate">{it.label}</span>
+                      {it.badge && it.badge > 0 ? (
+                        <span className={cn(
+                          "inline-flex h-5 min-w-5 px-1.5 items-center justify-center rounded-full text-[10px] font-semibold",
+                          active ? "bg-background text-foreground" : "bg-destructive text-destructive-foreground",
+                        )}>
+                          {it.badge}
+                        </span>
+                      ) : null}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
           <div className="mt-auto border-t border-border px-5 py-4 text-[11px] text-muted-foreground">
             <p className="truncate">{user.email}</p>
