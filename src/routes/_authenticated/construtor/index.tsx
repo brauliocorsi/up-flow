@@ -35,6 +35,7 @@ type Atividade = {
   id: string;
   funcao_id: string;
   nome: string;
+  descricao: string | null;
   duracao_padrao_min: number;
   cor: string | null;
 };
