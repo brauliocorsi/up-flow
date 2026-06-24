@@ -874,6 +874,8 @@ function HojePage() {
           concluirPending={concluir.isPending}
           pausarPending={pausar.isPending}
           t={t}
+          questaoNova={questaoNovaDaTarefa(atual)}
+          onAbrirQuestao={(q) => setQuestaoAberta(q)}
         />
       ) : (
         <div className="mt-6 rounded-xl border border-border bg-card p-6 text-center">
