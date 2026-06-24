@@ -95,6 +95,8 @@ function PainelPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [urgOpen, setUrgOpen] = useState(false);
   const [urgForm, setUrgForm] = useState({ funcionario_id: "", titulo: "", descricao: "", prioridade: "urgente" as "urgente" | "normal" });
+  const [filtroFuncs, setFiltroFuncs] = useState<Set<string>>(new Set());
+  const [filtroOpen, setFiltroOpen] = useState(false);
 
   // Live ticker only when viewing today
   useEffect(() => {
@@ -318,6 +320,8 @@ function PainelPage() {
     };
   });
 
+  const cartoesVisiveis = filtroFuncs.size === 0 ? cartoes : cartoes.filter((c) => filtroFuncs.has(c.f.id));
+
   const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado === "aberto");
   const tempoUrgenciasMin = (() => {
     let total = 0;
@@ -331,12 +335,12 @@ function PainelPage() {
   })();
 
   const metrics = {
-    ativos: cartoes.filter((c) => c.execAberta && !c.pausada).length,
-    concluidas: cartoes.reduce((s, c) => s + c.concluidas, 0),
+    ativos: cartoesVisiveis.filter((c) => c.execAberta && !c.pausada).length,
+    concluidas: cartoesVisiveis.reduce((s, c) => s + c.concluidas, 0),
     dentroPct: (() => {
       // Histórico: % de tarefas concluídas dentro do tempo previsto
       if (!isLive) {
-        const done = cartoes.flatMap((c) => c.tarefas).filter((tk) => tk.estado === "concluida");
+        const done = cartoesVisiveis.flatMap((c) => c.tarefas).filter((tk) => tk.estado === "concluida");
         if (done.length === 0) return 100;
         let dentro = 0;
         for (const tk of done) {
@@ -346,12 +350,12 @@ function PainelPage() {
         }
         return Math.round((dentro / done.length) * 100);
       }
-      const ativas = cartoes.filter((c) => c.execAberta);
+      const ativas = cartoesVisiveis.filter((c) => c.execAberta);
       if (ativas.length === 0) return 100;
       return Math.round((ativas.filter((c) => !c.excedido).length / ativas.length) * 100);
     })(),
-    pausas: cartoes.filter((c) => c.pausada).length,
-    urgencias: isLive ? urgenciasAbertas.length : 0,
+    pausas: cartoesVisiveis.filter((c) => c.pausada).length,
+    urgencias: isLive ? urgenciasAbertas.filter((e) => filtroFuncs.size === 0 || filtroFuncs.has(e.funcionario_id)).length : 0,
     tempoUrg: tempoUrgenciasMin,
   };
 
@@ -506,6 +510,83 @@ function PainelPage() {
         </div>
       )}
 
+      <div className="mt-6 rounded-lg border border-border bg-card px-3 py-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setFiltroOpen((o) => !o)}
+            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium text-foreground hover:bg-accent"
+          >
+            {filtroFuncs.size === 0
+              ? `👥 ${t("painel.filtro.todos")}`
+              : `👥 ${filtroFuncs.size} ${t("painel.filtro.selecionados")}`}
+            <span className="ml-2 text-xs text-muted-foreground">{filtroOpen ? "▲" : "▼"}</span>
+          </button>
+          {filtroFuncs.size > 0 && (
+            <button
+              onClick={() => setFiltroFuncs(new Set())}
+              className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {t("painel.filtro.limpar")}
+            </button>
+          )}
+          {filtroFuncs.size > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {funcionarios.filter((f) => filtroFuncs.has(f.id)).map((f) => {
+                const cor = corFuncionario(f.cor);
+                return (
+                  <span
+                    key={f.id}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-2 py-0.5 text-xs"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cor }} />
+                    {f.nome}
+                    <button
+                      onClick={() => {
+                        const next = new Set(filtroFuncs);
+                        next.delete(f.id);
+                        setFiltroFuncs(next);
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label={t("common.remove")}
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        {filtroOpen && (
+          <div className="mt-3 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3 border-t border-border pt-3">
+            {funcionarios.map((f) => {
+              const checked = filtroFuncs.has(f.id);
+              const cor = corFuncionario(f.cor);
+              return (
+                <label
+                  key={f.id}
+                  className="flex items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-accent cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => {
+                      const next = new Set(filtroFuncs);
+                      if (checked) next.delete(f.id); else next.add(f.id);
+                      setFiltroFuncs(next);
+                    }}
+                    className="h-4 w-4"
+                  />
+                  <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: cor }} />
+                  <span className="text-foreground truncate">{f.nome}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+
       <div className="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         <Metric label={t("painel.metrics.ativos")} value={metrics.ativos} />
         <Metric label={t("painel.metrics.concluidas")} value={metrics.concluidas} />
@@ -517,15 +598,15 @@ function PainelPage() {
 
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {cartoes.map((c) => <FuncionarioCard key={c.f.id} c={c} t={t} isLive={isLive} />)}
-        {cartoes.length === 0 && (
+        {cartoesVisiveis.map((c) => <FuncionarioCard key={c.f.id} c={c} t={t} isLive={isLive} />)}
+        {cartoesVisiveis.length === 0 && (
           <p className="text-sm text-muted-foreground">{t("painel.empty")}</p>
         )}
       </div>
 
       <h2 className="mt-12 text-xl font-semibold text-foreground">{t("painel.details")}</h2>
       <div className="mt-4 space-y-3">
-        {cartoes.map((c) => {
+        {cartoesVisiveis.map((c) => {
           const open = expanded[c.f.id] ?? false;
           const cor = corFuncionario(c.f.cor);
           return (
