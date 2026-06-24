@@ -390,3 +390,138 @@ function Shell({ children }: { children: React.ReactNode }) {
     <main className="px-4 sm:px-6 py-6 sm:py-10 max-w-5xl w-full mx-auto">{children}</main>
   );
 }
+
+function InlineEditRow({
+  atividade,
+  funcoes,
+  onSaved,
+  onCancel,
+}: {
+  atividade: Atividade;
+  funcoes: Funcao[];
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const { t } = useTranslation();
+  const [nome, setNome] = useState(atividade.nome);
+  const [descricao, setDescricao] = useState(atividade.descricao ?? "");
+  const [funcaoId, setFuncaoId] = useState(atividade.funcao_id);
+  const [duracao, setDuracao] = useState<number>(atividade.duracao_padrao_min);
+  const [cor, setCor] = useState(atividade.cor ?? "");
+  const [ativo, setAtivo] = useState<boolean>(atividade.ativo);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setNome(atividade.nome);
+    setDescricao(atividade.descricao ?? "");
+    setFuncaoId(atividade.funcao_id);
+    setDuracao(atividade.duracao_padrao_min);
+    setCor(atividade.cor ?? "");
+    setAtivo(atividade.ativo);
+  }, [atividade]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const cleanNome = nome.trim();
+      if (!cleanNome || !funcaoId || !Number.isFinite(duracao) || duracao < 0) {
+        throw new Error(t("atividades.fillRequired"));
+      }
+      const { error } = await supabase
+        .from("atividades")
+        .update({
+          nome: cleanNome,
+          descricao: descricao.trim(),
+          funcao_id: funcaoId,
+          duracao_padrao_min: Math.round(duracao),
+          cor: cor.trim() ? cor.trim() : null,
+          ativo,
+        })
+        .eq("id", atividade.id);
+      if (error) throw error;
+    },
+    onSuccess: onSaved,
+    onError: (e: Error) => setError(e.message),
+  });
+
+  return (
+    <tr className="bg-muted/20 align-top">
+      <td className="px-3 py-2">
+        <input
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          maxLength={200}
+          className="w-full rounded border border-input bg-background px-2 py-1 text-sm"
+        />
+        <select
+          value={funcaoId}
+          onChange={(e) => setFuncaoId(e.target.value)}
+          className="mt-1 w-full rounded border border-input bg-background px-2 py-1 text-xs"
+        >
+          {funcoes.map((f) => (
+            <option key={f.id} value={f.id}>{f.nome}</option>
+          ))}
+        </select>
+      </td>
+      <td className="px-3 py-2">
+        <textarea
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
+          rows={2}
+          className="w-full rounded border border-input bg-background px-2 py-1 text-sm"
+        />
+      </td>
+      <td className="px-3 py-2 text-right">
+        <input
+          type="number"
+          min={0}
+          value={duracao}
+          onChange={(e) => setDuracao(Number(e.target.value))}
+          className="w-20 rounded border border-input bg-background px-2 py-1 text-right text-sm tabular-nums"
+        />
+      </td>
+      <td className="px-3 py-2">
+        <div className="flex items-center gap-1">
+          <input
+            type="color"
+            value={cor || "#64748B"}
+            onChange={(e) => setCor(e.target.value)}
+            className="h-7 w-9 rounded border border-input bg-background"
+          />
+          <input
+            type="text"
+            value={cor}
+            placeholder="#RRGGBB"
+            onChange={(e) => setCor(e.target.value)}
+            className="w-20 rounded border border-input bg-background px-2 py-1 font-mono text-[11px]"
+          />
+        </div>
+      </td>
+      <td className="px-3 py-2 text-xs">
+        <label className="inline-flex items-center gap-1">
+          <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} />
+          {ativo ? t("atividades.ativa") : t("atividades.inativa")}
+        </label>
+      </td>
+      <td className="px-3 py-2 text-right">
+        <div className="flex flex-col items-end gap-1">
+          <div className="space-x-2">
+            <button
+              onClick={() => save.mutate()}
+              disabled={save.isPending}
+              className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {save.isPending ? t("common.saving") : t("common.save")}
+            </button>
+            <button
+              onClick={onCancel}
+              className="rounded-md border border-input bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+            >
+              {t("common.cancel")}
+            </button>
+          </div>
+          {error && <p className="text-[11px] text-destructive">{error}</p>}
+        </div>
+      </td>
+    </tr>
+  );
+}
