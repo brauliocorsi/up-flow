@@ -743,6 +743,10 @@ export type Database = {
         }
         Returns: string
       }
+      definir_papel_funcionario: {
+        Args: { _funcionario_id: string; _papel: string }
+        Returns: undefined
+      }
       desassociar_user_de_funcionario: {
         Args: { _funcionario_id: string }
         Returns: undefined
