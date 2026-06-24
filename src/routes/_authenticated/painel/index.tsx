@@ -521,15 +521,15 @@ function PainelPage() {
 
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {cartoes.map((c) => <FuncionarioCard key={c.f.id} c={c} t={t} isLive={isLive} />)}
-        {cartoes.length === 0 && (
+        {cartoesVisiveis.map((c) => <FuncionarioCard key={c.f.id} c={c} t={t} isLive={isLive} />)}
+        {cartoesVisiveis.length === 0 && (
           <p className="text-sm text-muted-foreground">{t("painel.empty")}</p>
         )}
       </div>
 
       <h2 className="mt-12 text-xl font-semibold text-foreground">{t("painel.details")}</h2>
       <div className="mt-4 space-y-3">
-        {cartoes.map((c) => {
+        {cartoesVisiveis.map((c) => {
           const open = expanded[c.f.id] ?? false;
           const cor = corFuncionario(c.f.cor);
           return (
