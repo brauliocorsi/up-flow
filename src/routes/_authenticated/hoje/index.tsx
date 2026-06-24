@@ -860,10 +860,33 @@ function HojePage() {
       <h2 className="mt-10 text-lg font-semibold text-foreground">{t("hoje.listaTarefas")}</h2>
       <ul className="mt-3 space-y-2">
         {tarefas.map((tk) => {
+          if (tk.tipo === "pausa") {
+            const ini = tk.hora_inicio?.slice(0, 5) ?? "";
+            const fim = tk.hora_fim?.slice(0, 5) ?? "";
+            return (
+              <li
+                key={tk.id}
+                className="rounded-lg border border-dashed border-border bg-muted/40 p-3"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground font-mono w-6 shrink-0">⏸</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-muted-foreground truncate">{tk.titulo}</p>
+                    <p className="text-xs text-muted-foreground">{ini}–{fim} · {tk.minutos_previstos}m</p>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
+                    {t("painel.estado.pausa")}
+                  </span>
+                </div>
+              </li>
+            );
+          }
           const aberta = execAbertaDe(tk.id);
           const gasto = tempoGastoMs(tk.id);
           const gastoMin = Math.floor(gasto / 60000);
           const isAtual = atual?.id === tk.id;
+          const ini = tk.hora_inicio?.slice(0, 5);
+          const fim = tk.hora_fim?.slice(0, 5);
           return (
             <li
               key={tk.id}
@@ -875,7 +898,7 @@ function HojePage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{tk.titulo}</p>
                   <p className="text-xs text-muted-foreground">
-                    {gastoMin}m / {tk.minutos_previstos}m
+                    {ini && fim ? `${ini}–${fim} · ` : ""}{gastoMin}m / {tk.minutos_previstos}m
                   </p>
                 </div>
                 <EstadoBadge estado={tk.estado} t={t} />
@@ -893,7 +916,7 @@ function HojePage() {
                   ) : null;
                 })()}
                 <button
-                  onClick={() => setNovaQuestao({ atividadeId: atividadeIdDaTarefa(tk.titulo), tarefaDiaId: tk.id, titulo: tk.titulo })}
+                  onClick={() => setNovaQuestao({ atividadeId: tk.atividade_id ?? atividadeIdDaTarefa(tk.titulo), tarefaDiaId: tk.id, titulo: tk.titulo })}
                   className="rounded-md border border-input bg-background p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground shrink-0"
                   title={t("questoes.tenhoQuestao")}
                   aria-label={t("questoes.tenhoQuestao")}
