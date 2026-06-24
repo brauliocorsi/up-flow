@@ -1083,8 +1083,10 @@ function TarefaAtualCard(props: {
   concluirPending: boolean;
   pausarPending: boolean;
   t: TFn;
+  questaoNova?: QuestaoBase | null;
+  onAbrirQuestao?: (q: QuestaoBase) => void;
 }) {
-  const { tarefa, cor, execAberta, tempoGastoMs, now, motivos, t } = props;
+  const { tarefa, cor, execAberta, tempoGastoMs, now, motivos, t, questaoNova, onAbrirQuestao } = props;
   const decorridoSessaoMs = execAberta ? now - new Date(execAberta.inicio).getTime() : 0;
   const previstoMs = tarefa.minutos_previstos * 60000;
   const pct = previstoMs > 0 ? Math.min(100, (tempoGastoMs / previstoMs) * 100) : 0;
@@ -1100,6 +1102,15 @@ function TarefaAtualCard(props: {
         <p className="text-xs uppercase tracking-wide" style={{ color: cor }}>{t("hoje.tarefaAtual")}</p>
         <EstadoBadge estado={tarefa.estado} t={t} />
       </div>
+      {questaoNova && onAbrirQuestao && (
+        <button
+          onClick={() => onAbrirQuestao(questaoNova)}
+          className="mt-3 flex w-full items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 animate-pulse"
+        >
+          <BellRing className="h-4 w-4" />
+          <span className="truncate">{t("hoje.respostaNova")}: {questaoNova.assunto}</span>
+        </button>
+      )}
       <p className="mt-2 text-2xl font-semibold text-foreground">{tarefa.titulo}</p>
 
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
