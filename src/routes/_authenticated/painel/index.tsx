@@ -510,6 +510,83 @@ function PainelPage() {
         </div>
       )}
 
+      <div className="mt-6 rounded-lg border border-border bg-card px-3 py-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setFiltroOpen((o) => !o)}
+            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium text-foreground hover:bg-accent"
+          >
+            {filtroFuncs.size === 0
+              ? `👥 ${t("painel.filtro.todos")}`
+              : `👥 ${filtroFuncs.size} ${t("painel.filtro.selecionados")}`}
+            <span className="ml-2 text-xs text-muted-foreground">{filtroOpen ? "▲" : "▼"}</span>
+          </button>
+          {filtroFuncs.size > 0 && (
+            <button
+              onClick={() => setFiltroFuncs(new Set())}
+              className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {t("painel.filtro.limpar")}
+            </button>
+          )}
+          {filtroFuncs.size > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {funcionarios.filter((f) => filtroFuncs.has(f.id)).map((f) => {
+                const cor = corFuncionario(f.cor);
+                return (
+                  <span
+                    key={f.id}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-2 py-0.5 text-xs"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cor }} />
+                    {f.nome}
+                    <button
+                      onClick={() => {
+                        const next = new Set(filtroFuncs);
+                        next.delete(f.id);
+                        setFiltroFuncs(next);
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label={t("common.remove")}
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        {filtroOpen && (
+          <div className="mt-3 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3 border-t border-border pt-3">
+            {funcionarios.map((f) => {
+              const checked = filtroFuncs.has(f.id);
+              const cor = corFuncionario(f.cor);
+              return (
+                <label
+                  key={f.id}
+                  className="flex items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-accent cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => {
+                      const next = new Set(filtroFuncs);
+                      if (checked) next.delete(f.id); else next.add(f.id);
+                      setFiltroFuncs(next);
+                    }}
+                    className="h-4 w-4"
+                  />
+                  <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: cor }} />
+                  <span className="text-foreground truncate">{f.nome}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+
       <div className="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         <Metric label={t("painel.metrics.ativos")} value={metrics.ativos} />
         <Metric label={t("painel.metrics.concluidas")} value={metrics.concluidas} />
