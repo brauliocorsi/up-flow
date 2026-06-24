@@ -413,20 +413,6 @@ function PainelPage() {
           >
             ⚠ {t("painel.urgencia.trigger")}
           </button>
-          <button
-            onClick={() => gerarDemo.mutate()}
-            disabled={gerarDemo.isPending}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-50"
-          >
-            {gerarDemo.isPending ? t("painel.demo.generating") : t("painel.demo.generate")}
-          </button>
-          <button
-            onClick={() => limparDemo.mutate()}
-            disabled={limparDemo.isPending}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-50"
-          >
-            {limparDemo.isPending ? t("painel.demo.clearing") : t("painel.demo.clear")}
-          </button>
         </div>
       </div>
 
