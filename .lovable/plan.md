@@ -1,19 +1,27 @@
-Plano para corrigir o problema de `app.name` aparecer no ecrã:
+## Objetivo
 
-1. Corrigir a inicialização do i18n para ser síncrona antes do primeiro render
-   - Remover o detector automático que pode inicializar tarde ou manter idioma inconsistente.
-   - Inicializar diretamente com os recursos PT/EN e PT como idioma padrão.
-   - Preservar a troca manual PT/EN pelo seletor.
+Remover totalmente a versão em inglês e garantir que todos os textos aparecem corretamente em português (sem chaves cruas tipo `hoje.eventos.aAtender`).
 
-2. Blindar o layout autenticado contra chaves cruas
-   - Substituir `t("app.name")` e `t("app.tagline")` no cabeçalho/drawer por constantes seguras ou traduções com fallback explícito.
-   - Substituir rótulos do menu por traduções com fallback explícito, para nunca renderizar `nav.*` ou `app.*`.
+## O que vai mudar
 
-3. Remover restos de navegação antiga que podem aparecer no operador
-   - Confirmar que não existem cabeçalhos antigos duplicados nem links para `/app` nas páginas autenticadas.
-   - Ajustar redirecionamentos antigos para levarem o operador para `/hoje` e o gestor para as páginas corretas.
+### 1. Remover inglês do sistema
+- Apagar `src/i18n/locales/en.json`.
+- Simplificar `src/i18n/index.ts`: carregar só `pt`, sem `localStorage`, sem `supportedLngs`/`fallbackLng` de en, `lng: "pt"` fixo.
+- Remover o componente `src/components/LanguageSwitcher.tsx` e todas as suas utilizações (`auth.tsx`, `trocar-password.tsx`, `AuthenticatedLayout.tsx` e qualquer outro ponto encontrado).
+- Definir `<html lang="pt">` no `__root.tsx`.
 
-4. Validar no preview
-   - Abrir o ecrã do operador `/hoje`.
-   - Abrir o menu hambúrguer.
-   - Confirmar que aparecem textos reais como `UP Móveis`, `A minha rotina`, `Ajuda`, `Terminar sessão`, e que não aparece nenhuma chave como `app.name`, `app.home`, `nav.*` ou `common.*`.
+### 2. Corrigir chaves cruas a aparecer no UI
+Auditar todas as chamadas `t("...")` do projeto contra `pt.json` e:
+- Adicionar ao `pt.json` qualquer chave em uso que esteja em falta (causa principal de ver `hoje.eventos.aAtender` no ecrã em vez do texto traduzido).
+- Corrigir typos de chaves nos componentes quando o nome estiver mal escrito.
+- Garantir que `returnNull: false` e `returnEmptyString: false` continuam, e que `react: { useSuspense: false }` se mantém para evitar fallback a mostrar a key.
+
+Ficheiros que vou varrer: todos os `src/routes/**` e `src/components/**` listados na investigação (hoje, painel, equipa, atividades, construtor, gerar, ajuda, questoes, app, auth, trocar-password, AuthenticatedLayout, HorarioEditor, MacrosSection, NovaQuestaoDialog, QuestaoConversa).
+
+### 3. Sem alterações de funcionalidade
+- Sem mexer em lógica de negócio, queries, Supabase, rotas ou layout visual além da remoção do seletor de idioma.
+- Formatação de datas passa a usar sempre `pt-PT`.
+
+## Validação
+- Abrir `/app`, `/hoje`, `/painel`, `/equipa`, `/construtor`, `/atividades`, `/questoes`, `/ajuda`, `/auth` e confirmar que não aparece nenhuma chave crua nem texto em inglês.
+- Verificar consola sem warnings do i18next sobre missing keys.

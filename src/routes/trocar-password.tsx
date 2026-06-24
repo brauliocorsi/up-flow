@@ -2,7 +2,7 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+
 
 export const Route = createFileRoute("/trocar-password")({
   ssr: false,
@@ -49,7 +49,6 @@ function TrocarPasswordPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <span className="font-semibold text-foreground tracking-tight">{t("app.name")}</span>
-        <LanguageSwitcher />
       </header>
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-sm">

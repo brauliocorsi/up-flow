@@ -16,7 +16,7 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -148,7 +148,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                 )}
               </Link>
             )}
-            <LanguageSwitcher />
+            
             <Button
               variant="outline"
               size="sm"
