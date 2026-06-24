@@ -351,6 +351,7 @@
       "urgenciaTitulo": "URGÊNCIA",
       "concluirUrgencia": "Concluir urgência",
       "aAtender": "A atender",
+      "lembrete": "Lembrete",
       "concluir": "Concluir",
       "retomarPergunta": "Retomar “{{titulo}}”?",
       "retomar": "Sim, retomar",
