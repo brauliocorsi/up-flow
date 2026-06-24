@@ -95,6 +95,8 @@ function PainelPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [urgOpen, setUrgOpen] = useState(false);
   const [urgForm, setUrgForm] = useState({ funcionario_id: "", titulo: "", descricao: "", prioridade: "urgente" as "urgente" | "normal" });
+  const [filtroFuncs, setFiltroFuncs] = useState<Set<string>>(new Set());
+  const [filtroOpen, setFiltroOpen] = useState(false);
 
   // Live ticker only when viewing today
   useEffect(() => {
