@@ -113,7 +113,7 @@ function AtividadesPage() {
           <p className="mt-1 text-sm text-muted-foreground">{t("atividades.subtitle")}</p>
         </div>
         <button
-          onClick={() => { setAdding(true); setEditing(null); }}
+          onClick={() => { setAdding(true); setEditingId(null); }}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           {t("atividades.add")}
@@ -129,14 +129,13 @@ function AtividadesPage() {
         </div>
       )}
 
-      {(adding || editing) && (
+      {adding && (
         <AtividadeForm
           funcoes={funcoes}
-          initial={editing}
-          onCancel={() => { setAdding(false); setEditing(null); }}
+          initial={null}
+          onCancel={() => { setAdding(false); }}
           onSaved={() => {
             setAdding(false);
-            setEditing(null);
             setFeedback(t("atividades.saved"));
             invalidate();
           }}
