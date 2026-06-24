@@ -14,6 +14,7 @@ import { criarFuncionario } from "@/lib/criar-funcionario.functions";
 import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SetoresManager } from "@/components/SetoresManager";
 
 export const Route = createFileRoute("/_authenticated/equipa/")({
   component: EquipaPage,
@@ -237,6 +238,10 @@ function EquipaPage() {
           </div>
         </div>
       </div>
+
+      <SetoresManager />
+
+
 
       {feedback && (
         <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground shadow-soft animate-fade-in">
