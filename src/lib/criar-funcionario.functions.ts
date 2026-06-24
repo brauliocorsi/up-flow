@@ -62,20 +62,43 @@ export const criarFuncionario = createServerFn({ method: "POST" })
     }
     const newUserId = created.user.id;
 
-    // 4 + 5. Insert funcionario and role, rollback auth user on any failure
+    // 4 + 5. Upsert funcionario and role, rollback auth user on any failure.
+    // NOTE: the `handle_new_user` trigger on auth.users already inserts a
+    // funcionarios row for the new user_id. We update that row here instead
+    // of inserting a second one (which would violate the user_id UNIQUE
+    // constraint and trigger an unwanted rollback).
     try {
-      const { data: funcRow, error: insErr } = await supabaseAdmin
+      // Try to update the trigger-created row first.
+      const { data: updatedRow, error: updErr } = await supabaseAdmin
         .from("funcionarios")
-        .insert({
+        .update({
           nome: data.nome.trim(),
           funcao_id: data.funcao_id,
           papel: data.papel,
           ativo: true,
-          user_id: newUserId,
         })
+        .eq("user_id", newUserId)
         .select("id")
-        .single();
-      if (insErr || !funcRow) throw new Error("funcionario_insert_failed");
+        .maybeSingle();
+      if (updErr) throw new Error("funcionario_insert_failed");
+
+      let funcRow = updatedRow;
+      if (!funcRow) {
+        // Trigger didn't run for some reason — fall back to insert.
+        const { data: insertedRow, error: insErr } = await supabaseAdmin
+          .from("funcionarios")
+          .insert({
+            nome: data.nome.trim(),
+            funcao_id: data.funcao_id,
+            papel: data.papel,
+            ativo: true,
+            user_id: newUserId,
+          })
+          .select("id")
+          .single();
+        if (insErr || !insertedRow) throw new Error("funcionario_insert_failed");
+        funcRow = insertedRow;
+      }
 
       const { error: roleInsErr } = await supabaseAdmin
         .from("user_roles")
