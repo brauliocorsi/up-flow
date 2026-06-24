@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { HelpCircle, MessageCircleQuestion } from "lucide-react";
+import { HelpCircle, MessageCircleQuestion, BellRing } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
