@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/hoje/")({
   component: HojePage,
 });
 
-type Estado = "pendente" | "a_decorrer" | "pausada" | "saltada" | "concluida";
+type Estado = "pendente" | "a_decorrer" | "pausada" | "saltada" | "concluida" | "pausa";
 type Funcionario = {
   id: string;
   nome: string;
@@ -28,6 +28,10 @@ type Tarefa = {
   ordem: number;
   minutos_previstos: number;
   estado: Estado;
+  tipo: "atividade" | "pausa";
+  hora_inicio: string | null;
+  hora_fim: string | null;
+  atividade_id: string | null;
 };
 type Execucao = {
   id: string;
@@ -132,9 +136,10 @@ function HojePage() {
     queryFn: async (): Promise<Tarefa[]> => {
       const { data: rows, error } = await supabase
         .from("tarefas_dia")
-        .select("id, funcionario_id, titulo, ordem, minutos_previstos, estado")
+        .select("id, funcionario_id, titulo, ordem, minutos_previstos, estado, tipo, hora_inicio, hora_fim, atividade_id")
         .eq("funcionario_id", me!.id)
         .eq("data", data)
+        .order("hora_inicio", { ascending: true, nullsFirst: false })
         .order("ordem");
       if (error) throw error;
       return (rows ?? []) as Tarefa[];
@@ -571,11 +576,12 @@ function HojePage() {
   }
 
   const cor = corFuncionario(me.cor);
-  const concluidas = tarefas.filter((tk) => tk.estado === "concluida").length;
+  const tarefasAtivas = tarefas.filter((tk) => tk.tipo !== "pausa");
+  const concluidas = tarefasAtivas.filter((tk) => tk.estado === "concluida").length;
   const atual =
-    tarefas.find((tk) => tk.estado === "a_decorrer") ??
-    tarefas.find((tk) => tk.estado === "pendente") ??
-    tarefas.find((tk) => tk.estado === "pausada") ??
+    tarefasAtivas.find((tk) => tk.estado === "a_decorrer") ??
+    tarefasAtivas.find((tk) => tk.estado === "pendente") ??
+    tarefasAtivas.find((tk) => tk.estado === "pausada") ??
     null;
   const motivos = motivosQuery.data ?? [];
   const eventos = eventosQuery.data ?? [];
@@ -605,7 +611,7 @@ function HojePage() {
         </div>
         <div className="text-right">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("hoje.progresso")}</p>
-          <p className="text-xl font-semibold text-foreground">{concluidas} / {tarefas.length}</p>
+          <p className="text-xl font-semibold text-foreground">{concluidas} / {tarefasAtivas.length}</p>
         </div>
         <button
           onClick={() => { setBellOpen((v) => { const nv = !v; if (nv && unread > 0) marcarLidos.mutate(); return nv; }); }}
@@ -854,10 +860,33 @@ function HojePage() {
       <h2 className="mt-10 text-lg font-semibold text-foreground">{t("hoje.listaTarefas")}</h2>
       <ul className="mt-3 space-y-2">
         {tarefas.map((tk) => {
+          if (tk.tipo === "pausa") {
+            const ini = tk.hora_inicio?.slice(0, 5) ?? "";
+            const fim = tk.hora_fim?.slice(0, 5) ?? "";
+            return (
+              <li
+                key={tk.id}
+                className="rounded-lg border border-dashed border-border bg-muted/40 p-3"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground font-mono w-6 shrink-0">⏸</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-muted-foreground truncate">{tk.titulo}</p>
+                    <p className="text-xs text-muted-foreground">{ini}–{fim} · {tk.minutos_previstos}m</p>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
+                    {t("painel.estado.pausa")}
+                  </span>
+                </div>
+              </li>
+            );
+          }
           const aberta = execAbertaDe(tk.id);
           const gasto = tempoGastoMs(tk.id);
           const gastoMin = Math.floor(gasto / 60000);
           const isAtual = atual?.id === tk.id;
+          const ini = tk.hora_inicio?.slice(0, 5);
+          const fim = tk.hora_fim?.slice(0, 5);
           return (
             <li
               key={tk.id}
@@ -869,7 +898,7 @@ function HojePage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{tk.titulo}</p>
                   <p className="text-xs text-muted-foreground">
-                    {gastoMin}m / {tk.minutos_previstos}m
+                    {ini && fim ? `${ini}–${fim} · ` : ""}{gastoMin}m / {tk.minutos_previstos}m
                   </p>
                 </div>
                 <EstadoBadge estado={tk.estado} t={t} />
@@ -887,7 +916,7 @@ function HojePage() {
                   ) : null;
                 })()}
                 <button
-                  onClick={() => setNovaQuestao({ atividadeId: atividadeIdDaTarefa(tk.titulo), tarefaDiaId: tk.id, titulo: tk.titulo })}
+                  onClick={() => setNovaQuestao({ atividadeId: tk.atividade_id ?? atividadeIdDaTarefa(tk.titulo), tarefaDiaId: tk.id, titulo: tk.titulo })}
                   className="rounded-md border border-input bg-background p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground shrink-0"
                   title={t("questoes.tenhoQuestao")}
                   aria-label={t("questoes.tenhoQuestao")}
@@ -1203,6 +1232,7 @@ function EstadoBadge({ estado, t }: { estado: Estado; t: TFn }) {
     pausada: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
     saltada: "bg-muted text-muted-foreground line-through",
     concluida: "bg-primary/10 text-primary",
+    pausa: "bg-muted text-muted-foreground",
   };
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${map[estado]}`}>{t(`painel.estado.${estado}`)}</span>;
 }

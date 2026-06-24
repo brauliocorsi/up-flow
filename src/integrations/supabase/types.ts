@@ -603,39 +603,58 @@ export type Database = {
       }
       tarefas_dia: {
         Row: {
+          atividade_id: string | null
           created_at: string
           data: string
           estado: string
           funcionario_id: string
+          hora_fim: string | null
+          hora_inicio: string | null
           id: string
           minutos_previstos: number
           ordem: number
           template_tarefa_id: string | null
+          tipo: string
           titulo: string
         }
         Insert: {
+          atividade_id?: string | null
           created_at?: string
           data: string
           estado?: string
           funcionario_id: string
+          hora_fim?: string | null
+          hora_inicio?: string | null
           id?: string
           minutos_previstos?: number
           ordem?: number
           template_tarefa_id?: string | null
+          tipo?: string
           titulo: string
         }
         Update: {
+          atividade_id?: string | null
           created_at?: string
           data?: string
           estado?: string
           funcionario_id?: string
+          hora_fim?: string | null
+          hora_inicio?: string | null
           id?: string
           minutos_previstos?: number
           ordem?: number
           template_tarefa_id?: string | null
+          tipo?: string
           titulo?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tarefas_dia_atividade_id_fkey"
+            columns: ["atividade_id"]
+            isOneToOne: false
+            referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tarefas_dia_funcionario_id_fkey"
             columns: ["funcionario_id"]
@@ -722,6 +741,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _garantir_atividade: {
+        Args: { _funcionario_id: string; _minutos: number; _titulo: string }
+        Returns: string
+      }
       associar_user_a_funcionario: {
         Args: { _funcionario_id: string; _user_id: string }
         Returns: undefined
@@ -790,6 +813,7 @@ export type Database = {
         Args: { _funcionario_id: string }
         Returns: undefined
       }
+      migrar_templates_para_blocos: { Args: never; Returns: undefined }
       proxima_cor_funcionario: { Args: never; Returns: string }
       questao_visivel: { Args: { _questao_id: string }; Returns: boolean }
       tarefa_pertence_a_mim: {
