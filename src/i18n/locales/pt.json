@@ -261,7 +261,8 @@
       "pausada": "Pausada",
       "saltada": "Saltada",
       "concluida": "Concluída",
-      "excedido": "Excedido"
+      "excedido": "Excedido",
+      "pausa": "Pausa"
     },
     "eventoTipo": {
       "recebimento": "Recebimento",
