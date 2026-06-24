@@ -141,7 +141,7 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Atividade[]> => {
       const { data, error } = await supabase
         .from("atividades")
-        .select("id, funcao_id, nome, duracao_padrao_min, cor")
+        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor")
         .in("funcao_id", setorIds)
         .eq("ativo", true)
         .order("nome");
