@@ -172,32 +172,45 @@ function AtividadesPage() {
                   <tbody className="divide-y divide-border">
                     {lista.map((a) => (
                       <Fragment key={a.id}>
-                      <tr className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
-                        <td className="px-3 py-2 font-medium">{a.nome}</td>
-                        <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums">{a.duracao_padrao_min}</td>
-                        <td className="px-3 py-2">
-                          {a.cor ? (
-                            <span className="inline-flex items-center gap-2">
-                              <span className="inline-block h-3 w-3 rounded-full ring-1 ring-border" style={{ backgroundColor: a.cor }} />
-                              <span className="text-xs">{a.cor}</span>
-                            </span>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">{t("atividades.corNone")}</span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2 text-xs">
-                          {a.ativo ? t("atividades.ativa") : t("atividades.inativa")}
-                        </td>
-                        <td className="px-3 py-2 text-right space-x-2">
-                          <button onClick={() => { setEditing(a); setAdding(false); }} className="text-xs text-primary hover:underline">
-                            {t("atividades.edit")}
-                          </button>
-                          <button onClick={() => toggleAtivo.mutate(a)} className="text-xs text-muted-foreground hover:underline">
-                            {a.ativo ? t("atividades.deactivate") : t("atividades.activate")}
-                          </button>
-                        </td>
-                      </tr>
+                      {editingId === a.id ? (
+                        <InlineEditRow
+                          atividade={a}
+                          funcoes={funcoes}
+                          onCancel={() => setEditingId(null)}
+                          onSaved={() => {
+                            setEditingId(null);
+                            setFeedback(t("atividades.saved"));
+                            invalidate();
+                          }}
+                        />
+                      ) : (
+                        <tr className={a.ativo ? "text-foreground" : "text-muted-foreground"}>
+                          <td className="px-3 py-2 font-medium">{a.nome}</td>
+                          <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
+                          <td className="px-3 py-2 text-right tabular-nums">{a.duracao_padrao_min}</td>
+                          <td className="px-3 py-2">
+                            {a.cor ? (
+                              <span className="inline-flex items-center gap-2">
+                                <span className="inline-block h-3 w-3 rounded-full ring-1 ring-border" style={{ backgroundColor: a.cor }} />
+                                <span className="text-xs">{a.cor}</span>
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">{t("atividades.corNone")}</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2 text-xs">
+                            {a.ativo ? t("atividades.ativa") : t("atividades.inativa")}
+                          </td>
+                          <td className="px-3 py-2 text-right space-x-2">
+                            <button onClick={() => { setEditingId(a.id); setAdding(false); }} className="text-xs text-primary hover:underline">
+                              {t("atividades.edit")}
+                            </button>
+                            <button onClick={() => toggleAtivo.mutate(a)} className="text-xs text-muted-foreground hover:underline">
+                              {a.ativo ? t("atividades.deactivate") : t("atividades.activate")}
+                            </button>
+                          </td>
+                        </tr>
+                      )}
                       <tr key={a.id + "-macros"}>
                         <td colSpan={6} className="px-3 pb-3 pt-0">
                           <details className="rounded border border-border bg-muted/20 p-2">
