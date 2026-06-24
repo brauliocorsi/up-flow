@@ -78,19 +78,35 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
 
   const unread = unreadQ.data ?? 0;
 
-  const items: Item[] = isGestor
+  const sections: Section[] = isGestor
     ? [
-        { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
-        { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
-        { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
-        { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
-        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
-        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
-        { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
+        {
+          label: tf("nav.sectionGestao", "Gestão"),
+          items: [
+            { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
+            { to: "/equipa", label: tf("nav.equipa", "Equipa"), icon: Users },
+            { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
+            { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
+            { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+            { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+            { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
+          ],
+        },
+        {
+          label: tf("nav.sectionOperador", "Operador"),
+          items: [
+            { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
+          ],
+        },
       ]
     : [
-        { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
-        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+        {
+          label: tf("nav.section", "Navegação"),
+          items: [
+            { to: "/hoje", label: tf("nav.hoje", "A minha rotina"), icon: ClipboardList },
+            { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+          ],
+        },
       ];
 
   async function handleSignOut() {
