@@ -807,7 +807,9 @@ function HojePage() {
                 <div className="min-w-0">
                   <p className="text-sm text-foreground truncate">
                     <span className="text-xs uppercase tracking-wide text-muted-foreground mr-2">
-                      {t(`painel.eventoTipo.${e.tipo}`)}
+                      {e.tipo === "urgencia" && e.prioridade === "normal"
+                        ? t("hoje.eventos.lembrete")
+                        : t(`painel.eventoTipo.${e.tipo}`)}
                     </span>
                     {e.titulo}
                   </p>
