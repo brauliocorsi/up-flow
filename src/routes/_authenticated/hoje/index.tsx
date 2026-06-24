@@ -611,7 +611,7 @@ function HojePage() {
         </div>
         <div className="text-right">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("hoje.progresso")}</p>
-          <p className="text-xl font-semibold text-foreground">{concluidas} / {tarefas.length}</p>
+          <p className="text-xl font-semibold text-foreground">{concluidas} / {tarefasAtivas.length}</p>
         </div>
         <button
           onClick={() => { setBellOpen((v) => { const nv = !v; if (nv && unread > 0) marcarLidos.mutate(); return nv; }); }}
