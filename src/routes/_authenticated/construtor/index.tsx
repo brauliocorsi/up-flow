@@ -506,6 +506,9 @@ function LibraryItem({ atividade, onClickAdd }: { atividade: Atividade; onClickA
       />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium text-foreground">{atividade.nome}</div>
+        {atividade.descricao && (
+          <div className="line-clamp-2 text-[11px] text-muted-foreground">{atividade.descricao}</div>
+        )}
         <div className="text-[11px] text-muted-foreground">
           {t("construtor.minutos", { m: atividade.duracao_padrao_min })}
         </div>
