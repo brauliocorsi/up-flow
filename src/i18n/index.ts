@@ -1,22 +1,25 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import pt from "./locales/pt.json";
-import en from "./locales/en.json";
 
-const savedLanguage =
-  typeof window !== "undefined" ? window.localStorage.getItem("up-moveis-lang") : null;
-
-const initialLng = savedLanguage === "en" ? "en" : "pt";
+// Apenas Português (PT-PT). Limpa qualquer preferência antiga.
+if (typeof window !== "undefined") {
+  try {
+    window.localStorage.removeItem("up-moveis-lang");
+    window.localStorage.removeItem("i18nextLng");
+  } catch {
+    /* ignore */
+  }
+}
 
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     resources: {
       pt: { translation: pt },
-      en: { translation: en },
     },
-    lng: initialLng,
+    lng: "pt",
     fallbackLng: "pt",
-    supportedLngs: ["pt", "en"],
+    supportedLngs: ["pt"],
     load: "languageOnly",
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
