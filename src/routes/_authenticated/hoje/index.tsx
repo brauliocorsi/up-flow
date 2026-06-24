@@ -72,7 +72,7 @@ function fmtClock(ms: number): string {
 }
 
 function HojePage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const user = useAuthUser();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -578,7 +578,7 @@ function HojePage() {
   const eventosFechados = eventos.filter((e) => e.estado === "fechado");
   const unread = eventosAbertos.filter((e) => !e.lido).length;
 
-  const dateFmt = new Intl.DateTimeFormat(i18n.language === "pt" ? "pt-PT" : "en-GB", {
+  const dateFmt = new Intl.DateTimeFormat("pt-PT", {
     weekday: "long", day: "2-digit", month: "long",
   }).format(new Date());
 

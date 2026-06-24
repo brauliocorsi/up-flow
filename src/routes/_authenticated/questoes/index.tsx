@@ -19,7 +19,7 @@ type Q = QuestaoBase & {
 type Estado = "aberta" | "respondida" | "fechada" | "todas";
 
 function QuestoesPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const user = useAuthUser();
   const [estado, setEstado] = useState<Estado>("aberta");
@@ -98,7 +98,7 @@ function QuestoesPage() {
   });
 
   const rows = listQ.data ?? [];
-  const fmtAgo = useMemo(() => new Intl.RelativeTimeFormat(i18n.language === "pt" ? "pt-PT" : "en-GB", { numeric: "auto" }), [i18n.language]);
+  const fmtAgo = useMemo(() => new Intl.RelativeTimeFormat("pt-PT", { numeric: "auto" }), []);
   function ago(iso: string): string {
     const diff = (Date.now() - new Date(iso).getTime()) / 1000;
     if (diff < 60) return fmtAgo.format(-Math.round(diff), "second");

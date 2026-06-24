@@ -124,6 +124,7 @@
     "action": "Gerar tarefas de hoje para a equipa",
     "running": "A gerar…",
     "results": "Resultado",
+    "tarefasCount": "{{count}} tarefas",
     "tarefasCount_one": "{{count}} tarefa",
     "tarefasCount_other": "{{count}} tarefas",
     "noFuncionarios": "Não há funcionários ativos.",

@@ -81,7 +81,7 @@ function initials(name: string): string {
 }
 
 function PainelPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const user = useAuthUser();
   const qc = useQueryClient();
   const [dataSel, setDataSel] = useState<string>(() => todayISO());
@@ -370,7 +370,7 @@ function PainelPage() {
     tempoUrg: tempoUrgenciasMin,
   };
 
-  const locale = i18n.language === "pt" ? "pt-PT" : "en-GB";
+  const locale = "pt-PT";
   const dateFmt = new Intl.DateTimeFormat(locale, {
     weekday: "long", day: "2-digit", month: "long",
   }).format(isoToDate(dataSel));
