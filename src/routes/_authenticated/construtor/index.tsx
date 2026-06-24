@@ -35,6 +35,7 @@ type Atividade = {
   id: string;
   funcao_id: string;
   nome: string;
+  descricao: string | null;
   duracao_padrao_min: number;
   cor: string | null;
 };
@@ -140,7 +141,7 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Atividade[]> => {
       const { data, error } = await supabase
         .from("atividades")
-        .select("id, funcao_id, nome, duracao_padrao_min, cor")
+        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor")
         .in("funcao_id", setorIds)
         .eq("ativo", true)
         .order("nome");
@@ -505,6 +506,9 @@ function LibraryItem({ atividade, onClickAdd }: { atividade: Atividade; onClickA
       />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium text-foreground">{atividade.nome}</div>
+        {atividade.descricao && (
+          <div className="line-clamp-2 text-[11px] text-muted-foreground">{atividade.descricao}</div>
+        )}
         <div className="text-[11px] text-muted-foreground">
           {t("construtor.minutos", { m: atividade.duracao_padrao_min })}
         </div>
