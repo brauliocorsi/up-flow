@@ -929,6 +929,20 @@ function HojePage() {
                 </div>
                 <EstadoBadge estado={tk.estado} t={t} />
                 {(() => {
+                  const qNova = questaoNovaDaTarefa(tk);
+                  return qNova ? (
+                    <button
+                      onClick={() => setQuestaoAberta(qNova)}
+                      className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 shrink-0 animate-pulse"
+                      title={t("hoje.verResposta")}
+                      aria-label={t("hoje.verResposta")}
+                    >
+                      <BellRing className="h-3.5 w-3.5" />
+                      {t("hoje.respostaNova")}
+                    </button>
+                  ) : null;
+                })()}
+                {(() => {
                   const macro = tarefaTemMacros(tk.titulo);
                   return macro ? (
                     <button
