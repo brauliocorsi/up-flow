@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { HelpCircle, MessageCircleQuestion } from "lucide-react";
+import { HelpCircle, MessageCircleQuestion, BellRing } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
@@ -361,6 +361,30 @@ function HojePage() {
     return () => { supabase.removeChannel(ch); };
   }, [me, qc]);
 
+
+  // Mapas de questões com resposta nova do gestor (não lida)
+  const questoesNovas = useMemo(() => {
+    const porTarefa = new Map<string, QuestaoBase>();
+    const porAtividade = new Map<string, QuestaoBase>();
+    (minhasQuestoesQ.data ?? []).forEach((q) => {
+      if (q.unread <= 0) return;
+      if (q.estado === "fechada") return;
+      if (q.tarefa_dia_id && !porTarefa.has(q.tarefa_dia_id)) porTarefa.set(q.tarefa_dia_id, q);
+      if (q.atividade_id && !porAtividade.has(q.atividade_id)) porAtividade.set(q.atividade_id, q);
+    });
+    return { porTarefa, porAtividade };
+  }, [minhasQuestoesQ.data]);
+
+  function questaoNovaDaTarefa(tk: { id: string; atividade_id: string | null; titulo: string }): QuestaoBase | null {
+    return (
+      questoesNovas.porTarefa.get(tk.id) ??
+      (tk.atividade_id ? questoesNovas.porAtividade.get(tk.atividade_id) : null) ??
+      (() => {
+        const aid = atividadeIdDaTarefa(tk.titulo);
+        return aid ? questoesNovas.porAtividade.get(aid) ?? null : null;
+      })()
+    );
+  }
 
   const tarefas = tarefasQuery.data ?? [];
   const execucoes = execucoesQuery.data ?? [];
@@ -850,6 +874,8 @@ function HojePage() {
           concluirPending={concluir.isPending}
           pausarPending={pausar.isPending}
           t={t}
+          questaoNova={questaoNovaDaTarefa(atual)}
+          onAbrirQuestao={(q) => setQuestaoAberta(q)}
         />
       ) : (
         <div className="mt-6 rounded-xl border border-border bg-card p-6 text-center">
@@ -904,6 +930,20 @@ function HojePage() {
                   </p>
                 </div>
                 <EstadoBadge estado={tk.estado} t={t} />
+                {(() => {
+                  const qNova = questaoNovaDaTarefa(tk);
+                  return qNova ? (
+                    <button
+                      onClick={() => setQuestaoAberta(qNova)}
+                      className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 shrink-0 animate-pulse"
+                      title={t("hoje.verResposta")}
+                      aria-label={t("hoje.verResposta")}
+                    >
+                      <BellRing className="h-3.5 w-3.5" />
+                      {t("hoje.respostaNova")}
+                    </button>
+                  ) : null;
+                })()}
                 {(() => {
                   const macro = tarefaTemMacros(tk.titulo);
                   return macro ? (
@@ -1043,8 +1083,10 @@ function TarefaAtualCard(props: {
   concluirPending: boolean;
   pausarPending: boolean;
   t: TFn;
+  questaoNova?: QuestaoBase | null;
+  onAbrirQuestao?: (q: QuestaoBase) => void;
 }) {
-  const { tarefa, cor, execAberta, tempoGastoMs, now, motivos, t } = props;
+  const { tarefa, cor, execAberta, tempoGastoMs, now, motivos, t, questaoNova, onAbrirQuestao } = props;
   const decorridoSessaoMs = execAberta ? now - new Date(execAberta.inicio).getTime() : 0;
   const previstoMs = tarefa.minutos_previstos * 60000;
   const pct = previstoMs > 0 ? Math.min(100, (tempoGastoMs / previstoMs) * 100) : 0;
@@ -1060,6 +1102,15 @@ function TarefaAtualCard(props: {
         <p className="text-xs uppercase tracking-wide" style={{ color: cor }}>{t("hoje.tarefaAtual")}</p>
         <EstadoBadge estado={tarefa.estado} t={t} />
       </div>
+      {questaoNova && onAbrirQuestao && (
+        <button
+          onClick={() => onAbrirQuestao(questaoNova)}
+          className="mt-3 flex w-full items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 animate-pulse"
+        >
+          <BellRing className="h-4 w-4" />
+          <span className="truncate">{t("hoje.respostaNova")}: {questaoNova.assunto}</span>
+        </button>
+      )}
       <p className="mt-2 text-2xl font-semibold text-foreground">{tarefa.titulo}</p>
 
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
