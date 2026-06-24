@@ -48,7 +48,31 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
       if (error) throw error;
       return !!data;
     },
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
+
+  // Reverifica o papel automaticamente após login/refresh de sessão
+  // e em alterações na tabela user_roles para este utilizador.
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+        qc.invalidateQueries({ queryKey: ["is-gestor"] });
+      }
+    });
+    const ch = supabase
+      .channel(`user-roles-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "user_roles", filter: `user_id=eq.${user.id}` },
+        () => qc.invalidateQueries({ queryKey: ["is-gestor", user.id] }),
+      )
+      .subscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+      supabase.removeChannel(ch);
+    };
+  }, [user.id, qc]);
 
   const unreadQ = useQuery({
     enabled: !!isGestor,
