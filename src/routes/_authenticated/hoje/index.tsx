@@ -1207,6 +1207,7 @@ function EstadoBadge({ estado, t }: { estado: Estado; t: TFn }) {
     pausada: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
     saltada: "bg-muted text-muted-foreground line-through",
     concluida: "bg-primary/10 text-primary",
+    pausa: "bg-muted text-muted-foreground",
   };
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${map[estado]}`}>{t(`painel.estado.${estado}`)}</span>;
 }
