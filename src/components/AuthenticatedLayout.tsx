@@ -147,6 +147,11 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                 </span>
               </span>
             </Link>
+            {isGestor && (
+              <span className="hidden sm:inline-flex items-center rounded-full border border-foreground/20 bg-foreground/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">
+                {tf("roles.admin", "Administrador")}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
