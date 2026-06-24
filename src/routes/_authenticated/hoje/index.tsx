@@ -576,11 +576,12 @@ function HojePage() {
   }
 
   const cor = corFuncionario(me.cor);
-  const concluidas = tarefas.filter((tk) => tk.estado === "concluida").length;
+  const tarefasAtivas = tarefas.filter((tk) => tk.tipo !== "pausa");
+  const concluidas = tarefasAtivas.filter((tk) => tk.estado === "concluida").length;
   const atual =
-    tarefas.find((tk) => tk.estado === "a_decorrer") ??
-    tarefas.find((tk) => tk.estado === "pendente") ??
-    tarefas.find((tk) => tk.estado === "pausada") ??
+    tarefasAtivas.find((tk) => tk.estado === "a_decorrer") ??
+    tarefasAtivas.find((tk) => tk.estado === "pendente") ??
+    tarefasAtivas.find((tk) => tk.estado === "pausada") ??
     null;
   const motivos = motivosQuery.data ?? [];
   const eventos = eventosQuery.data ?? [];
