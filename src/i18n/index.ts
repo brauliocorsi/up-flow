@@ -25,6 +25,21 @@ if (!i18n.isInitialized) {
     react: { useSuspense: false },
     returnNull: false,
     returnEmptyString: false,
+    // Em vez de mostrar a chave técnica (ex.: "hoje.eventos.urgente"),
+    // mostra um espaço vazio. Mantém a UI limpa mesmo se faltar tradução.
+    parseMissingKeyHandler: (key) => {
+      if (import.meta.env?.DEV) {
+        // eslint-disable-next-line no-console
+        console.warn("[i18n] missing key:", key);
+      }
+      // Devolve apenas o último segmento legível (ex.: "urgente") em vez da chave inteira.
+      const last = key.split(".").pop() ?? "";
+      // Capitaliza para parecer um label decente.
+      return last
+        ? last.charAt(0).toUpperCase() + last.slice(1).replace(/_/g, " ")
+        : "";
+    },
+    saveMissing: false,
   });
 }
 
