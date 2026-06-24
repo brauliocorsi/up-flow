@@ -318,6 +318,11 @@
     "future": {
       "empty": "Tarefas ainda não geradas para este dia",
       "hint": "As tarefas são geradas no próprio dia para cada funcionário ativo."
+    },
+    "filtro": {
+      "todos": "Todos os funcionários",
+      "selecionados": "selecionados",
+      "limpar": "Limpar filtro"
     }
   },
   "hoje": {
