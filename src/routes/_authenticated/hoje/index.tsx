@@ -362,6 +362,30 @@ function HojePage() {
   }, [me, qc]);
 
 
+  // Mapas de questões com resposta nova do gestor (não lida)
+  const questoesNovas = useMemo(() => {
+    const porTarefa = new Map<string, QuestaoBase>();
+    const porAtividade = new Map<string, QuestaoBase>();
+    (minhasQuestoesQ.data ?? []).forEach((q) => {
+      if (q.unread <= 0) return;
+      if (q.estado === "fechada") return;
+      if (q.tarefa_dia_id && !porTarefa.has(q.tarefa_dia_id)) porTarefa.set(q.tarefa_dia_id, q);
+      if (q.atividade_id && !porAtividade.has(q.atividade_id)) porAtividade.set(q.atividade_id, q);
+    });
+    return { porTarefa, porAtividade };
+  }, [minhasQuestoesQ.data]);
+
+  function questaoNovaDaTarefa(tk: { id: string; atividade_id: string | null; titulo: string }): QuestaoBase | null {
+    return (
+      questoesNovas.porTarefa.get(tk.id) ??
+      (tk.atividade_id ? questoesNovas.porAtividade.get(tk.atividade_id) : null) ??
+      (() => {
+        const aid = atividadeIdDaTarefa(tk.titulo);
+        return aid ? questoesNovas.porAtividade.get(aid) ?? null : null;
+      })()
+    );
+  }
+
   const tarefas = tarefasQuery.data ?? [];
   const execucoes = execucoesQuery.data ?? [];
   const execByTarefa = useMemo(() => {
