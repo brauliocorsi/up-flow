@@ -599,10 +599,17 @@ function FuncionarioForm({
       if (initial) {
         const { error } = await supabase
           .from("funcionarios")
-          .update({ nome: cleanNome, funcao_id: principal, papel, ativo })
+          .update({ nome: cleanNome, funcao_id: principal, ativo })
           .eq("id", initial.id);
         if (error) throw error;
         funcionarioId = initial.id;
+        if (papel !== initial.papel) {
+          const { error: e2 } = await supabase.rpc("definir_papel_funcionario", {
+            _funcionario_id: initial.id,
+            _papel: papel,
+          });
+          if (e2) throw e2;
+        }
       } else {
         const { data, error } = await supabase
           .from("funcionarios")
