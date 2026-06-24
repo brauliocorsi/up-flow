@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
+type Section = { label: string; items: Item[] };
 
 const APP_NAME = "UP Móveis";
 
