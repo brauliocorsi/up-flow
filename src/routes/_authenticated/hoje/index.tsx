@@ -136,9 +136,10 @@ function HojePage() {
     queryFn: async (): Promise<Tarefa[]> => {
       const { data: rows, error } = await supabase
         .from("tarefas_dia")
-        .select("id, funcionario_id, titulo, ordem, minutos_previstos, estado")
+        .select("id, funcionario_id, titulo, ordem, minutos_previstos, estado, tipo, hora_inicio, hora_fim, atividade_id")
         .eq("funcionario_id", me!.id)
         .eq("data", data)
+        .order("hora_inicio", { ascending: true, nullsFirst: false })
         .order("ordem");
       if (error) throw error;
       return (rows ?? []) as Tarefa[];
