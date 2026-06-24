@@ -320,6 +320,8 @@ function PainelPage() {
     };
   });
 
+  const cartoesVisiveis = filtroFuncs.size === 0 ? cartoes : cartoes.filter((c) => filtroFuncs.has(c.f.id));
+
   const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado === "aberto");
   const tempoUrgenciasMin = (() => {
     let total = 0;
