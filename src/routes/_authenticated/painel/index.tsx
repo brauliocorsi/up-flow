@@ -206,23 +206,6 @@ function PainelPage() {
     };
   }, [isGestor, isLive, dataSel, qc]);
 
-  const gerarDemo = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.rpc("gerar_dados_demo", { _data: dataSel });
-      if (error) throw error;
-    },
-    onSuccess: () => setFeedback(t("painel.demo.generated")),
-    onError: (e: Error) => setFeedback(e.message),
-  });
-
-  const limparDemo = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.rpc("limpar_dados_demo", { _data: dataSel });
-      if (error) throw error;
-    },
-    onSuccess: () => setFeedback(t("painel.demo.cleared")),
-    onError: (e: Error) => setFeedback(e.message),
-  });
 
   const dispararUrgencia = useMutation({
     mutationFn: async () => {
@@ -412,20 +395,6 @@ function PainelPage() {
             title={!isLive ? t("painel.mode.historicOnly") : undefined}
           >
             ⚠ {t("painel.urgencia.trigger")}
-          </button>
-          <button
-            onClick={() => gerarDemo.mutate()}
-            disabled={gerarDemo.isPending}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-50"
-          >
-            {gerarDemo.isPending ? t("painel.demo.generating") : t("painel.demo.generate")}
-          </button>
-          <button
-            onClick={() => limparDemo.mutate()}
-            disabled={limparDemo.isPending}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-50"
-          >
-            {limparDemo.isPending ? t("painel.demo.clearing") : t("painel.demo.clear")}
           </button>
         </div>
       </div>
