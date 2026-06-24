@@ -28,7 +28,18 @@
     "questoes": "Questões",
     "construtor": "Construtor",
     "openMenu": "Abrir menu",
-    "closeMenu": "Fechar menu"
+    "closeMenu": "Fechar menu",
+    "section": "Navegação"
+  },
+  "setores": {
+    "title": "Setores",
+    "subtitle": "Cria e gere os setores aos quais os funcionários podem pertencer.",
+    "add": "Novo setor",
+    "namePlaceholder": "Ex.: Apoio/Vendas/Compras",
+    "empty": "Ainda não há setores. Cria o primeiro.",
+    "fillRequired": "Indica um nome.",
+    "confirmDelete": "Apagar o setor “{{nome}}”? Esta ação não pode ser desfeita.",
+    "deleteErr": "Não foi possível apagar. Há funcionários ou atividades ligados a este setor."
   },
   "questoes": {
     "title": "Questões",
