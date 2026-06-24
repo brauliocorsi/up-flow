@@ -15,7 +15,8 @@
     "dismiss": "Fechar",
     "edit": "Editar",
     "delete": "Apagar",
-    "close": "Fechar"
+    "close": "Fechar",
+    "remove": "Remover"
   },
   "nav": {
     "home": "Início",
