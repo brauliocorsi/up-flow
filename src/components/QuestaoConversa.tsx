@@ -42,7 +42,7 @@ export function QuestaoConversa({
   papel: "operador" | "gestor";
   onClose: () => void;
 }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [reply, setReply] = useStateLocal("");
 
@@ -142,7 +142,7 @@ export function QuestaoConversa({
   });
 
   const fmtT = (iso: string) =>
-    new Date(iso).toLocaleString(i18n.language === "pt" ? "pt-PT" : "en-GB", {
+    new Date(iso).toLocaleString("pt-PT", {
       day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
     });
 
