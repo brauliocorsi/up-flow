@@ -206,23 +206,6 @@ function PainelPage() {
     };
   }, [isGestor, isLive, dataSel, qc]);
 
-  const gerarDemo = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.rpc("gerar_dados_demo", { _data: dataSel });
-      if (error) throw error;
-    },
-    onSuccess: () => setFeedback(t("painel.demo.generated")),
-    onError: (e: Error) => setFeedback(e.message),
-  });
-
-  const limparDemo = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.rpc("limpar_dados_demo", { _data: dataSel });
-      if (error) throw error;
-    },
-    onSuccess: () => setFeedback(t("painel.demo.cleared")),
-    onError: (e: Error) => setFeedback(e.message),
-  });
 
   const dispararUrgencia = useMutation({
     mutationFn: async () => {
