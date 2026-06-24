@@ -1,3 +1,6 @@
+// IMPORTANT: importar o i18n ANTES do routeTree para garantir que está
+// inicializado antes de qualquer módulo de rota chamar useTranslation().
+import "./i18n";
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";

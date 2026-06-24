@@ -259,7 +259,8 @@
       "a_decorrer": "A decorrer",
       "pausada": "Pausada",
       "saltada": "Saltada",
-      "concluida": "Concluída"
+      "concluida": "Concluída",
+      "excedido": "Excedido"
     },
     "eventoTipo": {
       "recebimento": "Recebimento",
