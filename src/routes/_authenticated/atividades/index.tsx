@@ -25,7 +25,7 @@ function AtividadesPage() {
   const { t } = useTranslation();
   const user = useAuthUser();
   const qc = useQueryClient();
-  const [editing, setEditing] = useState<Atividade | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
