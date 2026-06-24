@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/hoje/")({
   component: HojePage,
 });
 
-type Estado = "pendente" | "a_decorrer" | "pausada" | "saltada" | "concluida";
+type Estado = "pendente" | "a_decorrer" | "pausada" | "saltada" | "concluida" | "pausa";
 type Funcionario = {
   id: string;
   nome: string;
@@ -28,6 +28,10 @@ type Tarefa = {
   ordem: number;
   minutos_previstos: number;
   estado: Estado;
+  tipo: "atividade" | "pausa";
+  hora_inicio: string | null;
+  hora_fim: string | null;
+  atividade_id: string | null;
 };
 type Execucao = {
   id: string;
