@@ -335,12 +335,12 @@ function PainelPage() {
   })();
 
   const metrics = {
-    ativos: cartoes.filter((c) => c.execAberta && !c.pausada).length,
-    concluidas: cartoes.reduce((s, c) => s + c.concluidas, 0),
+    ativos: cartoesVisiveis.filter((c) => c.execAberta && !c.pausada).length,
+    concluidas: cartoesVisiveis.reduce((s, c) => s + c.concluidas, 0),
     dentroPct: (() => {
       // Histórico: % de tarefas concluídas dentro do tempo previsto
       if (!isLive) {
-        const done = cartoes.flatMap((c) => c.tarefas).filter((tk) => tk.estado === "concluida");
+        const done = cartoesVisiveis.flatMap((c) => c.tarefas).filter((tk) => tk.estado === "concluida");
         if (done.length === 0) return 100;
         let dentro = 0;
         for (const tk of done) {
@@ -350,12 +350,12 @@ function PainelPage() {
         }
         return Math.round((dentro / done.length) * 100);
       }
-      const ativas = cartoes.filter((c) => c.execAberta);
+      const ativas = cartoesVisiveis.filter((c) => c.execAberta);
       if (ativas.length === 0) return 100;
       return Math.round((ativas.filter((c) => !c.excedido).length / ativas.length) * 100);
     })(),
-    pausas: cartoes.filter((c) => c.pausada).length,
-    urgencias: isLive ? urgenciasAbertas.length : 0,
+    pausas: cartoesVisiveis.filter((c) => c.pausada).length,
+    urgencias: isLive ? urgenciasAbertas.filter((e) => filtroFuncs.size === 0 || filtroFuncs.has(e.funcionario_id)).length : 0,
     tempoUrg: tempoUrgenciasMin,
   };
 
