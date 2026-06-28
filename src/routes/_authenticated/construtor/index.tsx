@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Trash2, GripVertical, Pencil, Plus } from "lucide-react";
+import { normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/construtor/")({
   component: ConstrutorPage,
