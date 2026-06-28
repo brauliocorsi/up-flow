@@ -366,6 +366,19 @@ function AtividadeForm({
             )}
           </div>
         </label>
+        <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+          <span className="text-muted-foreground">{t("atividades.cadencia.label")}</span>
+          <select
+            value={cadencia}
+            onChange={(e) => setCadencia(normalizeCadencia(e.target.value))}
+            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+          >
+            {CADENCIAS.map((c) => (
+              <option key={c} value={c}>{t(`atividades.cadencia.${c}`)}</option>
+            ))}
+          </select>
+          <span className="text-[11px] text-muted-foreground">{t("atividades.cadencia.help")}</span>
+        </label>
         {initial && (
           <label className="flex items-center gap-2 text-sm text-foreground">
             <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} />
