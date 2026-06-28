@@ -465,6 +465,9 @@
       "5": "Sexta-feira",
       "6": "Sábado"
     },
-    "apenasGestor": "Só o gestor pode usar o construtor."
+    "apenasGestor": "Só o gestor pode usar o construtor.",
+    "cadencia": {
+      "help": "Define em que semanas este bloco aparece (semanal, quinzenal A/B, ou semana específica do mês)."
+    }
   }
 }
