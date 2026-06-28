@@ -25,7 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Trash2, GripVertical, Pencil, Plus } from "lucide-react";
-import { normalizeCadencia, type Cadencia } from "@/lib/cadencia";
+import { CADENCIAS, normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/construtor/")({
   component: ConstrutorPage,
@@ -58,6 +58,7 @@ type Bloco = {
   hora_inicio: string;
   hora_fim: string;
   ordem: number;
+  cadencia: Cadencia;
 };
 
 const PX_PER_MIN = 1.2;
@@ -190,12 +191,15 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Bloco[]> => {
       const { data, error } = await supabase
         .from("rotina_blocos")
-        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem")
+        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem, cadencia")
         .eq("funcionario_id", funcionarioId)
         .eq("dia_semana", dia)
         .order("hora_inicio");
       if (error) throw error;
-      return (data ?? []) as Bloco[];
+      return (data ?? []).map((b) => ({
+        ...b,
+        cadencia: normalizeCadencia((b as { cadencia?: string }).cadencia),
+      })) as Bloco[];
     },
   });
 
@@ -230,7 +234,7 @@ function ConstrutorPage() {
   }
 
   const createBloco = useMutation({
-    mutationFn: async (payload: { atividade_id: string; startMin: number; endMin: number }) => {
+    mutationFn: async (payload: { atividade_id: string; startMin: number; endMin: number; cadencia?: Cadencia }) => {
       const conflict = checkConflict(payload.startMin, payload.endMin);
       if (conflict) throw new Error(conflict);
       const { error } = await supabase.from("rotina_blocos").insert({
@@ -240,6 +244,7 @@ function ConstrutorPage() {
         hora_inicio: minToHm(payload.startMin),
         hora_fim: minToHm(payload.endMin),
         ordem: blocos.length,
+        cadencia: normalizeCadencia(payload.cadencia),
       });
       if (error) throw error;
     },
@@ -251,18 +256,20 @@ function ConstrutorPage() {
   });
 
   const updateBloco = useMutation({
-    mutationFn: async (payload: { id: string; startMin: number; endMin: number; atividade_id?: string }) => {
+    mutationFn: async (payload: { id: string; startMin: number; endMin: number; atividade_id?: string; cadencia?: Cadencia }) => {
       const conflict = checkConflict(payload.startMin, payload.endMin, payload.id);
       if (conflict) throw new Error(conflict);
       const upd: {
         hora_inicio: string;
         hora_fim: string;
         atividade_id?: string;
+        cadencia?: Cadencia;
       } = {
         hora_inicio: minToHm(payload.startMin),
         hora_fim: minToHm(payload.endMin),
       };
       if (payload.atividade_id) upd.atividade_id = payload.atividade_id;
+      if (payload.cadencia) upd.cadencia = payload.cadencia;
       const { error } = await supabase.from("rotina_blocos").update(upd).eq("id", payload.id);
       if (error) throw error;
     },
@@ -300,7 +307,7 @@ function ConstrutorPage() {
       const a = atividadeById.get(ativId);
       if (!a) return;
       const dur = Math.max(SLOT_MIN, a.duracao_padrao_min || 30);
-      createBloco.mutate({ atividade_id: ativId, startMin: slotMin, endMin: slotMin + dur });
+      createBloco.mutate({ atividade_id: ativId, startMin: slotMin, endMin: slotMin + dur, cadencia: a.cadencia });
     } else if (activeId.startsWith("bloco:")) {
       const bid = activeId.slice(6);
       const b = blocos.find((x) => x.id === bid);
@@ -413,9 +420,9 @@ function ConstrutorPage() {
           atividade={addingFromActivity}
           horario={horario}
           onClose={() => setAddingFromActivity(null)}
-          onConfirm={(startMin, endMin) => {
+          onConfirm={(startMin, endMin, cadencia) => {
             createBloco.mutate(
-              { atividade_id: addingFromActivity.id, startMin, endMin },
+              { atividade_id: addingFromActivity.id, startMin, endMin, cadencia },
               { onSuccess: () => setAddingFromActivity(null) },
             );
           }}
@@ -428,8 +435,8 @@ function ConstrutorPage() {
           atividade={atividadeById.get(editing.atividade_id) ?? null}
           horario={horario}
           onClose={() => setEditing(null)}
-          onSave={(startMin, endMin) =>
-            updateBloco.mutate({ id: editing.id, startMin, endMin })
+          onSave={(startMin, endMin, cadencia) =>
+            updateBloco.mutate({ id: editing.id, startMin, endMin, cadencia })
           }
         />
       )}
@@ -713,9 +720,9 @@ function BlocoView({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
             <span className="truncate font-medium">{atividade?.nome ?? t("construtor.atividade")}</span>
-            {atividade && atividade.cadencia !== "semanal" && (
+            {bloco.cadencia !== "semanal" && (
               <span className="shrink-0 rounded-full bg-white/25 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide">
-                {t(`atividades.cadencia.badge.${atividade.cadencia}`)}
+                {t(`atividades.cadencia.badge.${bloco.cadencia}`)}
               </span>
             )}
           </div>
@@ -770,14 +777,15 @@ function AddDialog({
   atividade: Atividade;
   horario: Horario;
   onClose: () => void;
-  onConfirm: (startMin: number, endMin: number) => void;
+  onConfirm: (startMin: number, endMin: number, cadencia: Cadencia) => void;
 }) {
   const { t } = useTranslation();
   const [start, setStart] = useState(horario.hora_inicio.slice(0, 5));
   const [duracao, setDuracao] = useState<number>(atividade.duracao_padrao_min || 30);
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(atividade.cadencia));
   function submit() {
     const sMin = hmToMin(start);
-    onConfirm(sMin, sMin + Math.max(SLOT_MIN, duracao));
+    onConfirm(sMin, sMin + Math.max(SLOT_MIN, duracao), cadencia);
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
@@ -808,6 +816,11 @@ function AddDialog({
               className="rounded-md border border-input bg-background px-2 py-1.5"
             />
           </label>
+          <label className="col-span-2 flex flex-col gap-1 text-sm">
+            <span className="text-muted-foreground">{t("atividades.cadencia.label")}</span>
+            <CadenciaSelect value={cadencia} onChange={setCadencia} />
+            <span className="text-[11px] text-muted-foreground">{t("construtor.cadencia.help")}</span>
+          </label>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
@@ -832,13 +845,14 @@ function EditDialog({
   atividade: Atividade | null;
   horario: Horario;
   onClose: () => void;
-  onSave: (startMin: number, endMin: number) => void;
+  onSave: (startMin: number, endMin: number, cadencia: Cadencia) => void;
 }) {
   const { t } = useTranslation();
   const [start, setStart] = useState(bloco.hora_inicio.slice(0, 5));
   const [end, setEnd] = useState(bloco.hora_fim.slice(0, 5));
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(bloco.cadencia));
   function submit() {
-    onSave(hmToMin(start), hmToMin(end));
+    onSave(hmToMin(start), hmToMin(end), cadencia);
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
@@ -870,6 +884,11 @@ function EditDialog({
               className="rounded-md border border-input bg-background px-2 py-1.5"
             />
           </label>
+          <label className="col-span-2 flex flex-col gap-1 text-sm">
+            <span className="text-muted-foreground">{t("atividades.cadencia.label")}</span>
+            <CadenciaSelect value={cadencia} onChange={setCadencia} />
+            <span className="text-[11px] text-muted-foreground">{t("construtor.cadencia.help")}</span>
+          </label>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
@@ -879,6 +898,21 @@ function EditDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function CadenciaSelect({ value, onChange }: { value: Cadencia; onChange: (v: Cadencia) => void }) {
+  const { t } = useTranslation();
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(normalizeCadencia(e.target.value))}
+      className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+    >
+      {CADENCIAS.map((c) => (
+        <option key={c} value={c}>{t(`atividades.cadencia.${c}`)}</option>
+      ))}
+    </select>
   );
 }
 

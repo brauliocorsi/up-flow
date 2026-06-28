@@ -1,41 +1,29 @@
 ## Objetivo
-O papel **Gestor** passa a comportar-se como administrador total: vê e acede a todas as áreas do sistema (incluindo as do operador), não só ao seu sub-menu atual.
 
-## Alterações
+A grelha do construtor continua a repetir-se TODAS as semanas. Para atividades quinzenais ou mensais passas a escolher **em que semana** elas aparecem **por bloco** (não na biblioteca). Assim podes colocar a mesma atividade em dois espaços diferentes com semanas diferentes (ex.: "Limpeza profunda" às 3ª 09:00 Mensal-1ª e às 3ª 09:00 Mensal-3ª).
 
-### 1. Menu lateral (`src/components/AuthenticatedLayout.tsx`)
-Quando `isGestor === true`, o menu passa a listar **todos** os itens (gestor + operador), com separadores visuais:
+## Mudanças
 
-```
-— Gestão —
-  Painel
-  Equipa
-  Atividades
-  Construtor
-  Questões
-  Ajuda
-  Gerar tarefas
-— Operador —
-  A minha rotina  (/hoje)
-```
+### 1. Base de dados
+- Adicionar coluna `cadencia text` em `rotina_blocos` (default `'semanal'`, com o mesmo CHECK dos valores já usados em `atividades`).
+- Atualizar a função `gerar_tarefas_do_dia` para usar `rb.cadencia` (a do bloco) em vez de `a.cadencia`. A cadência da biblioteca passa a ser apenas o valor sugerido ao arrastar.
 
-Operadores continuam a ver apenas o seu sub-conjunto (sem mudanças).
+### 2. Construtor (`/construtor`)
+- Ao arrastar uma atividade da biblioteca para um espaço, o bloco criado herda a cadência atual da atividade (pré-preenchimento) — pode depois ser alterada no bloco.
+- No diálogo de edição do bloco (já existente, com horas / atividade), adicionar um seletor **Recorrência** com as mesmas opções de `CADENCIAS` (Semanal, Quinzenal A/B, Mensal 1ª–4ª, Mensal última).
+- `BlocoView`: badge passa a refletir `bloco.cadencia` (não a da atividade). Semanal não mostra badge; quinzenal/mensal mostram badge colorido como hoje.
+- Biblioteca lateral: mantém o badge informativo (valor por defeito da atividade) — apenas leitura.
+- Type `RotinaBloco` ganha `cadencia: Cadencia`; queries e mutations (`insert`/`update`) passam a ler/escrever o campo.
 
-### 2. Acesso à rota `/hoje` para gestor
-A página `/hoje` carrega tarefas via `funcionarios.user_id = auth.uid()`. Um gestor que não esteja também ligado a um registo de funcionário veria estado vazio. Para que o gestor possa **inspecionar a vista do operador**:
-- Adicionar um seletor de funcionário no topo de `/hoje` visível apenas a gestores ("A ver como: <funcionário>").
-- Quando o gestor selecciona um funcionário, a página passa a ler `tarefas_dia` / `eventos` / `horarios_trabalho` desse funcionário (modo leitura — sem iniciar/parar tarefas nem responder a questões em nome dele).
-- Sem selecção, mostra um estado vazio amigável com instrução para escolher um funcionário.
+### 3. i18n
+- Reusar as strings existentes `atividades.cadencia.*` no diálogo do bloco; acrescentar apenas `construtor.cadencia.label` e `construtor.cadencia.help` em `pt.json`.
 
-### 3. Indicador de papel
-Na topbar (perto do email no drawer) já mostramos "Gestor". Mantém-se. Adicionar um pequeno chip "Administrador" junto ao logo quando `isGestor` para reforçar o estatuto.
+## Fora de âmbito
+- Não muda a UI da biblioteca de atividades (continua a ter cadência por defeito).
+- Não muda `/painel`, `/hoje` nem `tarefas_dia` (já lê do bloco via RPC).
+- Sem "semanas específicas" arbitrárias além das opções já suportadas (A/B e 1ª–4ª/última do mês).
 
-## Fora do âmbito
-- Não mexe em RLS / RPCs (gestores já têm `has_role('gestor')` com acesso amplo nas policies existentes).
-- Não cria nova rota — reutiliza `/hoje` com modo "ver como".
-- Sem alterações de tradução estrutural; apenas novas chaves PT.
-
-## Confirmação final
-1. Gestor abre o menu e vê **todas** as áreas, incluindo "A minha rotina".
-2. Em `/hoje`, gestor pode escolher qualquer funcionário e ver a rotina dele em modo leitura.
-3. Operador continua a ver apenas o menu reduzido.
+## Validação
+1. Criar dois blocos no mesmo dia/hora-base com cadências diferentes (Mensal-1ª e Mensal-3ª) — só aparece no `/hoje` o que corresponde à data.
+2. Bloco semanal continua a aparecer todas as semanas.
+3. Alterar cadência de um bloco e regenerar tarefas do dia respeita o novo valor.
