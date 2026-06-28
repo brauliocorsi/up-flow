@@ -307,7 +307,7 @@ function ConstrutorPage() {
       const a = atividadeById.get(ativId);
       if (!a) return;
       const dur = Math.max(SLOT_MIN, a.duracao_padrao_min || 30);
-      createBloco.mutate({ atividade_id: ativId, startMin: slotMin, endMin: slotMin + dur });
+      createBloco.mutate({ atividade_id: ativId, startMin: slotMin, endMin: slotMin + dur, cadencia: a.cadencia });
     } else if (activeId.startsWith("bloco:")) {
       const bid = activeId.slice(6);
       const b = blocos.find((x) => x.id === bid);
