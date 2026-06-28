@@ -234,7 +234,7 @@ function ConstrutorPage() {
   }
 
   const createBloco = useMutation({
-    mutationFn: async (payload: { atividade_id: string; startMin: number; endMin: number }) => {
+    mutationFn: async (payload: { atividade_id: string; startMin: number; endMin: number; cadencia?: Cadencia }) => {
       const conflict = checkConflict(payload.startMin, payload.endMin);
       if (conflict) throw new Error(conflict);
       const { error } = await supabase.from("rotina_blocos").insert({
@@ -244,6 +244,7 @@ function ConstrutorPage() {
         hora_inicio: minToHm(payload.startMin),
         hora_fim: minToHm(payload.endMin),
         ordem: blocos.length,
+        cadencia: normalizeCadencia(payload.cadencia),
       });
       if (error) throw error;
     },
@@ -255,18 +256,20 @@ function ConstrutorPage() {
   });
 
   const updateBloco = useMutation({
-    mutationFn: async (payload: { id: string; startMin: number; endMin: number; atividade_id?: string }) => {
+    mutationFn: async (payload: { id: string; startMin: number; endMin: number; atividade_id?: string; cadencia?: Cadencia }) => {
       const conflict = checkConflict(payload.startMin, payload.endMin, payload.id);
       if (conflict) throw new Error(conflict);
       const upd: {
         hora_inicio: string;
         hora_fim: string;
         atividade_id?: string;
+        cadencia?: Cadencia;
       } = {
         hora_inicio: minToHm(payload.startMin),
         hora_fim: minToHm(payload.endMin),
       };
       if (payload.atividade_id) upd.atividade_id = payload.atividade_id;
+      if (payload.cadencia) upd.cadencia = payload.cadencia;
       const { error } = await supabase.from("rotina_blocos").update(upd).eq("id", payload.id);
       if (error) throw error;
     },
