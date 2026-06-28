@@ -263,6 +263,7 @@ function AtividadeForm({
   const [duracao, setDuracao] = useState<number>(initial?.duracao_padrao_min ?? 30);
   const [cor, setCor] = useState(initial?.cor ?? "");
   const [ativo, setAtivo] = useState<boolean>(initial?.ativo ?? true);
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(initial?.cadencia));
   const [error, setError] = useState<string | null>(null);
 
   const save = useMutation({
@@ -278,6 +279,7 @@ function AtividadeForm({
         duracao_padrao_min: Math.round(duracao),
         cor: cor.trim() ? cor.trim() : null,
         ativo,
+        cadencia,
       };
       if (initial) {
         const { error } = await supabase.from("atividades").update(payload).eq("id", initial.id);
