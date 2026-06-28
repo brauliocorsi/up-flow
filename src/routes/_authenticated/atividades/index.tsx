@@ -166,6 +166,7 @@ function AtividadesPage() {
                       <th className="px-3 py-2">{t("atividades.col.nome")}</th>
                       <th className="px-3 py-2">{t("atividades.col.descricao")}</th>
                       <th className="px-3 py-2 text-right">{t("atividades.col.duracao")}</th>
+                      <th className="px-3 py-2">{t("atividades.col.cadencia")}</th>
                       <th className="px-3 py-2">{t("atividades.col.cor")}</th>
                       <th className="px-3 py-2">{t("atividades.col.estado")}</th>
                       <th className="px-3 py-2 text-right">{t("atividades.col.actions")}</th>
@@ -191,6 +192,9 @@ function AtividadesPage() {
                           <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
                           <td className="px-3 py-2 text-right tabular-nums">{a.duracao_padrao_min}</td>
                           <td className="px-3 py-2">
+                            <CadenciaBadge cadencia={a.cadencia} />
+                          </td>
+                          <td className="px-3 py-2">
                             {a.cor ? (
                               <span className="inline-flex items-center gap-2">
                                 <span className="inline-block h-3 w-3 rounded-full ring-1 ring-border" style={{ backgroundColor: a.cor }} />
@@ -214,7 +218,7 @@ function AtividadesPage() {
                         </tr>
                       )}
                       <tr key={a.id + "-macros"}>
-                        <td colSpan={6} className="px-3 pb-3 pt-0">
+                        <td colSpan={7} className="px-3 pb-3 pt-0">
                           <details className="rounded border border-border bg-muted/20 p-2">
                             <summary className="cursor-pointer text-xs font-medium text-foreground select-none">
                               {t("macros.sectionTitle")}
