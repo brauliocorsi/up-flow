@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { MacrosSection } from "@/components/MacrosSection";
+import { CADENCIAS, normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/atividades/")({
   component: AtividadesPage,
@@ -19,6 +20,7 @@ type Atividade = {
   duracao_padrao_min: number;
   cor: string | null;
   ativo: boolean;
+  cadencia: Cadencia;
 };
 
 function AtividadesPage() {
