@@ -560,3 +560,19 @@ function InlineEditRow({
     </tr>
   );
 }
+
+function CadenciaBadge({ cadencia }: { cadencia: Cadencia }) {
+  const { t } = useTranslation();
+  if (cadencia === "semanal") {
+    return <span className="text-xs text-muted-foreground">{t("atividades.cadencia.badge.semanal")}</span>;
+  }
+  const isMensal = cadencia.startsWith("mensal");
+  const cls = isMensal
+    ? "bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300"
+    : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300";
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>
+      {t(`atividades.cadencia.badge.${cadencia}`)}
+    </span>
+  );
+}
