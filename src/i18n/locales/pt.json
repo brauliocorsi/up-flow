@@ -209,6 +209,7 @@
       "cor": "Cor",
       "setor": "Setor",
       "estado": "Estado",
+      "cadencia": "Recorrência",
       "actions": "Ações"
     },
     "edit": "Editar",
@@ -220,7 +221,29 @@
     "saved": "Atividade guardada.",
     "stateChanged": "Estado atualizado.",
     "corNone": "Herda do setor",
-    "corCustom": "Personalizada"
+    "corCustom": "Personalizada",
+    "cadencia": {
+      "label": "Recorrência",
+      "help": "Define com que frequência esta atividade aparece na rotina.",
+      "semanal": "Todas as semanas",
+      "quinzenal_a": "Quinzenal · Semana A (ímpar)",
+      "quinzenal_b": "Quinzenal · Semana B (par)",
+      "mensal_1": "Mensal · 1.ª semana",
+      "mensal_2": "Mensal · 2.ª semana",
+      "mensal_3": "Mensal · 3.ª semana",
+      "mensal_4": "Mensal · 4.ª semana",
+      "mensal_ultima": "Mensal · última semana",
+      "badge": {
+        "semanal": "Semanal",
+        "quinzenal_a": "Quinz. A",
+        "quinzenal_b": "Quinz. B",
+        "mensal_1": "Mensal 1.ª",
+        "mensal_2": "Mensal 2.ª",
+        "mensal_3": "Mensal 3.ª",
+        "mensal_4": "Mensal 4.ª",
+        "mensal_ultima": "Mensal últ."
+      }
+    }
   },
   "trocar": {
     "title": "Definir nova palavra-passe",

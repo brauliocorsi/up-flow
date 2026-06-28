@@ -17,6 +17,7 @@ export type Database = {
       atividades: {
         Row: {
           ativo: boolean
+          cadencia: string
           cor: string | null
           created_at: string
           descricao: string
@@ -27,6 +28,7 @@ export type Database = {
         }
         Insert: {
           ativo?: boolean
+          cadencia?: string
           cor?: string | null
           created_at?: string
           descricao?: string
@@ -37,6 +39,7 @@ export type Database = {
         }
         Update: {
           ativo?: boolean
+          cadencia?: string
           cor?: string | null
           created_at?: string
           descricao?: string
@@ -748,6 +751,10 @@ export type Database = {
       associar_user_a_funcionario: {
         Args: { _funcionario_id: string; _user_id: string }
         Returns: undefined
+      }
+      cadencia_aplica: {
+        Args: { _cadencia: string; _data: string }
+        Returns: boolean
       }
       copiar_rotina_dia: {
         Args: {

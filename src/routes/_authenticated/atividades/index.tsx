@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { MacrosSection } from "@/components/MacrosSection";
+import { CADENCIAS, normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/atividades/")({
   component: AtividadesPage,
@@ -19,6 +20,7 @@ type Atividade = {
   duracao_padrao_min: number;
   cor: string | null;
   ativo: boolean;
+  cadencia: Cadencia;
 };
 
 function AtividadesPage() {
@@ -59,10 +61,10 @@ function AtividadesPage() {
     queryFn: async (): Promise<Atividade[]> => {
       const { data, error } = await supabase
         .from("atividades")
-        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor, ativo")
+        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor, ativo, cadencia")
         .order("nome");
       if (error) throw error;
-      return (data ?? []) as Atividade[];
+      return (data ?? []).map((a) => ({ ...a, cadencia: normalizeCadencia((a as { cadencia?: string }).cadencia) })) as Atividade[];
     },
   });
 
@@ -164,6 +166,7 @@ function AtividadesPage() {
                       <th className="px-3 py-2">{t("atividades.col.nome")}</th>
                       <th className="px-3 py-2">{t("atividades.col.descricao")}</th>
                       <th className="px-3 py-2 text-right">{t("atividades.col.duracao")}</th>
+                      <th className="px-3 py-2">{t("atividades.col.cadencia")}</th>
                       <th className="px-3 py-2">{t("atividades.col.cor")}</th>
                       <th className="px-3 py-2">{t("atividades.col.estado")}</th>
                       <th className="px-3 py-2 text-right">{t("atividades.col.actions")}</th>
@@ -189,6 +192,9 @@ function AtividadesPage() {
                           <td className="px-3 py-2 text-muted-foreground">{a.descricao || "—"}</td>
                           <td className="px-3 py-2 text-right tabular-nums">{a.duracao_padrao_min}</td>
                           <td className="px-3 py-2">
+                            <CadenciaBadge cadencia={a.cadencia} />
+                          </td>
+                          <td className="px-3 py-2">
                             {a.cor ? (
                               <span className="inline-flex items-center gap-2">
                                 <span className="inline-block h-3 w-3 rounded-full ring-1 ring-border" style={{ backgroundColor: a.cor }} />
@@ -212,7 +218,7 @@ function AtividadesPage() {
                         </tr>
                       )}
                       <tr key={a.id + "-macros"}>
-                        <td colSpan={6} className="px-3 pb-3 pt-0">
+                        <td colSpan={7} className="px-3 pb-3 pt-0">
                           <details className="rounded border border-border bg-muted/20 p-2">
                             <summary className="cursor-pointer text-xs font-medium text-foreground select-none">
                               {t("macros.sectionTitle")}
@@ -257,6 +263,7 @@ function AtividadeForm({
   const [duracao, setDuracao] = useState<number>(initial?.duracao_padrao_min ?? 30);
   const [cor, setCor] = useState(initial?.cor ?? "");
   const [ativo, setAtivo] = useState<boolean>(initial?.ativo ?? true);
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(initial?.cadencia));
   const [error, setError] = useState<string | null>(null);
 
   const save = useMutation({
@@ -272,6 +279,7 @@ function AtividadeForm({
         duracao_padrao_min: Math.round(duracao),
         cor: cor.trim() ? cor.trim() : null,
         ativo,
+        cadencia,
       };
       if (initial) {
         const { error } = await supabase.from("atividades").update(payload).eq("id", initial.id);
@@ -358,6 +366,19 @@ function AtividadeForm({
             )}
           </div>
         </label>
+        <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+          <span className="text-muted-foreground">{t("atividades.cadencia.label")}</span>
+          <select
+            value={cadencia}
+            onChange={(e) => setCadencia(normalizeCadencia(e.target.value))}
+            className="rounded border border-input bg-background px-3 py-2 text-foreground"
+          >
+            {CADENCIAS.map((c) => (
+              <option key={c} value={c}>{t(`atividades.cadencia.${c}`)}</option>
+            ))}
+          </select>
+          <span className="text-[11px] text-muted-foreground">{t("atividades.cadencia.help")}</span>
+        </label>
         {initial && (
           <label className="flex items-center gap-2 text-sm text-foreground">
             <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} />
@@ -409,6 +430,7 @@ function InlineEditRow({
   const [duracao, setDuracao] = useState<number>(atividade.duracao_padrao_min);
   const [cor, setCor] = useState(atividade.cor ?? "");
   const [ativo, setAtivo] = useState<boolean>(atividade.ativo);
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(atividade.cadencia));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -418,6 +440,7 @@ function InlineEditRow({
     setDuracao(atividade.duracao_padrao_min);
     setCor(atividade.cor ?? "");
     setAtivo(atividade.ativo);
+    setCadencia(normalizeCadencia(atividade.cadencia));
   }, [atividade]);
 
   const save = useMutation({
@@ -435,6 +458,7 @@ function InlineEditRow({
           duracao_padrao_min: Math.round(duracao),
           cor: cor.trim() ? cor.trim() : null,
           ativo,
+          cadencia,
         })
         .eq("id", atividade.id);
       if (error) throw error;
@@ -480,6 +504,17 @@ function InlineEditRow({
         />
       </td>
       <td className="px-3 py-2">
+        <select
+          value={cadencia}
+          onChange={(e) => setCadencia(normalizeCadencia(e.target.value))}
+          className="w-full rounded border border-input bg-background px-2 py-1 text-xs"
+        >
+          {CADENCIAS.map((c) => (
+            <option key={c} value={c}>{t(`atividades.cadencia.${c}`)}</option>
+          ))}
+        </select>
+      </td>
+      <td className="px-3 py-2">
         <div className="flex items-center gap-1">
           <input
             type="color"
@@ -523,5 +558,21 @@ function InlineEditRow({
         </div>
       </td>
     </tr>
+  );
+}
+
+function CadenciaBadge({ cadencia }: { cadencia: Cadencia }) {
+  const { t } = useTranslation();
+  if (cadencia === "semanal") {
+    return <span className="text-xs text-muted-foreground">{t("atividades.cadencia.badge.semanal")}</span>;
+  }
+  const isMensal = cadencia.startsWith("mensal");
+  const cls = isMensal
+    ? "bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300"
+    : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300";
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>
+      {t(`atividades.cadencia.badge.${cadencia}`)}
+    </span>
   );
 }

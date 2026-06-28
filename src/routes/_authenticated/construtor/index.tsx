@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Trash2, GripVertical, Pencil, Plus } from "lucide-react";
+import { normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/construtor/")({
   component: ConstrutorPage,
@@ -38,6 +39,7 @@ type Atividade = {
   descricao: string | null;
   duracao_padrao_min: number;
   cor: string | null;
+  cadencia: Cadencia;
 };
 type Setor = { id: string; nome: string };
 type Horario = { tipo_dia: string; hora_inicio: string; hora_fim: string };
@@ -141,12 +143,12 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Atividade[]> => {
       const { data, error } = await supabase
         .from("atividades")
-        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor")
+        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor, cadencia")
         .in("funcao_id", setorIds)
         .eq("ativo", true)
         .order("nome");
       if (error) throw error;
-      return (data ?? []) as Atividade[];
+      return (data ?? []).map((a) => ({ ...a, cadencia: normalizeCadencia((a as { cadencia?: string }).cadencia) })) as Atividade[];
     },
   });
 
@@ -505,7 +507,10 @@ function LibraryItem({ atividade, onClickAdd }: { atividade: Atividade; onClickA
         style={{ backgroundColor: atividade.cor ?? "#94a3b8" }}
       />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-foreground">{atividade.nome}</div>
+        <div className="flex items-center gap-1.5">
+          <span className="truncate text-sm font-medium text-foreground">{atividade.nome}</span>
+          <MiniCadenciaBadge cadencia={atividade.cadencia} />
+        </div>
         {atividade.descricao && (
           <div className="line-clamp-2 text-[11px] text-muted-foreground">{atividade.descricao}</div>
         )}
@@ -706,7 +711,14 @@ function BlocoView({
           <GripVertical className="h-3.5 w-3.5" />
         </button>
         <div className="min-w-0 flex-1">
-          <div className="truncate font-medium">{atividade?.nome ?? t("construtor.atividade")}</div>
+          <div className="flex items-center gap-1">
+            <span className="truncate font-medium">{atividade?.nome ?? t("construtor.atividade")}</span>
+            {atividade && atividade.cadencia !== "semanal" && (
+              <span className="shrink-0 rounded-full bg-white/25 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide">
+                {t(`atividades.cadencia.badge.${atividade.cadencia}`)}
+              </span>
+            )}
+          </div>
           <div className="text-[10px] opacity-90">
             {bloco.hora_inicio.slice(0, 5)} – {bloco.hora_fim.slice(0, 5)}
           </div>
@@ -943,5 +955,19 @@ function CopyDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function MiniCadenciaBadge({ cadencia }: { cadencia: Cadencia }) {
+  const { t } = useTranslation();
+  if (cadencia === "semanal") return null;
+  const isMensal = cadencia.startsWith("mensal");
+  const cls = isMensal
+    ? "bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300"
+    : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300";
+  return (
+    <span className={`shrink-0 rounded-full px-1.5 py-px text-[10px] font-semibold ${cls}`}>
+      {t(`atividades.cadencia.badge.${cadencia}`)}
+    </span>
   );
 }
