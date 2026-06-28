@@ -430,6 +430,7 @@ function InlineEditRow({
   const [duracao, setDuracao] = useState<number>(atividade.duracao_padrao_min);
   const [cor, setCor] = useState(atividade.cor ?? "");
   const [ativo, setAtivo] = useState<boolean>(atividade.ativo);
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(atividade.cadencia));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -439,6 +440,7 @@ function InlineEditRow({
     setDuracao(atividade.duracao_padrao_min);
     setCor(atividade.cor ?? "");
     setAtivo(atividade.ativo);
+    setCadencia(normalizeCadencia(atividade.cadencia));
   }, [atividade]);
 
   const save = useMutation({
@@ -456,6 +458,7 @@ function InlineEditRow({
           duracao_padrao_min: Math.round(duracao),
           cor: cor.trim() ? cor.trim() : null,
           ativo,
+          cadencia,
         })
         .eq("id", atividade.id);
       if (error) throw error;
