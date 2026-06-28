@@ -957,3 +957,17 @@ function CopyDialog({
     </Dialog>
   );
 }
+
+function MiniCadenciaBadge({ cadencia }: { cadencia: Cadencia }) {
+  const { t } = useTranslation();
+  if (cadencia === "semanal") return null;
+  const isMensal = cadencia.startsWith("mensal");
+  const cls = isMensal
+    ? "bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300"
+    : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300";
+  return (
+    <span className={`shrink-0 rounded-full px-1.5 py-px text-[10px] font-semibold ${cls}`}>
+      {t(`atividades.cadencia.badge.${cadencia}`)}
+    </span>
+  );
+}
