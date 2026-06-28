@@ -720,9 +720,9 @@ function BlocoView({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
             <span className="truncate font-medium">{atividade?.nome ?? t("construtor.atividade")}</span>
-            {atividade && atividade.cadencia !== "semanal" && (
+            {bloco.cadencia !== "semanal" && (
               <span className="shrink-0 rounded-full bg-white/25 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide">
-                {t(`atividades.cadencia.badge.${atividade.cadencia}`)}
+                {t(`atividades.cadencia.badge.${bloco.cadencia}`)}
               </span>
             )}
           </div>
