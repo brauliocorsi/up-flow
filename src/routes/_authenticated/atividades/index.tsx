@@ -61,10 +61,10 @@ function AtividadesPage() {
     queryFn: async (): Promise<Atividade[]> => {
       const { data, error } = await supabase
         .from("atividades")
-        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor, ativo")
+        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor, ativo, cadencia")
         .order("nome");
       if (error) throw error;
-      return (data ?? []) as Atividade[];
+      return (data ?? []).map((a) => ({ ...a, cadencia: normalizeCadencia((a as { cadencia?: string }).cadencia) })) as Atividade[];
     },
   });
 
