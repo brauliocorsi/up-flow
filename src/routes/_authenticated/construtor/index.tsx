@@ -38,6 +38,7 @@ type Atividade = {
   descricao: string | null;
   duracao_padrao_min: number;
   cor: string | null;
+  cadencia: Cadencia;
 };
 type Setor = { id: string; nome: string };
 type Horario = { tipo_dia: string; hora_inicio: string; hora_fim: string };
