@@ -143,12 +143,12 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Atividade[]> => {
       const { data, error } = await supabase
         .from("atividades")
-        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor")
+        .select("id, funcao_id, nome, descricao, duracao_padrao_min, cor, cadencia")
         .in("funcao_id", setorIds)
         .eq("ativo", true)
         .order("nome");
       if (error) throw error;
-      return (data ?? []) as Atividade[];
+      return (data ?? []).map((a) => ({ ...a, cadencia: normalizeCadencia((a as { cadencia?: string }).cadencia) })) as Atividade[];
     },
   });
 
