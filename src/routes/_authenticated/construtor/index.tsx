@@ -711,7 +711,14 @@ function BlocoView({
           <GripVertical className="h-3.5 w-3.5" />
         </button>
         <div className="min-w-0 flex-1">
-          <div className="truncate font-medium">{atividade?.nome ?? t("construtor.atividade")}</div>
+          <div className="flex items-center gap-1">
+            <span className="truncate font-medium">{atividade?.nome ?? t("construtor.atividade")}</span>
+            {atividade && atividade.cadencia !== "semanal" && (
+              <span className="shrink-0 rounded-full bg-white/25 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide">
+                {t(`atividades.cadencia.badge.${atividade.cadencia}`)}
+              </span>
+            )}
+          </div>
           <div className="text-[10px] opacity-90">
             {bloco.hora_inicio.slice(0, 5)} – {bloco.hora_fim.slice(0, 5)}
           </div>
