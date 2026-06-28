@@ -191,12 +191,15 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Bloco[]> => {
       const { data, error } = await supabase
         .from("rotina_blocos")
-        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem")
+        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem, cadencia")
         .eq("funcionario_id", funcionarioId)
         .eq("dia_semana", dia)
         .order("hora_inicio");
       if (error) throw error;
-      return (data ?? []) as Bloco[];
+      return (data ?? []).map((b) => ({
+        ...b,
+        cadencia: normalizeCadencia((b as { cadencia?: string }).cadencia),
+      })) as Bloco[];
     },
   });
 
