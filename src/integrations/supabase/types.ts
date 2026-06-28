@@ -527,6 +527,7 @@ export type Database = {
       rotina_blocos: {
         Row: {
           atividade_id: string
+          cadencia: string
           created_at: string
           dia_semana: number
           funcionario_id: string
@@ -538,6 +539,7 @@ export type Database = {
         }
         Insert: {
           atividade_id: string
+          cadencia?: string
           created_at?: string
           dia_semana: number
           funcionario_id: string
@@ -549,6 +551,7 @@ export type Database = {
         }
         Update: {
           atividade_id?: string
+          cadencia?: string
           created_at?: string
           dia_semana?: number
           funcionario_id?: string
