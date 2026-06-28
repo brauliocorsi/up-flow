@@ -504,6 +504,17 @@ function InlineEditRow({
         />
       </td>
       <td className="px-3 py-2">
+        <select
+          value={cadencia}
+          onChange={(e) => setCadencia(normalizeCadencia(e.target.value))}
+          className="w-full rounded border border-input bg-background px-2 py-1 text-xs"
+        >
+          {CADENCIAS.map((c) => (
+            <option key={c} value={c}>{t(`atividades.cadencia.${c}`)}</option>
+          ))}
+        </select>
+      </td>
+      <td className="px-3 py-2">
         <div className="flex items-center gap-1">
           <input
             type="color"
