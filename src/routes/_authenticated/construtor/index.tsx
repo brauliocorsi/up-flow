@@ -420,9 +420,9 @@ function ConstrutorPage() {
           atividade={addingFromActivity}
           horario={horario}
           onClose={() => setAddingFromActivity(null)}
-          onConfirm={(startMin, endMin) => {
+          onConfirm={(startMin, endMin, cadencia) => {
             createBloco.mutate(
-              { atividade_id: addingFromActivity.id, startMin, endMin },
+              { atividade_id: addingFromActivity.id, startMin, endMin, cadencia },
               { onSuccess: () => setAddingFromActivity(null) },
             );
           }}
@@ -435,8 +435,8 @@ function ConstrutorPage() {
           atividade={atividadeById.get(editing.atividade_id) ?? null}
           horario={horario}
           onClose={() => setEditing(null)}
-          onSave={(startMin, endMin) =>
-            updateBloco.mutate({ id: editing.id, startMin, endMin })
+          onSave={(startMin, endMin, cadencia) =>
+            updateBloco.mutate({ id: editing.id, startMin, endMin, cadencia })
           }
         />
       )}
