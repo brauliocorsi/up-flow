@@ -507,7 +507,10 @@ function LibraryItem({ atividade, onClickAdd }: { atividade: Atividade; onClickA
         style={{ backgroundColor: atividade.cor ?? "#94a3b8" }}
       />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-foreground">{atividade.nome}</div>
+        <div className="flex items-center gap-1.5">
+          <span className="truncate text-sm font-medium text-foreground">{atividade.nome}</span>
+          <MiniCadenciaBadge cadencia={atividade.cadencia} />
+        </div>
         {atividade.descricao && (
           <div className="line-clamp-2 text-[11px] text-muted-foreground">{atividade.descricao}</div>
         )}
