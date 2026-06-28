@@ -777,14 +777,15 @@ function AddDialog({
   atividade: Atividade;
   horario: Horario;
   onClose: () => void;
-  onConfirm: (startMin: number, endMin: number) => void;
+  onConfirm: (startMin: number, endMin: number, cadencia: Cadencia) => void;
 }) {
   const { t } = useTranslation();
   const [start, setStart] = useState(horario.hora_inicio.slice(0, 5));
   const [duracao, setDuracao] = useState<number>(atividade.duracao_padrao_min || 30);
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(atividade.cadencia));
   function submit() {
     const sMin = hmToMin(start);
-    onConfirm(sMin, sMin + Math.max(SLOT_MIN, duracao));
+    onConfirm(sMin, sMin + Math.max(SLOT_MIN, duracao), cadencia);
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
@@ -815,6 +816,11 @@ function AddDialog({
               className="rounded-md border border-input bg-background px-2 py-1.5"
             />
           </label>
+          <label className="col-span-2 flex flex-col gap-1 text-sm">
+            <span className="text-muted-foreground">{t("atividades.cadencia.label")}</span>
+            <CadenciaSelect value={cadencia} onChange={setCadencia} />
+            <span className="text-[11px] text-muted-foreground">{t("construtor.cadencia.help")}</span>
+          </label>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
@@ -839,13 +845,14 @@ function EditDialog({
   atividade: Atividade | null;
   horario: Horario;
   onClose: () => void;
-  onSave: (startMin: number, endMin: number) => void;
+  onSave: (startMin: number, endMin: number, cadencia: Cadencia) => void;
 }) {
   const { t } = useTranslation();
   const [start, setStart] = useState(bloco.hora_inicio.slice(0, 5));
   const [end, setEnd] = useState(bloco.hora_fim.slice(0, 5));
+  const [cadencia, setCadencia] = useState<Cadencia>(normalizeCadencia(bloco.cadencia));
   function submit() {
-    onSave(hmToMin(start), hmToMin(end));
+    onSave(hmToMin(start), hmToMin(end), cadencia);
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
@@ -877,6 +884,11 @@ function EditDialog({
               className="rounded-md border border-input bg-background px-2 py-1.5"
             />
           </label>
+          <label className="col-span-2 flex flex-col gap-1 text-sm">
+            <span className="text-muted-foreground">{t("atividades.cadencia.label")}</span>
+            <CadenciaSelect value={cadencia} onChange={setCadencia} />
+            <span className="text-[11px] text-muted-foreground">{t("construtor.cadencia.help")}</span>
+          </label>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
@@ -886,6 +898,21 @@ function EditDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function CadenciaSelect({ value, onChange }: { value: Cadencia; onChange: (v: Cadencia) => void }) {
+  const { t } = useTranslation();
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(normalizeCadencia(e.target.value))}
+      className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+    >
+      {CADENCIAS.map((c) => (
+        <option key={c} value={c}>{t(`atividades.cadencia.${c}`)}</option>
+      ))}
+    </select>
   );
 }
 
