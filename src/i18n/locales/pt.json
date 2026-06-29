@@ -492,7 +492,25 @@
     },
     "apenasGestor": "Só o gestor pode usar o construtor.",
     "cadencia": {
-      "help": "Define em que semanas este bloco aparece (semanal, quinzenal A/B, ou semana específica do mês)."
+      "help": "Define em que dias/semanas este bloco aparece. \"Diária\" replica de seg a sex."
+    },
+    "diariaConflito": "Não foi possível replicar para todos os dias úteis: {{erro}}",
+    "diariaCriada": "Bloco diário replicado de segunda a sexta.",
+    "excecoes": {
+      "titulo": "Datas saltadas",
+      "vazio": "Sem datas saltadas para este bloco.",
+      "adicionar": "Saltar nova data",
+      "remover": "Repor",
+      "ajuda": "As datas listadas não geram tarefa para este bloco. A rotina semanal continua intacta."
     }
+  },
+  "saltarData": {
+    "btn": "Saltar nesta data",
+    "titulo": "Saltar esta tarefa só neste dia?",
+    "descricao": "A rotina nas semanas seguintes continua igual. Esta data fica registada como exceção.",
+    "motivo": "Motivo (opcional)",
+    "confirmar": "Saltar este dia",
+    "sucesso": "Tarefa saltada nesta data.",
+    "semBloco": "Esta tarefa não está ligada a um bloco de rotina."
   }
 }
