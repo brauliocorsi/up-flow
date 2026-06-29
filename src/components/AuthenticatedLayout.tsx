@@ -14,6 +14,7 @@ import {
   MessageCircleQuestion,
   Bell,
   LayoutGrid,
+  BarChart3,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -112,6 +113,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             { to: "/atividades", label: tf("nav.atividades", "Atividades"), icon: ListChecks },
             { to: "/construtor", label: tf("nav.construtor", "Construtor"), icon: LayoutGrid },
             { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+            { to: "/relatorios", label: tf("nav.relatorios", "Relatórios"), icon: BarChart3 },
             { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
             { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
           ],

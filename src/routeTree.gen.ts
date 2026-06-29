@@ -13,6 +13,7 @@ import { Route as TrocarPasswordRouteImport } from './routes/trocar-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRelatoriosIndexRouteImport } from './routes/_authenticated/relatorios/index'
 import { Route as AuthenticatedQuestoesIndexRouteImport } from './routes/_authenticated/questoes/index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel/index'
 import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authenticated/hoje/index'
@@ -42,6 +43,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRelatoriosIndexRoute =
+  AuthenticatedRelatoriosIndexRouteImport.update({
+    id: '/relatorios/',
+    path: '/relatorios/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedQuestoesIndexRoute =
   AuthenticatedQuestoesIndexRouteImport.update({
     id: '/questoes/',
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/hoje/': typeof AuthenticatedHojeIndexRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
   '/questoes/': typeof AuthenticatedQuestoesIndexRoute
+  '/relatorios/': typeof AuthenticatedRelatoriosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -120,6 +128,7 @@ export interface FileRoutesByTo {
   '/hoje': typeof AuthenticatedHojeIndexRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
   '/questoes': typeof AuthenticatedQuestoesIndexRoute
+  '/relatorios': typeof AuthenticatedRelatoriosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,6 +145,7 @@ export interface FileRoutesById {
   '/_authenticated/hoje/': typeof AuthenticatedHojeIndexRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/_authenticated/questoes/': typeof AuthenticatedQuestoesIndexRoute
+  '/_authenticated/relatorios/': typeof AuthenticatedRelatoriosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/hoje/'
     | '/painel/'
     | '/questoes/'
+    | '/relatorios/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/hoje'
     | '/painel'
     | '/questoes'
+    | '/relatorios'
   id:
     | '__root__'
     | '/'
@@ -181,6 +193,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hoje/'
     | '/_authenticated/painel/'
     | '/_authenticated/questoes/'
+    | '/_authenticated/relatorios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/relatorios/': {
+      id: '/_authenticated/relatorios/'
+      path: '/relatorios'
+      fullPath: '/relatorios/'
+      preLoaderRoute: typeof AuthenticatedRelatoriosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/questoes/': {
       id: '/_authenticated/questoes/'
@@ -296,6 +316,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHojeIndexRoute: typeof AuthenticatedHojeIndexRoute
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
   AuthenticatedQuestoesIndexRoute: typeof AuthenticatedQuestoesIndexRoute
+  AuthenticatedRelatoriosIndexRoute: typeof AuthenticatedRelatoriosIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -308,6 +329,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHojeIndexRoute: AuthenticatedHojeIndexRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
   AuthenticatedQuestoesIndexRoute: AuthenticatedQuestoesIndexRoute,
+  AuthenticatedRelatoriosIndexRoute: AuthenticatedRelatoriosIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
