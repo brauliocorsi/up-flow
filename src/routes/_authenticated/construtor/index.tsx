@@ -59,6 +59,7 @@ type Bloco = {
   hora_fim: string;
   ordem: number;
   cadencia: Cadencia;
+  grupo_id: string | null;
 };
 
 const PX_PER_MIN = 1.2;
@@ -191,7 +192,7 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Bloco[]> => {
       const { data, error } = await supabase
         .from("rotina_blocos")
-        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem, cadencia")
+        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem, cadencia, grupo_id")
         .eq("funcionario_id", funcionarioId)
         .eq("dia_semana", dia)
         .order("hora_inicio");
@@ -235,22 +236,58 @@ function ConstrutorPage() {
 
   const createBloco = useMutation({
     mutationFn: async (payload: { atividade_id: string; startMin: number; endMin: number; cadencia?: Cadencia }) => {
+      const cad = normalizeCadencia(payload.cadencia);
+      const hi = minToHm(payload.startMin);
+      const hf = minToHm(payload.endMin);
+
+      if (cad === "diaria") {
+        const conflict = checkConflict(payload.startMin, payload.endMin);
+        if (conflict) throw new Error(t("construtor.diariaConflito", { erro: conflict }));
+        const grupoId = (crypto as Crypto).randomUUID();
+        const rows: Array<{
+          funcionario_id: string;
+          dia_semana: number;
+          atividade_id: string;
+          hora_inicio: string;
+          hora_fim: string;
+          ordem: number;
+          cadencia: Cadencia;
+          grupo_id: string;
+        }> = [];
+        for (let d = 1; d <= 5; d++) {
+          rows.push({
+            funcionario_id: funcionarioId,
+            dia_semana: d,
+            atividade_id: payload.atividade_id,
+            hora_inicio: hi,
+            hora_fim: hf,
+            ordem: 0,
+            cadencia: "diaria",
+            grupo_id: grupoId,
+          });
+        }
+        const { error } = await supabase.from("rotina_blocos").insert(rows);
+        if (error) throw error;
+        return { diaria: true };
+      }
+
       const conflict = checkConflict(payload.startMin, payload.endMin);
       if (conflict) throw new Error(conflict);
       const { error } = await supabase.from("rotina_blocos").insert({
         funcionario_id: funcionarioId,
         dia_semana: dia,
         atividade_id: payload.atividade_id,
-        hora_inicio: minToHm(payload.startMin),
-        hora_fim: minToHm(payload.endMin),
+        hora_inicio: hi,
+        hora_fim: hf,
         ordem: blocos.length,
-        cadencia: normalizeCadencia(payload.cadencia),
+        cadencia: cad,
       });
       if (error) throw error;
+      return { diaria: false };
     },
-    onSuccess: () => {
-      toast.success(t("construtor.guardado"));
-      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId, dia] });
+    onSuccess: (r) => {
+      toast.success(r?.diaria ? t("construtor.diariaCriada") : t("construtor.guardado"));
+      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -270,12 +307,27 @@ function ConstrutorPage() {
       };
       if (payload.atividade_id) upd.atividade_id = payload.atividade_id;
       if (payload.cadencia) upd.cadencia = payload.cadencia;
+
+      const target = blocos.find((b) => b.id === payload.id);
+      if (target?.grupo_id && target.cadencia === "diaria" && (payload.cadencia ?? "diaria") === "diaria") {
+        // Propagar a todo o grupo (seg-sex)
+        const { error } = await supabase
+          .from("rotina_blocos")
+          .update(upd)
+          .eq("grupo_id", target.grupo_id);
+        if (error) throw error;
+        return;
+      }
+      // Se mudou cadencia para fora de 'diaria', desliga do grupo
+      if (target?.grupo_id && payload.cadencia && payload.cadencia !== "diaria") {
+        (upd as Record<string, unknown>).grupo_id = null;
+      }
       const { error } = await supabase.from("rotina_blocos").update(upd).eq("id", payload.id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success(t("construtor.guardado"));
-      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId, dia] });
+      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId] });
       setEditing(null);
     },
     onError: (e: Error) => toast.error(e.message),
@@ -283,12 +335,18 @@ function ConstrutorPage() {
 
   const deleteBloco = useMutation({
     mutationFn: async (id: string) => {
+      const target = blocos.find((b) => b.id === id);
+      if (target?.grupo_id) {
+        const { error } = await supabase.from("rotina_blocos").delete().eq("grupo_id", target.grupo_id);
+        if (error) throw error;
+        return;
+      }
       const { error } = await supabase.from("rotina_blocos").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success(t("construtor.removido"));
-      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId, dia] });
+      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -889,6 +947,9 @@ function EditDialog({
             <CadenciaSelect value={cadencia} onChange={setCadencia} />
             <span className="text-[11px] text-muted-foreground">{t("construtor.cadencia.help")}</span>
           </label>
+          <div className="col-span-2">
+            <ExcecoesSection blocoId={bloco.id} />
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
@@ -1003,5 +1064,130 @@ function MiniCadenciaBadge({ cadencia }: { cadencia: Cadencia }) {
     <span className={`shrink-0 rounded-full px-1.5 py-px text-[10px] font-semibold ${cls}`}>
       {t(`atividades.cadencia.badge.${cadencia}`)}
     </span>
+  );
+}
+
+// ---------- Exceções por bloco ----------
+function ExcecoesSection({ blocoId }: { blocoId: string }) {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  const [novaData, setNovaData] = useState<string>("");
+  const [motivo, setMotivo] = useState<string>("");
+
+  const excQ = useQuery({
+    queryKey: ["bloco-excecoes", blocoId],
+    queryFn: async (): Promise<Array<{ id: string; data: string; motivo: string | null }>> => {
+      const { data, error } = await supabase
+        .from("rotina_bloco_excecoes")
+        .select("id, data, motivo")
+        .eq("bloco_id", blocoId)
+        .order("data");
+      if (error) throw error;
+      return (data ?? []) as Array<{ id: string; data: string; motivo: string | null }>;
+    },
+  });
+
+  const adicionar = useMutation({
+    mutationFn: async () => {
+      if (!novaData) throw new Error("—");
+      const { error } = await supabase.rpc("saltar_bloco_data", {
+        _bloco_id: blocoId,
+        _data: novaData,
+        _motivo: motivo || undefined,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setNovaData("");
+      setMotivo("");
+      qc.invalidateQueries({ queryKey: ["bloco-excecoes", blocoId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const remover = useMutation({
+    mutationFn: async (data: string) => {
+      const { error } = await supabase.rpc("remover_excecao_bloco", {
+        _bloco_id: blocoId,
+        _data: data,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["bloco-excecoes", blocoId] }),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const items = excQ.data ?? [];
+
+  return (
+    <div className="rounded-md border border-border bg-muted/30 p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm font-medium text-foreground">{t("construtor.excecoes.titulo")}</span>
+      </div>
+      <p className="mb-2 text-[11px] text-muted-foreground">{t("construtor.excecoes.ajuda")}</p>
+
+      {items.length === 0 ? (
+        <p className="mb-2 text-xs text-muted-foreground">{t("construtor.excecoes.vazio")}</p>
+      ) : (
+        <ul className="mb-3 flex flex-col gap-1">
+          {items.map((e) => (
+            <li
+              key={e.id}
+              className="flex items-center justify-between rounded-md border border-border bg-background px-2 py-1 text-xs"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium text-foreground">
+                  {new Date(e.data + "T00:00:00").toLocaleDateString("pt-PT", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                {e.motivo && <span className="text-muted-foreground">{e.motivo}</span>}
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => remover.mutate(e.data)}
+                disabled={remover.isPending}
+              >
+                {t("construtor.excecoes.remover")}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="flex flex-col gap-1 text-xs">
+          <span className="text-muted-foreground">{t("construtor.excecoes.adicionar")}</span>
+          <input
+            type="date"
+            value={novaData}
+            onChange={(ev) => setNovaData(ev.target.value)}
+            className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+          />
+        </label>
+        <label className="flex flex-1 flex-col gap-1 text-xs">
+          <span className="text-muted-foreground">Motivo</span>
+          <input
+            type="text"
+            value={motivo}
+            onChange={(ev) => setMotivo(ev.target.value)}
+            placeholder="—"
+            className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+          />
+        </label>
+        <Button
+          size="sm"
+          onClick={() => adicionar.mutate()}
+          disabled={!novaData || adicionar.isPending}
+        >
+          +
+        </Button>
+      </div>
+    </div>
   );
 }

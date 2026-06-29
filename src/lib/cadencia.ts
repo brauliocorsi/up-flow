@@ -1,4 +1,5 @@
 export type Cadencia =
+  | "diaria"
   | "semanal"
   | "quinzenal_a"
   | "quinzenal_b"
@@ -9,6 +10,7 @@ export type Cadencia =
   | "mensal_ultima";
 
 export const CADENCIAS: Cadencia[] = [
+  "diaria",
   "semanal",
   "quinzenal_a",
   "quinzenal_b",
