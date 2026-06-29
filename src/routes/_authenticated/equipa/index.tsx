@@ -461,6 +461,12 @@ function EquipaPage() {
                   );
                 })}
               </div>
+              {f.email && (
+                <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Mail className="h-3.5 w-3.5" />
+                  <span className="truncate" title={f.email}>{f.email}</span>
+                </div>
+              )}
               <div className="flex items-center justify-end gap-1">
                 <IconAction onClick={() => { setEditing(f); setAdding(false); }} title={t("equipa.edit")} tone="primary">
                   <Pencil className="h-3.5 w-3.5" />
