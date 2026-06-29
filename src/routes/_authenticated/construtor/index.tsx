@@ -1066,3 +1066,128 @@ function MiniCadenciaBadge({ cadencia }: { cadencia: Cadencia }) {
     </span>
   );
 }
+
+// ---------- Exceções por bloco ----------
+function ExcecoesSection({ blocoId }: { blocoId: string }) {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  const [novaData, setNovaData] = useState<string>("");
+  const [motivo, setMotivo] = useState<string>("");
+
+  const excQ = useQuery({
+    queryKey: ["bloco-excecoes", blocoId],
+    queryFn: async (): Promise<Array<{ id: string; data: string; motivo: string | null }>> => {
+      const { data, error } = await supabase
+        .from("rotina_bloco_excecoes")
+        .select("id, data, motivo")
+        .eq("bloco_id", blocoId)
+        .order("data");
+      if (error) throw error;
+      return (data ?? []) as Array<{ id: string; data: string; motivo: string | null }>;
+    },
+  });
+
+  const adicionar = useMutation({
+    mutationFn: async () => {
+      if (!novaData) throw new Error("—");
+      const { error } = await supabase.rpc("saltar_bloco_data", {
+        _bloco_id: blocoId,
+        _data: novaData,
+        _motivo: motivo || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setNovaData("");
+      setMotivo("");
+      qc.invalidateQueries({ queryKey: ["bloco-excecoes", blocoId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const remover = useMutation({
+    mutationFn: async (data: string) => {
+      const { error } = await supabase.rpc("remover_excecao_bloco", {
+        _bloco_id: blocoId,
+        _data: data,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["bloco-excecoes", blocoId] }),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const items = excQ.data ?? [];
+
+  return (
+    <div className="rounded-md border border-border bg-muted/30 p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm font-medium text-foreground">{t("construtor.excecoes.titulo")}</span>
+      </div>
+      <p className="mb-2 text-[11px] text-muted-foreground">{t("construtor.excecoes.ajuda")}</p>
+
+      {items.length === 0 ? (
+        <p className="mb-2 text-xs text-muted-foreground">{t("construtor.excecoes.vazio")}</p>
+      ) : (
+        <ul className="mb-3 flex flex-col gap-1">
+          {items.map((e) => (
+            <li
+              key={e.id}
+              className="flex items-center justify-between rounded-md border border-border bg-background px-2 py-1 text-xs"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium text-foreground">
+                  {new Date(e.data + "T00:00:00").toLocaleDateString("pt-PT", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                {e.motivo && <span className="text-muted-foreground">{e.motivo}</span>}
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => remover.mutate(e.data)}
+                disabled={remover.isPending}
+              >
+                {t("construtor.excecoes.remover")}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="flex flex-col gap-1 text-xs">
+          <span className="text-muted-foreground">{t("construtor.excecoes.adicionar")}</span>
+          <input
+            type="date"
+            value={novaData}
+            onChange={(ev) => setNovaData(ev.target.value)}
+            className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+          />
+        </label>
+        <label className="flex flex-1 flex-col gap-1 text-xs">
+          <span className="text-muted-foreground">Motivo</span>
+          <input
+            type="text"
+            value={motivo}
+            onChange={(ev) => setMotivo(ev.target.value)}
+            placeholder="—"
+            className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+          />
+        </label>
+        <Button
+          size="sm"
+          onClick={() => adicionar.mutate()}
+          disabled={!novaData || adicionar.isPending}
+        >
+          +
+        </Button>
+      </div>
+    </div>
+  );
+}
