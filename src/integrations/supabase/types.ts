@@ -812,6 +812,20 @@ export type Database = {
       }
       is_my_funcionario: { Args: { _funcionario_id: string }; Returns: boolean }
       limpar_dados_demo: { Args: { _data: string }; Returns: undefined }
+      listar_funcionarios_com_email: {
+        Args: never
+        Returns: {
+          ativo: boolean
+          cor: string
+          email: string
+          funcao_id: string
+          id: string
+          nome: string
+          papel: string
+          setores: Json
+          user_id: string
+        }[]
+      }
       listar_users_nao_associados: {
         Args: never
         Returns: {
