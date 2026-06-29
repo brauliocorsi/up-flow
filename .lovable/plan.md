@@ -1,29 +1,56 @@
 ## Objetivo
 
-A grelha do construtor continua a repetir-se TODAS as semanas. Para atividades quinzenais ou mensais passas a escolher **em que semana** elas aparecem **por bloco** (não na biblioteca). Assim podes colocar a mesma atividade em dois espaços diferentes com semanas diferentes (ex.: "Limpeza profunda" às 3ª 09:00 Mensal-1ª e às 3ª 09:00 Mensal-3ª).
+No /construtor, cada bloco passa a ter cadência clara (Diária, Semanal, Quinzenal A/B, Mensal por semana do mês) e o gestor pode saltar pontualmente uma data sem apagar a recorrência.
 
 ## Mudanças
 
-### 1. Base de dados
-- Adicionar coluna `cadencia text` em `rotina_blocos` (default `'semanal'`, com o mesmo CHECK dos valores já usados em `atividades`).
-- Atualizar a função `gerar_tarefas_do_dia` para usar `rb.cadencia` (a do bloco) em vez de `a.cadencia`. A cadência da biblioteca passa a ser apenas o valor sugerido ao arrastar.
+### 1. Cadência "Diária" no construtor
+- Adicionar opção `diaria` ao `CadenciaSelect` (já tem semanal/quinzenal A·B/mensal 1ª–4ª·última).
+- Ao gravar um bloco marcado como Diária, replicar o bloco automaticamente para **seg–sex (dias 1–5)** na mesma hora/atividade/ordem, com `cadencia='diaria'`. Sábado (dia 6) não é incluído por defeito.
+- Editar/apagar um bloco Diária propaga a alteração aos 5 dias (agrupados por um `grupo_id` opcional ou por match de atividade+hora+cadência; usar `grupo_id uuid` na tabela `rotina_blocos` para fiabilidade).
+- A função `cadencia_aplica('diaria', data)` devolve `true` para qualquer dia útil (ISODOW 1–5).
 
-### 2. Construtor (`/construtor`)
-- Ao arrastar uma atividade da biblioteca para um espaço, o bloco criado herda a cadência atual da atividade (pré-preenchimento) — pode depois ser alterada no bloco.
-- No diálogo de edição do bloco (já existente, com horas / atividade), adicionar um seletor **Recorrência** com as mesmas opções de `CADENCIAS` (Semanal, Quinzenal A/B, Mensal 1ª–4ª, Mensal última).
-- `BlocoView`: badge passa a refletir `bloco.cadencia` (não a da atividade). Semanal não mostra badge; quinzenal/mensal mostram badge colorido como hoje.
-- Biblioteca lateral: mantém o badge informativo (valor por defeito da atividade) — apenas leitura.
-- Type `RotinaBloco` ganha `cadencia: Cadencia`; queries e mutations (`insert`/`update`) passam a ler/escrever o campo.
+### 2. UI mais clara no construtor
+- O seletor de cadência mostra um resumo legível ("Todos os dias úteis", "Toda a semana", "Quinzenal – Semana A", "Mensal – 1ª semana", etc.).
+- Badge colorido no cartão do bloco com a cadência ativa (já existe parcialmente; uniformizar texto).
+- Ao arrastar uma atividade da biblioteca, abre o diálogo já com a cadência por defeito = `semanal`.
 
-### 3. i18n
-- Reusar as strings existentes `atividades.cadencia.*` no diálogo do bloco; acrescentar apenas `construtor.cadencia.label` e `construtor.cadencia.help` em `pt.json`.
+### 3. Exceções pontuais (saltar um dia específico)
 
-## Fora de âmbito
-- Não muda a UI da biblioteca de atividades (continua a ter cadência por defeito).
-- Não muda `/painel`, `/hoje` nem `tarefas_dia` (já lê do bloco via RPC).
-- Sem "semanas específicas" arbitrárias além das opções já suportadas (A/B e 1ª–4ª/última do mês).
+Nova tabela `rotina_bloco_excecoes`:
+- `bloco_id` (FK rotina_blocos, on delete cascade)
+- `data` (date)
+- `motivo` (text, opcional)
+- UNIQUE (bloco_id, data)
+- RLS: gestor faz tudo; funcionário vê as suas.
 
-## Validação
-1. Criar dois blocos no mesmo dia/hora-base com cadências diferentes (Mensal-1ª e Mensal-3ª) — só aparece no `/hoje` o que corresponde à data.
-2. Bloco semanal continua a aparecer todas as semanas.
-3. Alterar cadência de um bloco e regenerar tarefas do dia respeita o novo valor.
+`cadencia_aplica` / `gerar_tarefas_do_dia` passam a verificar se existe exceção para `(bloco_id, _data)` e, se sim, saltam o bloco nesse dia.
+
+Duas formas de criar exceção (conforme escolhido):
+
+**a) "Saltar este dia" no /painel e /hoje**
+- Botão de menu por tarefa pendente: "Saltar nesta data" → cria exceção para o `bloco_id` da tarefa e remove a tarefa de `tarefas_dia` desse dia.
+- Disponível ao gestor em qualquer dia; ao operador apenas no próprio dia, com confirmação.
+
+**b) Gestão de exceções no /construtor**
+- No diálogo de edição do bloco, secção "Exceções": lista de datas saltadas + date picker para adicionar/remover.
+- Indicador visual no cartão do bloco quando tem exceções futuras.
+
+### 4. Compatibilidade
+- Blocos atuais ficam com `cadencia='semanal'` (já é o default).
+- `copiar_rotina_dia` continua a copiar a cadência; ao copiar um bloco Diária, ignora (já está em todos os dias).
+- `tarefas_dia` ganha `bloco_id uuid` (nullable) para ligar de volta ao bloco original e permitir saltar exceções a partir do painel.
+
+## Ficheiros tocados
+
+- Migração SQL: `rotina_bloco_excecoes` (tabela + GRANT + RLS + policies), `rotina_blocos.grupo_id`, `tarefas_dia.bloco_id`, atualizar `cadencia_aplica` (caso `diaria`) e `gerar_tarefas_do_dia` (filtrar exceções, gravar `bloco_id`).
+- `src/routes/_authenticated/construtor/index.tsx`: opção Diária, replicação seg–sex, secção de exceções, edição/apagar propagados.
+- `src/components/CadenciaSelect.tsx`: nova opção + labels.
+- `src/routes/_authenticated/painel/index.tsx` e `hoje/index.tsx`: ação "Saltar nesta data" por tarefa.
+- i18n PT em `src/i18n/locales/pt.json`: novas chaves (`cadencia.diaria`, `construtor.excecoes.*`, `tarefa.saltar_data`).
+
+## Confirmações no fim
+
+1. Bloco Diária criado uma vez aparece de seg a sex.
+2. Marcar "Saltar nesta data" numa segunda remove só essa segunda; nas semanas seguintes a rotina mantém-se.
+3. Quinzenal e Mensal continuam a funcionar como antes.
