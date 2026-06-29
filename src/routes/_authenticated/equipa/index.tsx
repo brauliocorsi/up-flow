@@ -719,6 +719,11 @@ function FuncionarioForm({
           <HorarioEditor funcionarioId={initial.id} />
         </div>
       )}
+      {initial && (
+        <div className="mt-6 border-t border-border pt-6">
+          <AcessoEditor funcionario={initial} />
+        </div>
+      )}
       <div className="mt-6 flex flex-wrap gap-2">
         <Button onClick={() => save.mutate()} disabled={save.isPending} className="gap-2 rounded-full">
           <Save className="h-4 w-4" />
