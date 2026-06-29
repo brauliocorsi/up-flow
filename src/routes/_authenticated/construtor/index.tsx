@@ -192,7 +192,7 @@ function ConstrutorPage() {
     queryFn: async (): Promise<Bloco[]> => {
       const { data, error } = await supabase
         .from("rotina_blocos")
-        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem, cadencia")
+        .select("id, funcionario_id, dia_semana, atividade_id, hora_inicio, hora_fim, ordem, cadencia, grupo_id")
         .eq("funcionario_id", funcionarioId)
         .eq("dia_semana", dia)
         .order("hora_inicio");
