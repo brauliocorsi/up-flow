@@ -120,9 +120,12 @@
     "funcionario": "Funcionário"
   },
   "gerar": {
-    "title": "Gerar tarefas do dia",
-    "subtitle": "Cria as tarefas de hoje ({{date}}) para todos os funcionários ativos. Idempotente: se já existirem, não duplica.",
+    "title": "Gerar tarefas",
+    "subtitle": "Cria tarefas a partir de hoje ({{date}}) para todos os funcionários ativos. Idempotente: se já existirem, não duplica.",
     "action": "Gerar tarefas de hoje para a equipa",
+    "actionRange": "Gerar {{days}} dia(s) a partir de hoje",
+    "diasLabel": "Quantos dias gerar (a contar de hoje)",
+    "diasHint": "Os funcionários só veem cada dia quando a data chegar — a geração antecipada serve apenas para preparar a rotina.",
     "running": "A gerar…",
     "results": "Resultado",
     "tarefasCount": "{{count}} tarefas",
@@ -130,7 +133,11 @@
     "tarefasCount_other": "{{count}} tarefas",
     "noFuncionarios": "Não há funcionários ativos.",
     "forbidden": "Apenas gestores podem aceder a esta página.",
-    "backHome": "Voltar"
+    "backHome": "Voltar",
+    "colFuncionario": "Funcionário",
+    "colData": "Data",
+    "colTarefas": "Tarefas",
+    "totalGerado": "Total gerado: {{count}} tarefas em {{dias}} dia(s)."
   },
   "equipa": {
     "title": "Equipa",
