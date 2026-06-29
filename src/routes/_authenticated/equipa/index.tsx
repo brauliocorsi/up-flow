@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HorarioEditor } from "@/components/HorarioEditor";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
+import { atualizarAcessoFuncionario } from "@/lib/atualizar-acesso.functions";
 import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -719,6 +720,11 @@ function FuncionarioForm({
           <HorarioEditor funcionarioId={initial.id} />
         </div>
       )}
+      {initial && (
+        <div className="mt-6 border-t border-border pt-6">
+          <AcessoEditor funcionario={initial} />
+        </div>
+      )}
       <div className="mt-6 flex flex-wrap gap-2">
         <Button onClick={() => save.mutate()} disabled={save.isPending} className="gap-2 rounded-full">
           <Save className="h-4 w-4" />
@@ -756,6 +762,145 @@ function Field({
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">{children}</div>
+  );
+}
+
+function AcessoEditor({ funcionario }: { funcionario: Funcionario }) {
+  const { t } = useTranslation();
+  const callAtualizar = useServerFn(atualizarAcessoFuncionario);
+  const qc = useQueryClient();
+  const [email, setEmail] = useState(funcionario.email ?? "");
+  const [password, setPassword] = useState("");
+  const [mustChange, setMustChange] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  if (!funcionario.user_id) {
+    return (
+      <div className="space-y-2">
+        <h3 className="font-display text-sm font-semibold tracking-tight text-foreground inline-flex items-center gap-2">
+          <KeyRound className="h-4 w-4" />
+          {t("equipa.acesso.title")}
+        </h3>
+        <p className="text-sm text-muted-foreground">{t("equipa.acesso.noUser")}</p>
+      </div>
+    );
+  }
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setMsg(null);
+    const cleanEmail = email.trim();
+    const emailChanged = !!cleanEmail && cleanEmail.toLowerCase() !== (funcionario.email ?? "").toLowerCase();
+    const passwordChanged = password.length > 0;
+    if (!emailChanged && !passwordChanged) {
+      setMsg({ kind: "err", text: t("equipa.acesso.nothing") });
+      return;
+    }
+    if (passwordChanged && password.length < 8) {
+      setMsg({ kind: "err", text: t("equipa.acesso.errors.weak_password") });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await callAtualizar({
+        data: {
+          funcionario_id: funcionario.id,
+          email: emailChanged ? cleanEmail : undefined,
+          password: passwordChanged ? password : undefined,
+          must_change_password: passwordChanged ? mustChange : undefined,
+        },
+      });
+      const text =
+        res.email_changed && res.password_changed
+          ? t("equipa.acesso.successBoth")
+          : res.email_changed
+          ? t("equipa.acesso.successEmail")
+          : t("equipa.acesso.successPassword");
+      setMsg({ kind: "ok", text });
+      setPassword("");
+      setMustChange(false);
+      qc.invalidateQueries({ queryKey: ["funcionarios-all"] });
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "generic";
+      const key = `equipa.acesso.errors.${raw}`;
+      const translated = t(key);
+      setMsg({ kind: "err", text: translated === key ? t("equipa.acesso.errors.generic") : translated });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <div>
+        <h3 className="font-display text-sm font-semibold tracking-tight text-foreground inline-flex items-center gap-2">
+          <KeyRound className="h-4 w-4" />
+          {t("equipa.acesso.title")}
+        </h3>
+        <p className="mt-1 text-xs text-muted-foreground">{t("equipa.acesso.subtitle")}</p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label={t("equipa.acesso.emailLabel")}>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="email"
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              maxLength={255}
+              className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm text-foreground focus-ring"
+            />
+          </div>
+        </Field>
+        <Field label={t("equipa.acesso.passwordLabel")} hint={t("equipa.acesso.passwordHint")}>
+          <div className="relative">
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              minLength={8}
+              maxLength={128}
+              placeholder="••••••••"
+              className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm text-foreground focus-ring"
+            />
+          </div>
+        </Field>
+      </div>
+      <label className="inline-flex items-center gap-2 text-sm text-foreground">
+        <input
+          type="checkbox"
+          checked={mustChange}
+          onChange={(e) => setMustChange(e.target.checked)}
+          disabled={password.length === 0}
+          className="h-4 w-4 rounded border-input accent-[var(--primary)]"
+        />
+        <span className={cn(password.length === 0 && "text-muted-foreground")}>
+          {t("equipa.acesso.mustChange")}
+        </span>
+      </label>
+      {msg && (
+        <p
+          className={cn(
+            "rounded-md px-3 py-2 text-sm",
+            msg.kind === "ok"
+              ? "bg-primary-soft text-primary"
+              : "bg-destructive-soft text-destructive",
+          )}
+        >
+          {msg.text}
+        </p>
+      )}
+      <div>
+        <Button type="submit" disabled={loading} className="gap-2 rounded-full">
+          <Save className="h-4 w-4" />
+          {loading ? t("equipa.acesso.submitting") : t("equipa.acesso.submit")}
+        </Button>
+      </div>
+    </form>
   );
 }
 
