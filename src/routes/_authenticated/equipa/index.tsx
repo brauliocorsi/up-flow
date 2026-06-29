@@ -286,9 +286,9 @@ function EquipaPage() {
         />
       )}
 
-      <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card shadow-soft">
-        <div className="hidden md:block">
-          <table className="w-full text-sm">
+      <div className="mt-8 rounded-xl border border-border bg-card shadow-soft">
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full min-w-[1100px] text-sm">
             <thead className="bg-surface/60 text-left text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.nome")}</th>
@@ -391,7 +391,7 @@ function EquipaPage() {
                       </SelectField>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1">
                       <IconAction
                         onClick={() => { setEditing(f); setAdding(false); }}
