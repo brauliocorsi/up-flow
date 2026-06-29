@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HorarioEditor } from "@/components/HorarioEditor";
 import { useAuthUser } from "@/routes/_authenticated/route";
 import { criarFuncionario } from "@/lib/criar-funcionario.functions";
+import { atualizarAcessoFuncionario } from "@/lib/atualizar-acesso.functions";
 import { CORES_FUNCIONARIO, corFuncionario } from "@/lib/cores";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
