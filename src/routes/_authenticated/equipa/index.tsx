@@ -32,6 +32,7 @@ type Funcionario = {
   cor: string | null;
   funcao: { nome: string } | null;
   setores: { funcao_id: string }[];
+  email: string | null;
 };
 type AuthUser = { id: string; email: string };
 
