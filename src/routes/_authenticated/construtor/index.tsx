@@ -236,22 +236,58 @@ function ConstrutorPage() {
 
   const createBloco = useMutation({
     mutationFn: async (payload: { atividade_id: string; startMin: number; endMin: number; cadencia?: Cadencia }) => {
+      const cad = normalizeCadencia(payload.cadencia);
+      const hi = minToHm(payload.startMin);
+      const hf = minToHm(payload.endMin);
+
+      if (cad === "diaria") {
+        const conflict = checkConflict(payload.startMin, payload.endMin);
+        if (conflict) throw new Error(t("construtor.diariaConflito", { erro: conflict }));
+        const grupoId = (crypto as Crypto).randomUUID();
+        const rows: Array<{
+          funcionario_id: string;
+          dia_semana: number;
+          atividade_id: string;
+          hora_inicio: string;
+          hora_fim: string;
+          ordem: number;
+          cadencia: Cadencia;
+          grupo_id: string;
+        }> = [];
+        for (let d = 1; d <= 5; d++) {
+          rows.push({
+            funcionario_id: funcionarioId,
+            dia_semana: d,
+            atividade_id: payload.atividade_id,
+            hora_inicio: hi,
+            hora_fim: hf,
+            ordem: 0,
+            cadencia: "diaria",
+            grupo_id: grupoId,
+          });
+        }
+        const { error } = await supabase.from("rotina_blocos").insert(rows);
+        if (error) throw error;
+        return { diaria: true };
+      }
+
       const conflict = checkConflict(payload.startMin, payload.endMin);
       if (conflict) throw new Error(conflict);
       const { error } = await supabase.from("rotina_blocos").insert({
         funcionario_id: funcionarioId,
         dia_semana: dia,
         atividade_id: payload.atividade_id,
-        hora_inicio: minToHm(payload.startMin),
-        hora_fim: minToHm(payload.endMin),
+        hora_inicio: hi,
+        hora_fim: hf,
         ordem: blocos.length,
-        cadencia: normalizeCadencia(payload.cadencia),
+        cadencia: cad,
       });
       if (error) throw error;
+      return { diaria: false };
     },
-    onSuccess: () => {
-      toast.success(t("construtor.guardado"));
-      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId, dia] });
+    onSuccess: (r) => {
+      toast.success(r?.diaria ? t("construtor.diariaCriada") : t("construtor.guardado"));
+      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -271,12 +307,27 @@ function ConstrutorPage() {
       };
       if (payload.atividade_id) upd.atividade_id = payload.atividade_id;
       if (payload.cadencia) upd.cadencia = payload.cadencia;
+
+      const target = blocos.find((b) => b.id === payload.id);
+      if (target?.grupo_id && target.cadencia === "diaria" && (payload.cadencia ?? "diaria") === "diaria") {
+        // Propagar a todo o grupo (seg-sex)
+        const { error } = await supabase
+          .from("rotina_blocos")
+          .update(upd)
+          .eq("grupo_id", target.grupo_id);
+        if (error) throw error;
+        return;
+      }
+      // Se mudou cadencia para fora de 'diaria', desliga do grupo
+      if (target?.grupo_id && payload.cadencia && payload.cadencia !== "diaria") {
+        (upd as Record<string, unknown>).grupo_id = null;
+      }
       const { error } = await supabase.from("rotina_blocos").update(upd).eq("id", payload.id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success(t("construtor.guardado"));
-      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId, dia] });
+      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId] });
       setEditing(null);
     },
     onError: (e: Error) => toast.error(e.message),
@@ -284,12 +335,18 @@ function ConstrutorPage() {
 
   const deleteBloco = useMutation({
     mutationFn: async (id: string) => {
+      const target = blocos.find((b) => b.id === id);
+      if (target?.grupo_id) {
+        const { error } = await supabase.from("rotina_blocos").delete().eq("grupo_id", target.grupo_id);
+        if (error) throw error;
+        return;
+      }
       const { error } = await supabase.from("rotina_blocos").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success(t("construtor.removido"));
-      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId, dia] });
+      qc.invalidateQueries({ queryKey: ["construtor-blocos", funcionarioId] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
