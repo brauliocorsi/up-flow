@@ -59,6 +59,7 @@ type Bloco = {
   hora_fim: string;
   ordem: number;
   cadencia: Cadencia;
+  grupo_id: string | null;
 };
 
 const PX_PER_MIN = 1.2;
