@@ -947,6 +947,9 @@ function EditDialog({
             <CadenciaSelect value={cadencia} onChange={setCadencia} />
             <span className="text-[11px] text-muted-foreground">{t("construtor.cadencia.help")}</span>
           </label>
+          <div className="col-span-2">
+            <ExcecoesSection blocoId={bloco.id} />
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
