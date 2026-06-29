@@ -73,12 +73,15 @@ function EquipaPage() {
     enabled: !!isGestor,
     queryKey: ["funcionarios-all"],
     queryFn: async (): Promise<Funcionario[]> => {
-      const { data, error } = await supabase
-        .from("funcionarios")
-        .select("id, nome, papel, ativo, user_id, funcao_id, cor, funcao:funcoes(nome), setores:funcionario_setores(funcao_id)")
-        .order("nome");
+      const { data, error } = await supabase.rpc("listar_funcionarios_com_email");
       if (error) throw error;
-      return (data ?? []) as unknown as Funcionario[];
+      return (data ?? []).map((f: any) => ({
+        ...f,
+        funcao: null,
+        papel: f.papel as Papel,
+        setores: Array.isArray(f.setores) ? f.setores : [],
+        email: f.email ?? null,
+      })) as Funcionario[];
     },
   });
 
