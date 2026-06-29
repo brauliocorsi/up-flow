@@ -1093,7 +1093,7 @@ function ExcecoesSection({ blocoId }: { blocoId: string }) {
       const { error } = await supabase.rpc("saltar_bloco_data", {
         _bloco_id: blocoId,
         _data: novaData,
-        _motivo: motivo || null,
+        _motivo: motivo || undefined,
       });
       if (error) throw error;
     },
