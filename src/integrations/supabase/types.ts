@@ -524,6 +524,41 @@ export type Database = {
           },
         ]
       }
+      rotina_bloco_excecoes: {
+        Row: {
+          bloco_id: string
+          created_at: string
+          created_by: string | null
+          data: string
+          id: string
+          motivo: string | null
+        }
+        Insert: {
+          bloco_id: string
+          created_at?: string
+          created_by?: string | null
+          data: string
+          id?: string
+          motivo?: string | null
+        }
+        Update: {
+          bloco_id?: string
+          created_at?: string
+          created_by?: string | null
+          data?: string
+          id?: string
+          motivo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rotina_bloco_excecoes_bloco_id_fkey"
+            columns: ["bloco_id"]
+            isOneToOne: false
+            referencedRelation: "rotina_blocos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rotina_blocos: {
         Row: {
           atividade_id: string
@@ -531,6 +566,7 @@ export type Database = {
           created_at: string
           dia_semana: number
           funcionario_id: string
+          grupo_id: string | null
           hora_fim: string
           hora_inicio: string
           id: string
@@ -543,6 +579,7 @@ export type Database = {
           created_at?: string
           dia_semana: number
           funcionario_id: string
+          grupo_id?: string | null
           hora_fim: string
           hora_inicio: string
           id?: string
@@ -555,6 +592,7 @@ export type Database = {
           created_at?: string
           dia_semana?: number
           funcionario_id?: string
+          grupo_id?: string | null
           hora_fim?: string
           hora_inicio?: string
           id?: string
@@ -610,6 +648,7 @@ export type Database = {
       tarefas_dia: {
         Row: {
           atividade_id: string | null
+          bloco_id: string | null
           created_at: string
           data: string
           estado: string
@@ -625,6 +664,7 @@ export type Database = {
         }
         Insert: {
           atividade_id?: string | null
+          bloco_id?: string | null
           created_at?: string
           data: string
           estado?: string
@@ -640,6 +680,7 @@ export type Database = {
         }
         Update: {
           atividade_id?: string | null
+          bloco_id?: string | null
           created_at?: string
           data?: string
           estado?: string
@@ -659,6 +700,13 @@ export type Database = {
             columns: ["atividade_id"]
             isOneToOne: false
             referencedRelation: "atividades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_dia_bloco_id_fkey"
+            columns: ["bloco_id"]
+            isOneToOne: false
+            referencedRelation: "rotina_blocos"
             referencedColumns: ["id"]
           },
           {
@@ -840,6 +888,14 @@ export type Database = {
       migrar_templates_para_blocos: { Args: never; Returns: undefined }
       proxima_cor_funcionario: { Args: never; Returns: string }
       questao_visivel: { Args: { _questao_id: string }; Returns: boolean }
+      remover_excecao_bloco: {
+        Args: { _bloco_id: string; _data: string }
+        Returns: undefined
+      }
+      saltar_bloco_data: {
+        Args: { _bloco_id: string; _data: string; _motivo?: string }
+        Returns: undefined
+      }
       tarefa_pertence_a_mim: {
         Args: { _tarefa_dia_id: string }
         Returns: boolean
