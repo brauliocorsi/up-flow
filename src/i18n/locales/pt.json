@@ -192,6 +192,28 @@
         "funcao_not_found": "Setor inválido.",
         "generic": "Não foi possível criar. Tenta novamente."
       }
+    },
+    "acesso": {
+      "title": "Acesso e login",
+      "subtitle": "Atualiza o email ou define uma nova palavra-passe para este funcionário.",
+      "noUser": "Sem login associado. Associa um utilizador para gerir o acesso.",
+      "emailLabel": "Novo email",
+      "passwordLabel": "Nova palavra-passe",
+      "passwordHint": "Deixa em branco para manter. Mínimo 8 caracteres.",
+      "mustChange": "Obrigar a trocar palavra-passe no próximo acesso",
+      "submit": "Atualizar acesso",
+      "submitting": "A atualizar…",
+      "successEmail": "Email atualizado.",
+      "successPassword": "Palavra-passe atualizada.",
+      "successBoth": "Email e palavra-passe atualizados.",
+      "nothing": "Nada para atualizar.",
+      "errors": {
+        "email_exists": "Já existe um utilizador com este email.",
+        "weak_password": "Palavra-passe demasiado fraca.",
+        "forbidden": "Apenas gestores podem alterar acessos.",
+        "funcionario_sem_acesso": "Este funcionário não tem login associado.",
+        "generic": "Não foi possível atualizar. Tenta novamente."
+      }
     }
   },
   "atividades": {
