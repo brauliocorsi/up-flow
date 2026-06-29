@@ -291,6 +291,7 @@ function EquipaPage() {
             <thead className="bg-surface/60 text-left text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.nome")}</th>
+                <th className="px-4 py-3 font-medium">{t("equipa.col.email")}</th>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.cor")}</th>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.setores")}</th>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.papel")}</th>
