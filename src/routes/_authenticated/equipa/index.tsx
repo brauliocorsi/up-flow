@@ -313,6 +313,16 @@ function EquipaPage() {
                       {f.nome}
                     </span>
                   </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {f.email ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs">
+                        <Mail className="h-3.5 w-3.5" />
+                        <span className="truncate max-w-[180px]" title={f.email}>{f.email}</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground/60">—</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <CorPicker
                       value={f.cor}
