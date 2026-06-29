@@ -32,6 +32,7 @@ type Funcionario = {
   cor: string | null;
   funcao: { nome: string } | null;
   setores: { funcao_id: string }[];
+  email: string | null;
 };
 type AuthUser = { id: string; email: string };
 
@@ -72,12 +73,15 @@ function EquipaPage() {
     enabled: !!isGestor,
     queryKey: ["funcionarios-all"],
     queryFn: async (): Promise<Funcionario[]> => {
-      const { data, error } = await supabase
-        .from("funcionarios")
-        .select("id, nome, papel, ativo, user_id, funcao_id, cor, funcao:funcoes(nome), setores:funcionario_setores(funcao_id)")
-        .order("nome");
+      const { data, error } = await supabase.rpc("listar_funcionarios_com_email");
       if (error) throw error;
-      return (data ?? []) as unknown as Funcionario[];
+      return (data ?? []).map((f: any) => ({
+        ...f,
+        funcao: null,
+        papel: f.papel as Papel,
+        setores: Array.isArray(f.setores) ? f.setores : [],
+        email: f.email ?? null,
+      })) as Funcionario[];
     },
   });
 
@@ -287,6 +291,7 @@ function EquipaPage() {
             <thead className="bg-surface/60 text-left text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.nome")}</th>
+                <th className="px-4 py-3 font-medium">{t("equipa.col.email")}</th>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.cor")}</th>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.setores")}</th>
                 <th className="px-4 py-3 font-medium">{t("equipa.col.papel")}</th>
@@ -307,6 +312,16 @@ function EquipaPage() {
                       />
                       {f.nome}
                     </span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {f.email ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs">
+                        <Mail className="h-3.5 w-3.5" />
+                        <span className="truncate max-w-[180px]" title={f.email}>{f.email}</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground/60">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <CorPicker
@@ -410,7 +425,7 @@ function EquipaPage() {
                 </tr>
               ))}
               {funcionarios.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">{t("equipa.empty")}</td></tr>
+                <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">{t("equipa.empty")}</td></tr>
               )}
             </tbody>
           </table>
@@ -446,6 +461,12 @@ function EquipaPage() {
                   );
                 })}
               </div>
+              {f.email && (
+                <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Mail className="h-3.5 w-3.5" />
+                  <span className="truncate" title={f.email}>{f.email}</span>
+                </div>
+              )}
               <div className="flex items-center justify-end gap-1">
                 <IconAction onClick={() => { setEditing(f); setAdding(false); }} title={t("equipa.edit")} tone="primary">
                   <Pencil className="h-3.5 w-3.5" />

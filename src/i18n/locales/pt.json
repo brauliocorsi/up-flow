@@ -161,6 +161,7 @@
     "helpStep2": "Em alternativa, cria o login em Lovable Cloud → Users e associa-o aqui na coluna Login.",
     "col": {
       "nome": "Nome",
+      "email": "Email",
       "funcao": "Setor",
       "setores": "Setores",
       "papel": "Papel",
