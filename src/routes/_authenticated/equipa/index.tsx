@@ -391,7 +391,7 @@ function EquipaPage() {
                       </SelectField>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1">
                       <IconAction
                         onClick={() => { setEditing(f); setAdding(false); }}
