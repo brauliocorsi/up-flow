@@ -1,56 +1,58 @@
-## Objetivo
+# Redesign mobile-first + fila de urgências
 
-No /construtor, cada bloco passa a ter cadência clara (Diária, Semanal, Quinzenal A/B, Mensal por semana do mês) e o gestor pode saltar pontualmente uma data sem apagar a recorrência.
+Refazer a interface de toda a app numa lógica mobile → tablet → desktop, com modo escuro automático e botão manual, indicadores de eficiência por colaborador, e um novo sistema de urgências que o operador pode ordenar, pausar e retomar.
 
-## Mudanças
+## 1. Base visual e modo escuro
 
-### 1. Cadência "Diária" no construtor
-- Adicionar opção `diaria` ao `CadenciaSelect` (já tem semanal/quinzenal A·B/mensal 1ª–4ª·última).
-- Ao gravar um bloco marcado como Diária, replicar o bloco automaticamente para **seg–sex (dias 1–5)** na mesma hora/atividade/ordem, com `cadencia='diaria'`. Sábado (dia 6) não é incluído por defeito.
-- Editar/apagar um bloco Diária propaga a alteração aos 5 dias (agrupados por um `grupo_id` opcional ou por match de atividade+hora+cadência; usar `grupo_id uuid` na tabela `rotina_blocos` para fiabilidade).
-- A função `cadencia_aplica('diaria', data)` devolve `true` para qualquer dia útil (ISODOW 1–5).
+- Tema claro/escuro completo com deteção automática do sistema e botão na barra de topo (Claro / Escuro / Automático), com a escolha guardada no dispositivo.
+- Revisão dos tokens de cor para garantir contraste correto nos dois modos (estados de tarefa, cores de pessoa, urgências).
+- Alvos de toque maiores (mínimo 44px) em todos os botões, campos e linhas clicáveis.
+- Tipografia e espaçamento em escala: compacto no telemóvel, mais folgado em tablet/desktop.
 
-### 2. UI mais clara no construtor
-- O seletor de cadência mostra um resumo legível ("Todos os dias úteis", "Toda a semana", "Quinzenal – Semana A", "Mensal – 1ª semana", etc.).
-- Badge colorido no cartão do bloco com a cadência ativa (já existe parcialmente; uniformizar texto).
-- Ao arrastar uma atividade da biblioteca, abre o diálogo já com a cadência por defeito = `semanal`.
+## 2. Navegação mobile-first
 
-### 3. Exceções pontuais (saltar um dia específico)
+- Barra de topo simplificada: título da página, notificações e menu.
+- No telemóvel, barra de ações inferior com os destinos principais (Hoje, Painel, Questões, Menu); em tablet/desktop, menu lateral sempre visível.
+- Cada página passa a ter um cabeçalho consistente com título, subtítulo e ações principais agrupadas.
 
-Nova tabela `rotina_bloco_excecoes`:
-- `bloco_id` (FK rotina_blocos, on delete cascade)
-- `data` (date)
-- `motivo` (text, opcional)
-- UNIQUE (bloco_id, data)
-- RLS: gestor faz tudo; funcionário vê as suas.
+## 3. Página do operador (/hoje) mais simples de ler
 
-`cadencia_aplica` / `gerar_tarefas_do_dia` passam a verificar se existe exceção para `(bloco_id, _data)` e, se sim, saltam o bloco nesse dia.
+- Cartão grande "A decorrer agora" no topo: nome da atividade, cronómetro, previsto vs. real, e botões grandes (Concluir, Pausar, Saltar, Ajuda).
+- Lista do dia em blocos por período (manhã / tarde), com estado por cor e barra de progresso.
+- Faixa de resumo pessoal do dia: concluídas, pendentes, % de eficiência e tarefas fora do tempo.
+- Pausas fixas visualmente distintas das atividades.
 
-Duas formas de criar exceção (conforme escolhido):
+## 4. Fila de urgências (novo comportamento)
 
-**a) "Saltar este dia" no /painel e /hoje**
-- Botão de menu por tarefa pendente: "Saltar nesta data" → cria exceção para o `bloco_id` da tarefa e remove a tarefa de `tarefas_dia` desse dia.
-- Disponível ao gestor em qualquer dia; ao operador apenas no próprio dia, com confirmação.
+- Todas as urgências abertas passam a aparecer numa **fila** no topo do /hoje, ordenada por prioridade e hora.
+- O operador escolhe **qual atender primeiro** (botão "Iniciar" em qualquer urgência da fila).
+- Pode **pausar** a urgência em curso (com motivo opcional) e ela volta à fila como "Pausada", pronta a ser retomada mais tarde.
+- Pode **retomar** qualquer urgência pausada, ou voltar às atividades normais sem fechar as urgências.
+- Ao concluir a última urgência, a app pergunta se retoma a tarefa que estava pausada (comportamento atual mantido).
+- O gestor vê no /painel quem está em urgência, qual e há quanto tempo.
 
-**b) Gestão de exceções no /construtor**
-- No diálogo de edição do bloco, secção "Exceções": lista de datas saltadas + date picker para adicionar/remover.
-- Indicador visual no cartão do bloco quando tem exceções futuras.
+## 5. Indicadores de desempenho
 
-### 4. Compatibilidade
-- Blocos atuais ficam com `cadencia='semanal'` (já é o default).
-- `copiar_rotina_dia` continua a copiar a cadência; ao copiar um bloco Diária, ignora (já está em todos os dias).
-- `tarefas_dia` ganha `bloco_id uuid` (nullable) para ligar de volta ao bloco original e permitir saltar exceções a partir do painel.
+- **/painel (cartões)**: por pessoa — presente/ativo hoje (com base em execuções do dia), % de eficiência, nº de tarefas não cumpridas, e sinal de alerta quando há incumprimento ou atraso relevante.
+- **/hoje**: o próprio colaborador vê a sua eficiência do dia e o que está em falta.
+- **/relatorios**: coluna e destaque de incumprimento por colaborador no período escolhido, além dos indicadores atuais.
 
-## Ficheiros tocados
+## 6. Restantes páginas
 
-- Migração SQL: `rotina_bloco_excecoes` (tabela + GRANT + RLS + policies), `rotina_blocos.grupo_id`, `tarefas_dia.bloco_id`, atualizar `cadencia_aplica` (caso `diaria`) e `gerar_tarefas_do_dia` (filtrar exceções, gravar `bloco_id`).
-- `src/routes/_authenticated/construtor/index.tsx`: opção Diária, replicação seg–sex, secção de exceções, edição/apagar propagados.
-- `src/components/CadenciaSelect.tsx`: nova opção + labels.
-- `src/routes/_authenticated/painel/index.tsx` e `hoje/index.tsx`: ação "Saltar nesta data" por tarefa.
-- i18n PT em `src/i18n/locales/pt.json`: novas chaves (`cadencia.diaria`, `construtor.excecoes.*`, `tarefa.saltar_data`).
+Equipa, Construtor, Atividades, Questões, Gerar e Ajuda recebem o mesmo tratamento: cabeçalhos consistentes, tabelas que passam a cartões no telemóvel, diálogos em ecrã inteiro em mobile e botões maiores.
 
-## Confirmações no fim
+## Detalhes técnicos
 
-1. Bloco Diária criado uma vez aparece de seg a sex.
-2. Marcar "Saltar nesta data" numa segunda remove só essa segunda; nas semanas seguintes a rotina mantém-se.
-3. Quinzenal e Mensal continuam a funcionar como antes.
+- **Base de dados** (1 migração): acrescentar aos `eventos` o estado `pausado`, os campos `iniciado_em`, `ordem_fila` e uma tabela de períodos de atendimento para contabilizar tempo real por urgência; novas RPCs `iniciar_urgencia`, `pausar_urgencia`, `retomar_urgencia` (segurança: só o próprio operador ou gestor), mantendo `fechar_evento` como está.
+- **Tema**: provider de tema com `prefers-color-scheme` + classe `.dark` no `<html>`, persistência em localStorage; nenhum componente usa cores fixas — só tokens de `src/styles.css`.
+- **Responsivo**: seguir o padrão grid + `min-w-0` + `shrink-0` nos cabeçalhos; tabelas com vista alternativa em cartões abaixo de `sm`.
+- **Eficiência**: calculada no cliente a partir de `tarefas_dia` + `execucoes` (previsto ÷ real), sem alterar as RPCs de geração.
+- **i18n**: todas as strings novas em PT-PT em `src/i18n/locales/pt.json`.
+- Realtime mantém-se apenas no modo "ao vivo" do /painel e no /hoje, com cleanup ao mudar de data.
+
+## Validação final
+
+1. Telemóvel, tablet e desktop sem cortes nem scroll horizontal.
+2. Modo escuro automático + botão a funcionar em todas as páginas.
+3. Criar duas urgências, escolher a ordem, pausar uma, retomar depois e voltar às atividades.
+4. Cartões do painel a mostrar ativo hoje, eficiência e incumprimentos.
