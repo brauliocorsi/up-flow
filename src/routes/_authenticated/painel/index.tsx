@@ -839,7 +839,7 @@ function DetalheTarefas({
   cor: string;
 }) {
   return (
-    <table className="w-full text-sm">
+    <table className="w-full min-w-[34rem] text-sm">
       <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
         <tr>
           <th className="py-1 pr-2">#</th>
