@@ -433,10 +433,10 @@ function PainelPage() {
       </div>
 
       {/* Date navigation */}
-      <div className="mt-5 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+      <div className="mt-5 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
         <button
           onClick={() => setDataSel((d) => addDays(d, -1))}
-          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm hover:bg-accent"
+          className="min-h-11 rounded-lg border border-input bg-background px-3 text-sm hover:bg-accent"
           aria-label={t("painel.nav.prev")}
         >
           ‹ {t("painel.nav.prev")}
@@ -444,13 +444,13 @@ function PainelPage() {
         <button
           onClick={() => setDataSel(hoje)}
           disabled={isLive}
-          className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent disabled:opacity-50"
+          className="min-h-11 rounded-lg border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:opacity-50"
         >
           {t("painel.nav.today")}
         </button>
         <button
           onClick={() => setDataSel((d) => addDays(d, 1))}
-          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm hover:bg-accent"
+          className="min-h-11 rounded-lg border border-input bg-background px-3 text-sm hover:bg-accent"
           aria-label={t("painel.nav.next")}
         >
           {t("painel.nav.next")} ›
@@ -459,9 +459,10 @@ function PainelPage() {
           type="date"
           value={dataSel}
           onChange={(e) => { if (e.target.value) setDataSel(e.target.value); }}
-          className="ml-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+          className="min-h-11 flex-1 min-w-[9rem] rounded-lg border border-input bg-background px-2 text-sm"
         />
       </div>
+
 
       {urgOpen && isLive && (
         <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 p-4">
