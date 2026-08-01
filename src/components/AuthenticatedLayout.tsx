@@ -136,6 +136,19 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
         },
       ];
 
+  const bottomItems: Item[] = isGestor
+    ? [
+        { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
+        { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
+        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+      ]
+    : [
+        { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
+        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+      ];
+
+
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
