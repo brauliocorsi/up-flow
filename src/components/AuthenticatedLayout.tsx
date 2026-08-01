@@ -270,14 +270,58 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
               </div>
             ))}
           </nav>
-          <div className="mt-auto border-t border-border px-5 py-4 text-[11px] text-muted-foreground">
-            <p className="truncate">{user.email}</p>
-            <p className="mt-1 uppercase tracking-[0.18em] text-[10px]">{isGestor ? tf("roles.gestor", "Gestor") : tf("roles.funcionario", "Operador")}</p>
+          <div className="mt-auto border-t border-border px-5 py-4">
+            <div className="sm:hidden mb-3">
+              <ThemeToggle />
+            </div>
+            <p className="truncate text-[11px] text-muted-foreground">{user.email}</p>
+            <p className="mt-1 uppercase tracking-[0.18em] text-[10px] text-muted-foreground">{isGestor ? tf("roles.gestor", "Gestor") : tf("roles.funcionario", "Operador")}</p>
           </div>
         </SheetContent>
       </Sheet>
 
-      <main className="flex-1 page-enter">{children}</main>
+      <main className="flex-1 page-enter pb-20 md:pb-0">{children}</main>
+
+      {/* Navegação inferior — mobile first */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur md:hidden">
+        <ul className="mx-auto flex max-w-lg items-stretch">
+          {bottomItems.map((it) => {
+            const active = pathname === it.to || pathname.startsWith(it.to + "/");
+            const Icon = it.icon;
+            return (
+              <li key={it.to} className="flex-1">
+                <Link
+                  to={it.to}
+                  className={cn(
+                    "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium",
+                    active ? "text-foreground" : "text-muted-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="truncate px-1">{it.label}</span>
+                  {it.badge && it.badge > 0 ? (
+                    <span className="absolute top-2 right-1/2 translate-x-4 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                      {it.badge}
+                    </span>
+                  ) : null}
+                  {active && <span className="absolute top-0 h-0.5 w-10 rounded-full bg-foreground" />}
+                </Link>
+              </li>
+            );
+          })}
+          <li className="flex-1">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted-foreground"
+            >
+              <Menu className="h-5 w-5" />
+              <span>{tf("nav.more", "Mais")}</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
+
