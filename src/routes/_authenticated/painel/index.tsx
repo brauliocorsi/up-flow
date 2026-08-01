@@ -905,6 +905,10 @@ function makeCartaoType() {
     totalReal: number;
     totalPrevisto: number;
     concluidas: number;
+    saltadas: number;
+    pendentes: number;
+    eficiencia: number | null;
+    ativoHoje: boolean;
     atual: Tarefa | null;
     execAberta: Execucao | null;
     decorridoMin: number;
