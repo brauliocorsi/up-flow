@@ -726,23 +726,55 @@ function FuncionarioCard({ c, t, isLive }: { c: ReturnType<typeof makeCartaoType
 
   const cor = corFuncionario(c.f.cor);
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden shadow-sm">
+    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
       {/* Colored band — strong presence of person color */}
       <div className="h-2" style={{ backgroundColor: cor }} aria-hidden />
       <div className="p-4">
-        <div className="flex items-center gap-3">
-          <div
-            className="h-11 w-11 rounded-full text-white flex items-center justify-center text-sm font-semibold shrink-0 ring-2 ring-background shadow"
-            style={{ backgroundColor: cor }}
-          >
-            {initials(c.f.nome)}
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+          <div className="relative shrink-0">
+            <div
+              className="h-11 w-11 rounded-full text-white flex items-center justify-center text-sm font-semibold ring-2 ring-background shadow"
+              style={{ backgroundColor: cor }}
+            >
+              {initials(c.f.nome)}
+            </div>
+            {c.ativoHoje && (
+              <span
+                className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-card"
+                title={t("painel.badge.ativoDia")}
+                aria-label={t("painel.badge.ativoDia")}
+              />
+            )}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground truncate" style={{ color: cor }}>{c.f.nome}</p>
+          <div className="min-w-0">
+            <p className="font-semibold truncate" style={{ color: cor }}>{c.f.nome}</p>
             <p className="text-xs text-muted-foreground truncate">{c.f.funcao?.nome ?? "—"}</p>
           </div>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}`}>{badgeLabel}</span>
+          <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}`}>{badgeLabel}</span>
         </div>
+
+        <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-lg bg-muted/50 py-1.5">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("painel.card.eficiencia")}</p>
+            <p className={`text-sm font-semibold ${
+              c.eficiencia === null ? "text-muted-foreground"
+                : c.eficiencia >= 95 ? "text-emerald-600 dark:text-emerald-400"
+                : c.eficiencia >= 75 ? "text-amber-600 dark:text-amber-400"
+                : "text-destructive"
+            }`}>
+              {c.eficiencia === null ? "—" : `${c.eficiencia}%`}
+            </p>
+          </div>
+          <div className="rounded-lg bg-muted/50 py-1.5">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("painel.card.pendentes")}</p>
+            <p className="text-sm font-semibold text-foreground">{c.pendentes}</p>
+          </div>
+          <div className={`rounded-lg py-1.5 ${c.saltadas > 0 ? "bg-destructive/10" : "bg-muted/50"}`}>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("painel.card.naoCumpridas")}</p>
+            <p className={`text-sm font-semibold ${c.saltadas > 0 ? "text-destructive" : "text-foreground"}`}>{c.saltadas}</p>
+          </div>
+        </div>
+
 
         {c.urgencia && (
           <div className="mt-3 rounded-md border border-orange-500/40 bg-orange-500/10 px-2 py-1.5 text-xs font-medium text-orange-700 dark:text-orange-300">
