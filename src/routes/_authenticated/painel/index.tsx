@@ -661,7 +661,9 @@ function PainelPage() {
               </button>
               {open && (
                 <div className="px-4 py-3">
-                  <DetalheTarefas c={c} execByTarefa={execByTarefa} t={t} cor={cor} />
+                  <div className="-mx-1 overflow-x-auto px-1">
+                    <DetalheTarefas c={c} execByTarefa={execByTarefa} t={t} cor={cor} />
+                  </div>
                   {c.eventosFunc.length > 0 && (
                     <>
                       <h4 className="mt-4 text-xs uppercase tracking-wide text-muted-foreground">
