@@ -228,7 +228,7 @@ function HojePage() {
       const end = `${data}T23:59:59Z`;
       const { data: rows, error } = await supabase
         .from("eventos")
-        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim, prioridade, estado, tarefa_pausada_id, lido")
+        .select("id, funcionario_id, tipo, titulo, descricao, inicio, fim, prioridade, estado, tarefa_pausada_id, lido, iniciado_em, ordem_fila")
         .eq("funcionario_id", me!.id)
         .gte("inicio", start).lte("inicio", end)
         .order("inicio", { ascending: false });
