@@ -643,15 +643,32 @@ function HojePage() {
     null;
   const motivos = motivosQuery.data ?? [];
   const eventos = eventosQuery.data ?? [];
-  const eventosAbertos = eventos.filter((e) => e.estado === "aberto");
-  const urgenciaAberta = eventosAbertos.find((e) => e.prioridade === "urgente") ?? null;
+  const eventosAbertos = eventos.filter((e) => e.estado !== "fechado");
+  const urgencias = eventosAbertos
+    .filter((e) => e.prioridade === "urgente")
+    .sort((a, b) => {
+      const rank = (e: Evento) => (e.estado === "a_decorrer" ? 0 : e.estado === "pausado" ? 1 : 2);
+      const r = rank(a) - rank(b);
+      if (r !== 0) return r;
+      return (a.ordem_fila ?? 0) - (b.ordem_fila ?? 0) || a.inicio.localeCompare(b.inicio);
+    });
+  const urgenciaAtiva = urgencias.find((e) => e.estado === "a_decorrer") ?? null;
   const normaisAbertos = eventosAbertos.filter((e) => e.prioridade !== "urgente");
   const eventosFechados = eventos.filter((e) => e.estado === "fechado");
   const unread = eventosAbertos.filter((e) => !e.lido).length;
 
+  // Indicadores pessoais do dia
+  const concluidasList = tarefasAtivas.filter((tk) => tk.estado === "concluida");
+  const previstoMin = concluidasList.reduce((s, tk) => s + (tk.minutos_previstos ?? 0), 0);
+  const realMin = concluidasList.reduce((s, tk) => s + tempoGastoMs(tk.id) / 60000, 0);
+  const eficiencia = previstoMin > 0 && realMin > 0 ? Math.round((previstoMin / realMin) * 100) : null;
+  const naoCumpridas = tarefasAtivas.filter((tk) => tk.estado === "saltada").length;
+  const pendentes = tarefasAtivas.filter((tk) => tk.estado === "pendente").length;
+
   const dateFmt = new Intl.DateTimeFormat("pt-PT", {
     weekday: "long", day: "2-digit", month: "long",
   }).format(new Date());
+
 
   return (
     <Shell onSignOut={handleSignOut}>
