@@ -58,6 +58,41 @@ export type Database = {
           },
         ]
       }
+      evento_execucoes: {
+        Row: {
+          created_at: string
+          evento_id: string
+          fim: string | null
+          id: string
+          inicio: string
+          motivo: string | null
+        }
+        Insert: {
+          created_at?: string
+          evento_id: string
+          fim?: string | null
+          id?: string
+          inicio?: string
+          motivo?: string | null
+        }
+        Update: {
+          created_at?: string
+          evento_id?: string
+          fim?: string | null
+          id?: string
+          inicio?: string
+          motivo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evento_execucoes_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eventos: {
         Row: {
           created_at: string
@@ -67,8 +102,10 @@ export type Database = {
           fim: string | null
           funcionario_id: string
           id: string
+          iniciado_em: string | null
           inicio: string
           lido: boolean
+          ordem_fila: number
           prioridade: string
           tarefa_pausada_id: string | null
           tipo: string
@@ -82,8 +119,10 @@ export type Database = {
           fim?: string | null
           funcionario_id: string
           id?: string
+          iniciado_em?: string | null
           inicio?: string
           lido?: boolean
+          ordem_fila?: number
           prioridade?: string
           tarefa_pausada_id?: string | null
           tipo: string
@@ -97,8 +136,10 @@ export type Database = {
           fim?: string | null
           funcionario_id?: string
           id?: string
+          iniciado_em?: string | null
           inicio?: string
           lido?: boolean
+          ordem_fila?: number
           prioridade?: string
           tarefa_pausada_id?: string | null
           tipo?: string
@@ -858,6 +899,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      iniciar_urgencia: { Args: { _evento_id: string }; Returns: undefined }
       is_my_funcionario: { Args: { _funcionario_id: string }; Returns: boolean }
       limpar_dados_demo: { Args: { _data: string }; Returns: undefined }
       listar_funcionarios_com_email: {
@@ -886,12 +928,17 @@ export type Database = {
         Returns: undefined
       }
       migrar_templates_para_blocos: { Args: never; Returns: undefined }
+      pausar_urgencia: {
+        Args: { _evento_id: string; _motivo?: string }
+        Returns: undefined
+      }
       proxima_cor_funcionario: { Args: never; Returns: string }
       questao_visivel: { Args: { _questao_id: string }; Returns: boolean }
       remover_excecao_bloco: {
         Args: { _bloco_id: string; _data: string }
         Returns: undefined
       }
+      retomar_urgencia: { Args: { _evento_id: string }; Returns: undefined }
       saltar_bloco_data: {
         Args: { _bloco_id: string; _data: string; _motivo?: string }
         Returns: undefined

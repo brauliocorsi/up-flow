@@ -35,7 +35,7 @@ type Evento = {
   inicio: string;
   fim: string | null;
   prioridade: "urgente" | "normal";
-  estado: "aberto" | "fechado";
+  estado: "aberto" | "a_decorrer" | "pausado" | "fechado";
   tarefa_pausada_id: string | null;
   lido: boolean;
 };
@@ -263,6 +263,10 @@ function PainelPage() {
     totalReal: number;
     totalPrevisto: number;
     concluidas: number;
+    saltadas: number;
+    pendentes: number;
+    eficiencia: number | null;
+    ativoHoje: boolean;
     atual: Tarefa | null;
     execAberta: Execucao | null;
     decorridoMin: number;
@@ -276,6 +280,8 @@ function PainelPage() {
   const cartoes: Cartao[] = funcionarios.map((f) => {
     const fts = tarefas.filter((t) => t.funcionario_id === f.id);
     const concluidas = fts.filter((t) => t.estado === "concluida").length;
+    const saltadas = fts.filter((t) => t.estado === "saltada").length;
+    const pendentes = fts.filter((t) => t.estado === "pendente").length;
     // In historical mode there's no "current task" — nothing should be running in the past.
     const atual = isLive
       ? (fts.find((t) => t.estado === "a_decorrer" || t.estado === "pausada") ??
@@ -301,14 +307,36 @@ function PainelPage() {
     const excedido = !!atual && decorridoMin > atual.minutos_previstos && atual.minutos_previstos > 0;
     const eventosFunc = eventos.filter((e) => e.funcionario_id === f.id);
     const urgencia = isLive
-      ? (eventosFunc.find((e) => e.prioridade === "urgente" && e.estado === "aberto") ?? null)
+      ? (eventosFunc.find((e) => e.prioridade === "urgente" && e.estado !== "fechado") ?? null)
       : null;
+
+    // Eficiência: minutos previstos vs reais nas tarefas concluídas
+    const feitas = fts.filter((t) => t.estado === "concluida");
+    let prevMin = 0;
+    let realMin = 0;
+    for (const tk of feitas) {
+      const execs = execByTarefa.get(tk.id) ?? [];
+      const r = execs.reduce(
+        (s, e) => s + (e.fim ? (new Date(e.fim).getTime() - new Date(e.inicio).getTime()) / 60000 : 0),
+        0,
+      );
+      if (r > 0) { prevMin += tk.minutos_previstos; realMin += r; }
+    }
+    const eficiencia = realMin > 0 ? Math.round((prevMin / realMin) * 100) : null;
+
+    // Ativo no dia: tem alguma execução registada nesta data
+    const ativoHoje = fts.some((t) => (execByTarefa.get(t.id) ?? []).length > 0);
+
     return {
       f,
       tarefas: fts,
       totalReal: fts.length,
       totalPrevisto: fts.length,
       concluidas,
+      saltadas,
+      pendentes,
+      eficiencia,
+      ativoHoje,
       atual,
       execAberta,
       decorridoMin,
@@ -320,9 +348,10 @@ function PainelPage() {
     };
   });
 
+
   const cartoesVisiveis = filtroFuncs.size === 0 ? cartoes : cartoes.filter((c) => filtroFuncs.has(c.f.id));
 
-  const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado === "aberto");
+  const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado !== "fechado");
   const tempoUrgenciasMin = (() => {
     let total = 0;
     for (const e of eventos) {
@@ -404,10 +433,10 @@ function PainelPage() {
       </div>
 
       {/* Date navigation */}
-      <div className="mt-5 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+      <div className="mt-5 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
         <button
           onClick={() => setDataSel((d) => addDays(d, -1))}
-          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm hover:bg-accent"
+          className="min-h-11 rounded-lg border border-input bg-background px-3 text-sm hover:bg-accent"
           aria-label={t("painel.nav.prev")}
         >
           ‹ {t("painel.nav.prev")}
@@ -415,13 +444,13 @@ function PainelPage() {
         <button
           onClick={() => setDataSel(hoje)}
           disabled={isLive}
-          className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent disabled:opacity-50"
+          className="min-h-11 rounded-lg border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:opacity-50"
         >
           {t("painel.nav.today")}
         </button>
         <button
           onClick={() => setDataSel((d) => addDays(d, 1))}
-          className="rounded-md border border-input bg-background px-2.5 py-1.5 text-sm hover:bg-accent"
+          className="min-h-11 rounded-lg border border-input bg-background px-3 text-sm hover:bg-accent"
           aria-label={t("painel.nav.next")}
         >
           {t("painel.nav.next")} ›
@@ -430,9 +459,10 @@ function PainelPage() {
           type="date"
           value={dataSel}
           onChange={(e) => { if (e.target.value) setDataSel(e.target.value); }}
-          className="ml-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+          className="min-h-11 flex-1 min-w-[9rem] rounded-lg border border-input bg-background px-2 text-sm"
         />
       </div>
+
 
       {urgOpen && isLive && (
         <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 p-4">
@@ -631,7 +661,9 @@ function PainelPage() {
               </button>
               {open && (
                 <div className="px-4 py-3">
-                  <DetalheTarefas c={c} execByTarefa={execByTarefa} t={t} cor={cor} />
+                  <div className="-mx-1 overflow-x-auto px-1">
+                    <DetalheTarefas c={c} execByTarefa={execByTarefa} t={t} cor={cor} />
+                  </div>
                   {c.eventosFunc.length > 0 && (
                     <>
                       <h4 className="mt-4 text-xs uppercase tracking-wide text-muted-foreground">
@@ -697,23 +729,55 @@ function FuncionarioCard({ c, t, isLive }: { c: ReturnType<typeof makeCartaoType
 
   const cor = corFuncionario(c.f.cor);
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden shadow-sm">
+    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
       {/* Colored band — strong presence of person color */}
       <div className="h-2" style={{ backgroundColor: cor }} aria-hidden />
       <div className="p-4">
-        <div className="flex items-center gap-3">
-          <div
-            className="h-11 w-11 rounded-full text-white flex items-center justify-center text-sm font-semibold shrink-0 ring-2 ring-background shadow"
-            style={{ backgroundColor: cor }}
-          >
-            {initials(c.f.nome)}
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+          <div className="relative shrink-0">
+            <div
+              className="h-11 w-11 rounded-full text-white flex items-center justify-center text-sm font-semibold ring-2 ring-background shadow"
+              style={{ backgroundColor: cor }}
+            >
+              {initials(c.f.nome)}
+            </div>
+            {c.ativoHoje && (
+              <span
+                className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-card"
+                title={t("painel.badge.ativoDia")}
+                aria-label={t("painel.badge.ativoDia")}
+              />
+            )}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground truncate" style={{ color: cor }}>{c.f.nome}</p>
+          <div className="min-w-0">
+            <p className="font-semibold truncate" style={{ color: cor }}>{c.f.nome}</p>
             <p className="text-xs text-muted-foreground truncate">{c.f.funcao?.nome ?? "—"}</p>
           </div>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}`}>{badgeLabel}</span>
+          <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}`}>{badgeLabel}</span>
         </div>
+
+        <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-lg bg-muted/50 py-1.5">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("painel.card.eficiencia")}</p>
+            <p className={`text-sm font-semibold ${
+              c.eficiencia === null ? "text-muted-foreground"
+                : c.eficiencia >= 95 ? "text-emerald-600 dark:text-emerald-400"
+                : c.eficiencia >= 75 ? "text-amber-600 dark:text-amber-400"
+                : "text-destructive"
+            }`}>
+              {c.eficiencia === null ? "—" : `${c.eficiencia}%`}
+            </p>
+          </div>
+          <div className="rounded-lg bg-muted/50 py-1.5">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("painel.card.pendentes")}</p>
+            <p className="text-sm font-semibold text-foreground">{c.pendentes}</p>
+          </div>
+          <div className={`rounded-lg py-1.5 ${c.saltadas > 0 ? "bg-destructive/10" : "bg-muted/50"}`}>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("painel.card.naoCumpridas")}</p>
+            <p className={`text-sm font-semibold ${c.saltadas > 0 ? "text-destructive" : "text-foreground"}`}>{c.saltadas}</p>
+          </div>
+        </div>
+
 
         {c.urgencia && (
           <div className="mt-3 rounded-md border border-orange-500/40 bg-orange-500/10 px-2 py-1.5 text-xs font-medium text-orange-700 dark:text-orange-300">
@@ -775,7 +839,7 @@ function DetalheTarefas({
   cor: string;
 }) {
   return (
-    <table className="w-full text-sm">
+    <table className="w-full min-w-[34rem] text-sm">
       <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
         <tr>
           <th className="py-1 pr-2">#</th>
@@ -844,6 +908,10 @@ function makeCartaoType() {
     totalReal: number;
     totalPrevisto: number;
     concluidas: number;
+    saltadas: number;
+    pendentes: number;
+    eficiencia: number | null;
+    ativoHoje: boolean;
     atual: Tarefa | null;
     execAberta: Execucao | null;
     decorridoMin: number;

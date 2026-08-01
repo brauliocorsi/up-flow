@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
@@ -135,6 +136,19 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
         },
       ];
 
+  const bottomItems: Item[] = isGestor
+    ? [
+        { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
+        { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
+        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+      ]
+    : [
+        { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
+        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+      ];
+
+
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
@@ -181,14 +195,15 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <ThemeToggle className="hidden sm:inline-flex" />
             {isGestor && (
               <Link
                 to="/questoes"
-                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground focus-ring"
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground focus-ring"
                 aria-label={tf("nav.questoes", "Questões")}
                 title={tf("nav.questoes", "Questões")}
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-5 w-5" />
                 {unread > 0 && (
                   <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold text-destructive-foreground ring-2 ring-background">
                     {unread}
@@ -196,17 +211,18 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                 )}
               </Link>
             )}
-            
+
             <Button
               variant="outline"
               size="sm"
               onClick={handleSignOut}
-              className="gap-1.5 rounded-full"
+              className="h-11 gap-1.5 rounded-full px-3"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">{tf("common.signOut", "Sair")}</span>
             </Button>
           </div>
+
         </div>
       </header>
 
@@ -267,14 +283,58 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
               </div>
             ))}
           </nav>
-          <div className="mt-auto border-t border-border px-5 py-4 text-[11px] text-muted-foreground">
-            <p className="truncate">{user.email}</p>
-            <p className="mt-1 uppercase tracking-[0.18em] text-[10px]">{isGestor ? tf("roles.gestor", "Gestor") : tf("roles.funcionario", "Operador")}</p>
+          <div className="mt-auto border-t border-border px-5 py-4">
+            <div className="sm:hidden mb-3">
+              <ThemeToggle />
+            </div>
+            <p className="truncate text-[11px] text-muted-foreground">{user.email}</p>
+            <p className="mt-1 uppercase tracking-[0.18em] text-[10px] text-muted-foreground">{isGestor ? tf("roles.gestor", "Gestor") : tf("roles.funcionario", "Operador")}</p>
           </div>
         </SheetContent>
       </Sheet>
 
-      <main className="flex-1 page-enter">{children}</main>
+      <main className="flex-1 page-enter pb-20 md:pb-0">{children}</main>
+
+      {/* Navegação inferior — mobile first */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur md:hidden">
+        <ul className="mx-auto flex max-w-lg items-stretch">
+          {bottomItems.map((it) => {
+            const active = pathname === it.to || pathname.startsWith(it.to + "/");
+            const Icon = it.icon;
+            return (
+              <li key={it.to} className="flex-1">
+                <Link
+                  to={it.to}
+                  className={cn(
+                    "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium",
+                    active ? "text-foreground" : "text-muted-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="truncate px-1">{it.label}</span>
+                  {it.badge && it.badge > 0 ? (
+                    <span className="absolute top-2 right-1/2 translate-x-4 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                      {it.badge}
+                    </span>
+                  ) : null}
+                  {active && <span className="absolute top-0 h-0.5 w-10 rounded-full bg-foreground" />}
+                </Link>
+              </li>
+            );
+          })}
+          <li className="flex-1">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted-foreground"
+            >
+              <Menu className="h-5 w-5" />
+              <span>{tf("nav.more", "Mais")}</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
+
