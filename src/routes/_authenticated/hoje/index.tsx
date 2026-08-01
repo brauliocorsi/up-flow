@@ -41,6 +41,7 @@ type Execucao = {
   motivo_pausa_id: string | null;
 };
 type Motivo = { id: string; label: string };
+type EstadoEvento = "aberto" | "a_decorrer" | "pausado" | "fechado";
 type Evento = {
   id: string;
   funcionario_id: string;
@@ -50,10 +51,13 @@ type Evento = {
   inicio: string;
   fim: string | null;
   prioridade: "urgente" | "normal";
-  estado: "aberto" | "fechado";
+  estado: EstadoEvento;
   tarefa_pausada_id: string | null;
   lido: boolean;
+  iniciado_em: string | null;
+  ordem_fila: number | null;
 };
+
 
 function todayISO(): string {
   const d = new Date();
