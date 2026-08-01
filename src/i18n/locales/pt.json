@@ -30,7 +30,8 @@
     "construtor": "Construtor",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu",
-    "section": "Navegação"
+    "section": "Navegação",
+    "more": "Mais"
   },
   "setores": {
     "title": "Setores",
@@ -309,7 +310,8 @@
       "pausa": "Em pausa",
       "excedido": "Excedido",
       "urgencia": "Urgência",
-      "idle": "Sem execução"
+      "idle": "Sem execução",
+      "ativoDia": "Ativo hoje"
     },
     "estado": {
       "pendente": "Pendente",
@@ -379,6 +381,11 @@
       "todos": "Todos os funcionários",
       "selecionados": "selecionados",
       "limpar": "Limpar filtro"
+    },
+    "card": {
+      "eficiencia": "Eficiência",
+      "pendentes": "Pendentes",
+      "naoCumpridas": "Não cumpridas"
     }
   },
   "hoje": {
@@ -424,7 +431,24 @@
       "semAbertos": "Sem eventos por atender."
     },
     "hojeLabel": "Hoje",
-    "folga": "Hoje é dia de folga."
+    "folga": "Hoje é dia de folga.",
+    "urgencias": {
+      "fila": "{{n}} na fila",
+      "hint": "Podes escolher qual atender primeiro, pausar e retomar depois.",
+      "emCurso": "Em curso",
+      "pausada": "Pausada",
+      "naFila": "Na fila",
+      "iniciar": "Iniciar",
+      "retomar": "Retomar",
+      "pausar": "Pausar",
+      "semAtiva": "Nenhuma urgência em curso — escolhe uma para começar."
+    },
+    "kpi": {
+      "concluidas": "Concluídas",
+      "pendentes": "Pendentes",
+      "eficiencia": "Eficiência",
+      "naoCumpridas": "Não cumpridas"
+    }
   },
   "horario": {
     "title": "Horário de trabalho",
