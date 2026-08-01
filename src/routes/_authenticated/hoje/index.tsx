@@ -672,44 +672,69 @@ function HojePage() {
 
   return (
     <Shell onSignOut={handleSignOut}>
-      {/* Cabeçalho com avatar colorido */}
-      <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4" style={{ borderLeft: `6px solid ${cor}` }}>
+      {/* Cabeçalho com avatar colorido — mobile first */}
+      <div
+        className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-border bg-card p-4 sm:flex sm:gap-4"
+        style={{ borderLeft: `6px solid ${cor}` }}
+      >
         <div
-          className="h-14 w-14 rounded-full flex items-center justify-center text-white text-lg font-semibold shrink-0"
+          className="h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center text-white text-base sm:text-lg font-semibold shrink-0"
           style={{ backgroundColor: cor }}
         >
           {initials(me.nome)}
         </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-semibold text-foreground truncate">{me.nome}</h1>
-          <p className="text-sm text-muted-foreground">{dateFmt} · {me.funcao?.nome ?? "—"}</p>
+        <div className="min-w-0 sm:flex-1">
+          <h1 className="truncate text-xl sm:text-2xl font-semibold text-foreground">{me.nome}</h1>
+          <p className="truncate text-xs sm:text-sm text-muted-foreground">{dateFmt} · {me.funcao?.nome ?? "—"}</p>
         </div>
-        <div className="text-right">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("hoje.progresso")}</p>
-          <p className="text-xl font-semibold text-foreground">{concluidas} / {tarefasAtivas.length}</p>
+        <div className="col-span-2 flex items-center justify-between gap-2 sm:col-auto sm:justify-end">
+          <div className="sm:text-right">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{t("hoje.progresso")}</p>
+            <p className="text-lg font-semibold text-foreground">{concluidas} / {tarefasAtivas.length}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => { setBellOpen((v) => { const nv = !v; if (nv && unread > 0) marcarLidos.mutate(); return nv; }); }}
+              className="relative grid h-11 w-11 place-items-center rounded-full border border-input bg-background hover:bg-accent"
+              aria-label={t("hoje.eventos.sino")}
+              title={t("hoje.eventos.sino")}
+            >
+              <span className="text-lg">🔔</span>
+              {unread > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                  {unread}
+                </span>
+              )}
+            </button>
+            <Link
+              to="/ajuda"
+              className="grid h-11 w-11 place-items-center rounded-full border border-input bg-background hover:bg-accent text-muted-foreground hover:text-foreground"
+              aria-label={t("hoje.ajudaProcesso")}
+              title={t("hoje.ajudaProcesso")}
+            >
+              <HelpCircle className="h-5 w-5" />
+            </Link>
+          </div>
         </div>
-        <button
-          onClick={() => { setBellOpen((v) => { const nv = !v; if (nv && unread > 0) marcarLidos.mutate(); return nv; }); }}
-          className="relative ml-2 rounded-full border border-input bg-background p-2 hover:bg-accent"
-          aria-label={t("hoje.eventos.sino")}
-          title={t("hoje.eventos.sino")}
-        >
-          <span className="text-lg">🔔</span>
-          {unread > 0 && (
-            <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
-              {unread}
-            </span>
-          )}
-        </button>
-        <Link
-          to="/ajuda"
-          className="ml-1 rounded-full border border-input bg-background p-2 hover:bg-accent text-muted-foreground hover:text-foreground"
-          aria-label={t("hoje.ajudaProcesso")}
-          title={t("hoje.ajudaProcesso")}
-        >
-          <HelpCircle className="h-5 w-5" />
-        </Link>
       </div>
+
+      {/* Indicadores pessoais do dia */}
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <IndicadorHoje label={t("hoje.kpi.concluidas")} value={`${concluidas}`} tone="ok" />
+        <IndicadorHoje label={t("hoje.kpi.pendentes")} value={`${pendentes}`} />
+        <IndicadorHoje
+          label={t("hoje.kpi.eficiencia")}
+          value={eficiencia === null ? "—" : `${eficiencia}%`}
+          tone={eficiencia === null ? undefined : eficiencia >= 95 ? "ok" : eficiencia >= 75 ? "warn" : "bad"}
+        />
+        <IndicadorHoje
+          label={t("hoje.kpi.naoCumpridas")}
+          value={`${naoCumpridas}`}
+          tone={naoCumpridas > 0 ? "bad" : undefined}
+        />
+      </div>
+
+
 
       {horarioQuery.data && (horarioQuery.data.horario || horarioQuery.data.tipoDia === null) && (
         <p className="mt-2 px-1 text-xs text-muted-foreground">
