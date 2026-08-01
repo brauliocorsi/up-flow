@@ -351,7 +351,7 @@ function PainelPage() {
 
   const cartoesVisiveis = filtroFuncs.size === 0 ? cartoes : cartoes.filter((c) => filtroFuncs.has(c.f.id));
 
-  const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado === "aberto");
+  const urgenciasAbertas = eventos.filter((e) => e.tipo === "urgencia" && e.prioridade === "urgente" && e.estado !== "fechado");
   const tempoUrgenciasMin = (() => {
     let total = 0;
     for (const e of eventos) {
