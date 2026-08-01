@@ -35,7 +35,7 @@ type Evento = {
   inicio: string;
   fim: string | null;
   prioridade: "urgente" | "normal";
-  estado: "aberto" | "fechado";
+  estado: "aberto" | "a_decorrer" | "pausado" | "fechado";
   tarefa_pausada_id: string | null;
   lido: boolean;
 };
