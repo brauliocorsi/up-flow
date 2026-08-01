@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
