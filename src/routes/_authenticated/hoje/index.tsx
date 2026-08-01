@@ -1443,6 +1443,31 @@ function EstadoBadge({ estado, t }: { estado: Estado; t: TFn }) {
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${map[estado]}`}>{t(`painel.estado.${estado}`)}</span>;
 }
 
+function IndicadorHoje({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: "ok" | "warn" | "bad";
+}) {
+  const toneClass =
+    tone === "ok"
+      ? "text-emerald-600 dark:text-emerald-400"
+      : tone === "warn"
+        ? "text-amber-600 dark:text-amber-400"
+        : tone === "bad"
+          ? "text-destructive"
+          : "text-foreground";
+  return (
+    <div className="rounded-xl border border-border bg-card p-3">
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className={`mt-0.5 text-xl font-semibold ${toneClass}`}>{value}</p>
+    </div>
+  );
+}
+
 function Shell({ children }: { children: React.ReactNode; onSignOut?: () => void }) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
