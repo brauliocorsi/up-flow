@@ -181,14 +181,15 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <ThemeToggle className="hidden sm:inline-flex" />
             {isGestor && (
               <Link
                 to="/questoes"
-                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground focus-ring"
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground focus-ring"
                 aria-label={tf("nav.questoes", "Questões")}
                 title={tf("nav.questoes", "Questões")}
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-5 w-5" />
                 {unread > 0 && (
                   <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold text-destructive-foreground ring-2 ring-background">
                     {unread}
@@ -196,17 +197,18 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
                 )}
               </Link>
             )}
-            
+
             <Button
               variant="outline"
               size="sm"
               onClick={handleSignOut}
-              className="gap-1.5 rounded-full"
+              className="h-11 gap-1.5 rounded-full px-3"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">{tf("common.signOut", "Sair")}</span>
             </Button>
           </div>
+
         </div>
       </header>
 
