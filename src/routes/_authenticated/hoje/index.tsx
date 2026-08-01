@@ -843,35 +843,112 @@ function HojePage() {
         </div>
       )}
 
-      {urgenciaAberta && (
-        <div className="mt-4 rounded-xl border-2 border-destructive bg-destructive/10 p-5 animate-pulse">
-          <div className="flex items-center gap-2">
-            <span className="text-3xl">🚨</span>
-            <span className="text-xs font-bold tracking-widest text-destructive">{t("hoje.eventos.urgenciaTitulo")}</span>
+      {urgencias.length > 0 && (
+        <section className="mt-4 rounded-2xl border-2 border-destructive/70 bg-destructive/5 p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🚨</span>
+              <span className="text-xs font-bold tracking-widest text-destructive">
+                {t("hoje.eventos.urgenciaTitulo")}
+              </span>
+            </div>
+            <span className="rounded-full bg-destructive/15 px-2.5 py-1 text-xs font-semibold text-destructive">
+              {t("hoje.urgencias.fila", { n: urgencias.length })}
+            </span>
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-foreground">{urgenciaAberta.titulo}</h2>
-          {urgenciaAberta.descricao && (
-            <p className="mt-1 text-sm text-foreground/80 whitespace-pre-wrap">{urgenciaAberta.descricao}</p>
-          )}
-          <button
-            onClick={() => {
-              const tarefaPausada = urgenciaAberta.tarefa_pausada_id
-                ? tarefas.find((t) => t.id === urgenciaAberta.tarefa_pausada_id) ?? null
+          <p className="mt-2 text-xs text-muted-foreground">{t("hoje.urgencias.hint")}</p>
+
+          <ul className="mt-3 space-y-3">
+            {urgencias.map((e) => {
+              const ativa = e.estado === "a_decorrer";
+              const pausada = e.estado === "pausado";
+              const decorrido = ativa && e.iniciado_em ? now - new Date(e.iniciado_em).getTime() : 0;
+              const tarefaPausada = e.tarefa_pausada_id
+                ? tarefas.find((tk) => tk.id === e.tarefa_pausada_id) ?? null
                 : null;
-              fecharEvento.mutate({
-                eventoId: urgenciaAberta.id,
-                retomar: false,
-                tarefaId: tarefaPausada?.id ?? null,
-                tarefaTitulo: tarefaPausada?.titulo,
-              });
-            }}
-            disabled={fecharEvento.isPending}
-            className="mt-4 w-full rounded-lg bg-destructive px-4 py-4 text-base font-bold text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
-          >
-            ✓ {t("hoje.eventos.concluirUrgencia")}
-          </button>
-        </div>
+              return (
+                <li
+                  key={e.id}
+                  className={`rounded-xl border p-3 sm:p-4 ${
+                    ativa
+                      ? "border-destructive bg-destructive/10 shadow-sm"
+                      : pausada
+                        ? "border-amber-500/50 bg-amber-500/10"
+                        : "border-border bg-card"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-foreground break-words">{e.titulo}</p>
+                      {e.descricao && (
+                        <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">{e.descricao}</p>
+                      )}
+                    </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                        ativa
+                          ? "bg-destructive text-destructive-foreground"
+                          : pausada
+                            ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
+                            : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {ativa
+                        ? t("hoje.urgencias.emCurso")
+                        : pausada
+                          ? t("hoje.urgencias.pausada")
+                          : t("hoje.urgencias.naFila")}
+                    </span>
+                  </div>
+
+                  {ativa && (
+                    <p className="mt-2 font-mono text-lg text-destructive">{fmtClock(decorrido)}</p>
+                  )}
+
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {ativa ? (
+                      <button
+                        onClick={() => pausarUrgencia.mutate({ eventoId: e.id })}
+                        disabled={pausarUrgencia.isPending}
+                        className="min-h-12 rounded-xl border border-amber-500/60 bg-amber-500/15 px-4 text-sm font-semibold text-amber-800 dark:text-amber-200 hover:bg-amber-500/25 disabled:opacity-50"
+                      >
+                        ⏸ {t("hoje.urgencias.pausar")}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => iniciarUrgencia.mutate(e.id)}
+                        disabled={iniciarUrgencia.isPending}
+                        className="min-h-12 rounded-xl bg-destructive px-4 text-sm font-bold text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
+                      >
+                        {pausada ? `▶ ${t("hoje.urgencias.retomar")}` : `▶ ${t("hoje.urgencias.iniciar")}`}
+                      </button>
+                    )}
+                    <button
+                      onClick={() =>
+                        fecharEvento.mutate({
+                          eventoId: e.id,
+                          retomar: false,
+                          tarefaId: tarefaPausada?.id ?? null,
+                          tarefaTitulo: tarefaPausada?.titulo,
+                        })
+                      }
+                      disabled={fecharEvento.isPending}
+                      className="min-h-12 rounded-xl bg-emerald-600 px-4 text-sm font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
+                    >
+                      ✓ {t("hoje.eventos.concluirUrgencia")}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+
+          {!urgenciaAtiva && (
+            <p className="mt-3 text-xs text-muted-foreground">{t("hoje.urgencias.semAtiva")}</p>
+          )}
+        </section>
       )}
+
 
       {normaisAbertos.length > 0 && (
         <div className="mt-4 rounded-lg border border-border bg-card p-3">
