@@ -564,7 +564,7 @@ function HojePage() {
     mutationFn: async (args: { eventoId: string; motivo?: string | null }) => {
       const { error } = await supabase.rpc("pausar_urgencia", {
         _evento_id: args.eventoId,
-        _motivo: args.motivo ?? null,
+        _motivo: args.motivo ?? undefined,
       });
       if (error) throw error;
     },
