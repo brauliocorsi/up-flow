@@ -263,6 +263,10 @@ function PainelPage() {
     totalReal: number;
     totalPrevisto: number;
     concluidas: number;
+    saltadas: number;
+    pendentes: number;
+    eficiencia: number | null;
+    ativoHoje: boolean;
     atual: Tarefa | null;
     execAberta: Execucao | null;
     decorridoMin: number;
@@ -276,6 +280,8 @@ function PainelPage() {
   const cartoes: Cartao[] = funcionarios.map((f) => {
     const fts = tarefas.filter((t) => t.funcionario_id === f.id);
     const concluidas = fts.filter((t) => t.estado === "concluida").length;
+    const saltadas = fts.filter((t) => t.estado === "saltada").length;
+    const pendentes = fts.filter((t) => t.estado === "pendente").length;
     // In historical mode there's no "current task" — nothing should be running in the past.
     const atual = isLive
       ? (fts.find((t) => t.estado === "a_decorrer" || t.estado === "pausada") ??
@@ -301,14 +307,36 @@ function PainelPage() {
     const excedido = !!atual && decorridoMin > atual.minutos_previstos && atual.minutos_previstos > 0;
     const eventosFunc = eventos.filter((e) => e.funcionario_id === f.id);
     const urgencia = isLive
-      ? (eventosFunc.find((e) => e.prioridade === "urgente" && e.estado === "aberto") ?? null)
+      ? (eventosFunc.find((e) => e.prioridade === "urgente" && e.estado !== "fechado") ?? null)
       : null;
+
+    // Eficiência: minutos previstos vs reais nas tarefas concluídas
+    const feitas = fts.filter((t) => t.estado === "concluida");
+    let prevMin = 0;
+    let realMin = 0;
+    for (const tk of feitas) {
+      const execs = execByTarefa.get(tk.id) ?? [];
+      const r = execs.reduce(
+        (s, e) => s + (e.fim ? (new Date(e.fim).getTime() - new Date(e.inicio).getTime()) / 60000 : 0),
+        0,
+      );
+      if (r > 0) { prevMin += tk.minutos_previstos; realMin += r; }
+    }
+    const eficiencia = realMin > 0 ? Math.round((prevMin / realMin) * 100) : null;
+
+    // Ativo no dia: tem alguma execução registada nesta data
+    const ativoHoje = fts.some((t) => (execByTarefa.get(t.id) ?? []).length > 0);
+
     return {
       f,
       tarefas: fts,
       totalReal: fts.length,
       totalPrevisto: fts.length,
       concluidas,
+      saltadas,
+      pendentes,
+      eficiencia,
+      ativoHoje,
       atual,
       execAberta,
       decorridoMin,
@@ -319,6 +347,7 @@ function PainelPage() {
       eventosFunc,
     };
   });
+
 
   const cartoesVisiveis = filtroFuncs.size === 0 ? cartoes : cartoes.filter((c) => filtroFuncs.has(c.f.id));
 
