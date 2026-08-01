@@ -547,6 +547,36 @@ function HojePage() {
     onError: (e: Error) => setFeedback(e.message),
   });
 
+  const iniciarUrgencia = useMutation({
+    mutationFn: async (eventoId: string) => {
+      const { error } = await supabase.rpc("iniciar_urgencia", { _evento_id: eventoId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-tarefas", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-execucoes", me?.id, data] });
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+  const pausarUrgencia = useMutation({
+    mutationFn: async (args: { eventoId: string; motivo?: string | null }) => {
+      const { error } = await supabase.rpc("pausar_urgencia", {
+        _evento_id: args.eventoId,
+        _motivo: args.motivo ?? null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["hoje-eventos", me?.id, data] });
+      qc.invalidateQueries({ queryKey: ["hoje-execucoes", me?.id, data] });
+    },
+    onError: (e: Error) => setFeedback(e.message),
+  });
+
+
+
   const registarEvento = useMutation({
     mutationFn: async () => {
       if (!novoEv.titulo.trim()) throw new Error(t("hoje.eventos.fillRequired"));
