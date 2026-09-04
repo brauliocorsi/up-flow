@@ -25,6 +25,7 @@ import { Route as AuthenticatedChecklistsIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAtividadesIndexRouteImport } from './routes/_authenticated/atividades/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda/index'
+import { Route as AuthenticatedReportesIdRouteImport } from './routes/_authenticated/reportes/$id'
 import { Route as AuthenticatedChecklistsExecucaoIdRouteImport } from './routes/_authenticated/checklists/$execucaoId'
 
 const TrocarPasswordRoute = TrocarPasswordRouteImport.update({
@@ -114,6 +115,11 @@ const AuthenticatedAjudaIndexRoute = AuthenticatedAjudaIndexRouteImport.update({
   path: '/ajuda/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReportesIdRoute = AuthenticatedReportesIdRouteImport.update({
+  id: '/reportes/$id',
+  path: '/reportes/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedChecklistsExecucaoIdRoute =
   AuthenticatedChecklistsExecucaoIdRouteImport.update({
     id: '/checklists/$execucaoId',
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
   '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
+  '/reportes/$id': typeof AuthenticatedReportesIdRoute
   '/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/atividades/': typeof AuthenticatedAtividadesIndexRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
   '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
+  '/reportes/$id': typeof AuthenticatedReportesIdRoute
   '/ajuda': typeof AuthenticatedAjudaIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/atividades': typeof AuthenticatedAtividadesIndexRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
   '/_authenticated/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
+  '/_authenticated/reportes/$id': typeof AuthenticatedReportesIdRoute
   '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/atividades/': typeof AuthenticatedAtividadesIndexRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/trocar-password'
     | '/checklists/$execucaoId'
+    | '/reportes/$id'
     | '/ajuda/'
     | '/app/'
     | '/atividades/'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/trocar-password'
     | '/checklists/$execucaoId'
+    | '/reportes/$id'
     | '/ajuda'
     | '/app'
     | '/atividades'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/trocar-password'
     | '/_authenticated/checklists/$execucaoId'
+    | '/_authenticated/reportes/$id'
     | '/_authenticated/ajuda/'
     | '/_authenticated/app/'
     | '/_authenticated/atividades/'
@@ -356,6 +368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAjudaIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reportes/$id': {
+      id: '/_authenticated/reportes/$id'
+      path: '/reportes/$id'
+      fullPath: '/reportes/$id'
+      preLoaderRoute: typeof AuthenticatedReportesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/checklists/$execucaoId': {
       id: '/_authenticated/checklists/$execucaoId'
       path: '/checklists/$execucaoId'
@@ -368,6 +387,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedChecklistsExecucaoIdRoute: typeof AuthenticatedChecklistsExecucaoIdRoute
+  AuthenticatedReportesIdRoute: typeof AuthenticatedReportesIdRoute
   AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAtividadesIndexRoute: typeof AuthenticatedAtividadesIndexRoute
@@ -385,6 +405,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChecklistsExecucaoIdRoute:
     AuthenticatedChecklistsExecucaoIdRoute,
+  AuthenticatedReportesIdRoute: AuthenticatedReportesIdRoute,
   AuthenticatedAjudaIndexRoute: AuthenticatedAjudaIndexRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAtividadesIndexRoute: AuthenticatedAtividadesIndexRoute,
