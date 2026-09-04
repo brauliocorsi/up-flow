@@ -58,7 +58,16 @@ import {
 
 export const Route = createFileRoute("/_authenticated/admin/qualidade")({
   component: QualidadeAdminPage,
+  head: () => ({
+    meta: [
+      { title: "Painel de qualidade · UP Flow" },
+      { name: "description", content: "Indicadores de reportes, cumprimento de checklists e configuração do sistema de qualidade." },
+      { property: "og:title", content: "Painel de qualidade · UP Flow" },
+      { property: "og:description", content: "Indicadores de reportes, cumprimento de checklists e configuração do sistema de qualidade." },
+    ],
+  }),
 });
+
 
 // ---------- helpers ----------
 
