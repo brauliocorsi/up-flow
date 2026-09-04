@@ -15,6 +15,10 @@ import {
   Bell,
   LayoutGrid,
   BarChart3,
+  AlertTriangle,
+  ClipboardCheck,
+  ShieldCheck,
+
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -104,6 +108,17 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
 
   const unread = unreadQ.data ?? 0;
 
+  const qualidadeSection: Section = {
+    label: tf("nav.sectionQualidade", "Qualidade"),
+    items: [
+      { to: "/reportes", label: tf("nav.reportes", "Reportes"), icon: AlertTriangle },
+      { to: "/checklists", label: tf("nav.checklists", "Checklists"), icon: ClipboardCheck },
+      ...(isGestor
+        ? [{ to: "/admin/qualidade", label: tf("nav.adminQualidade", "Painel de qualidade"), icon: ShieldCheck }]
+        : []),
+    ],
+  };
+
   const sections: Section[] = isGestor
     ? [
         {
@@ -119,6 +134,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             { to: "/gerar", label: tf("nav.gerar", "Gerar tarefas"), icon: CalendarPlus },
           ],
         },
+        qualidadeSection,
         {
           label: tf("nav.sectionOperador", "Operador"),
           items: [
@@ -134,17 +150,21 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
             { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
           ],
         },
+        qualidadeSection,
       ];
+
 
   const bottomItems: Item[] = isGestor
     ? [
         { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
         { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
-        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+        { to: "/reportes", label: tf("nav.reportes", "Reportes"), icon: AlertTriangle },
       ]
     : [
         { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
-        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+        { to: "/checklists", label: tf("nav.checklists", "Checklists"), icon: ClipboardCheck },
+        { to: "/reportes", label: tf("nav.reportes", "Reportes"), icon: AlertTriangle },
+
       ];
 
 

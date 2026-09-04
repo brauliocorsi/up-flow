@@ -15,6 +15,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import i18n from "../i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider, themeInitScript } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
+
 
 
 function NotFoundComponent() {
@@ -144,8 +146,10 @@ function RootComponent() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <Outlet />
+          <Toaster />
         </ThemeProvider>
       </QueryClientProvider>
+
     </I18nextProvider>
   );
 }
