@@ -158,11 +158,13 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
     ? [
         { to: "/painel", label: tf("nav.painel", "Painel"), icon: LayoutDashboard },
         { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
-        { to: "/questoes", label: tf("nav.questoes", "Questões"), icon: MessageCircleQuestion, badge: unread },
+        { to: "/reportes", label: tf("nav.reportes", "Reportes"), icon: AlertTriangle },
       ]
     : [
         { to: "/hoje", label: tf("nav.hoje", "Rotina"), icon: ClipboardList },
-        { to: "/ajuda", label: tf("nav.ajuda", "Ajuda"), icon: HelpCircle },
+        { to: "/checklists", label: tf("nav.checklists", "Checklists"), icon: ClipboardCheck },
+        { to: "/reportes", label: tf("nav.reportes", "Reportes"), icon: AlertTriangle },
+
       ];
 
 
