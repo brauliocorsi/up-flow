@@ -27,6 +27,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda/index'
 import { Route as AuthenticatedReportesIdRouteImport } from './routes/_authenticated/reportes/$id'
 import { Route as AuthenticatedChecklistsExecucaoIdRouteImport } from './routes/_authenticated/checklists/$execucaoId'
+import { Route as AuthenticatedAdminQualidadeRouteImport } from './routes/_authenticated/admin/qualidade'
 
 const TrocarPasswordRoute = TrocarPasswordRouteImport.update({
   id: '/trocar-password',
@@ -126,11 +127,18 @@ const AuthenticatedChecklistsExecucaoIdRoute =
     path: '/checklists/$execucaoId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminQualidadeRoute =
+  AuthenticatedAdminQualidadeRouteImport.update({
+    id: '/admin/qualidade',
+    path: '/admin/qualidade',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/admin/qualidade': typeof AuthenticatedAdminQualidadeRoute
   '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/reportes/$id': typeof AuthenticatedReportesIdRoute
   '/ajuda/': typeof AuthenticatedAjudaIndexRoute
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/admin/qualidade': typeof AuthenticatedAdminQualidadeRoute
   '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/reportes/$id': typeof AuthenticatedReportesIdRoute
   '/ajuda': typeof AuthenticatedAjudaIndexRoute
@@ -171,6 +180,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/_authenticated/admin/qualidade': typeof AuthenticatedAdminQualidadeRoute
   '/_authenticated/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/_authenticated/reportes/$id': typeof AuthenticatedReportesIdRoute
   '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/trocar-password'
+    | '/admin/qualidade'
     | '/checklists/$execucaoId'
     | '/reportes/$id'
     | '/ajuda/'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/trocar-password'
+    | '/admin/qualidade'
     | '/checklists/$execucaoId'
     | '/reportes/$id'
     | '/ajuda'
@@ -231,6 +243,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/trocar-password'
+    | '/_authenticated/admin/qualidade'
     | '/_authenticated/checklists/$execucaoId'
     | '/_authenticated/reportes/$id'
     | '/_authenticated/ajuda/'
@@ -382,10 +395,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChecklistsExecucaoIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/qualidade': {
+      id: '/_authenticated/admin/qualidade'
+      path: '/admin/qualidade'
+      fullPath: '/admin/qualidade'
+      preLoaderRoute: typeof AuthenticatedAdminQualidadeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminQualidadeRoute: typeof AuthenticatedAdminQualidadeRoute
   AuthenticatedChecklistsExecucaoIdRoute: typeof AuthenticatedChecklistsExecucaoIdRoute
   AuthenticatedReportesIdRoute: typeof AuthenticatedReportesIdRoute
   AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
@@ -403,6 +424,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminQualidadeRoute: AuthenticatedAdminQualidadeRoute,
   AuthenticatedChecklistsExecucaoIdRoute:
     AuthenticatedChecklistsExecucaoIdRoute,
   AuthenticatedReportesIdRoute: AuthenticatedReportesIdRoute,
