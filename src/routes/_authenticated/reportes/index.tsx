@@ -349,7 +349,7 @@ function FiltroSelect({
   );
 }
 
-function CartaoReporte({ r, agora }: { r: Reporte; agora: number }) {
+function CartaoReporte({ r, agora, cor }: { r: Reporte; agora: number; cor?: string | null }) {
   const atrasado = !!(r.resposta_em_atraso || r.resolucao_em_atraso);
   const prazo = formatarPrazo(r.respondido_em ? r.prazo_resolucao : r.prazo_resposta, agora);
   return (
@@ -374,17 +374,11 @@ function CartaoReporte({ r, agora }: { r: Reporte; agora: number }) {
       </div>
       <p className="mt-1.5 line-clamp-2 text-sm font-medium text-foreground">{r.titulo}</p>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
-        <span
-          className="inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[10px]"
-          style={{ backgroundColor: `${corSetor(null)}00` }}
-        >
-          <span
-            className="h-2 w-2 rounded-full"
-            style={{ backgroundColor: corSetor(null) }}
-            data-setor={r.setor_destino_id ?? ""}
-          />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[10px]">
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: corSetor(cor) }} />
           {r.setor_destino ?? "—"}
         </span>
+
         <span
           className={cn(
             "rounded-full border px-2 py-0.5 text-[10px]",
