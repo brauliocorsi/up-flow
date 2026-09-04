@@ -13,6 +13,7 @@ import { Route as TrocarPasswordRouteImport } from './routes/trocar-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedReportesIndexRouteImport } from './routes/_authenticated/reportes/index'
 import { Route as AuthenticatedRelatoriosIndexRouteImport } from './routes/_authenticated/relatorios/index'
 import { Route as AuthenticatedQuestoesIndexRouteImport } from './routes/_authenticated/questoes/index'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel/index'
@@ -20,9 +21,11 @@ import { Route as AuthenticatedHojeIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedGerarIndexRouteImport } from './routes/_authenticated/gerar/index'
 import { Route as AuthenticatedEquipaIndexRouteImport } from './routes/_authenticated/equipa/index'
 import { Route as AuthenticatedConstrutorIndexRouteImport } from './routes/_authenticated/construtor/index'
+import { Route as AuthenticatedChecklistsIndexRouteImport } from './routes/_authenticated/checklists/index'
 import { Route as AuthenticatedAtividadesIndexRouteImport } from './routes/_authenticated/atividades/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda/index'
+import { Route as AuthenticatedChecklistsExecucaoIdRouteImport } from './routes/_authenticated/checklists/$execucaoId'
 
 const TrocarPasswordRoute = TrocarPasswordRouteImport.update({
   id: '/trocar-password',
@@ -43,6 +46,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedReportesIndexRoute =
+  AuthenticatedReportesIndexRouteImport.update({
+    id: '/reportes/',
+    path: '/reportes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedRelatoriosIndexRoute =
   AuthenticatedRelatoriosIndexRouteImport.update({
     id: '/relatorios/',
@@ -83,6 +92,12 @@ const AuthenticatedConstrutorIndexRoute =
     path: '/construtor/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedChecklistsIndexRoute =
+  AuthenticatedChecklistsIndexRouteImport.update({
+    id: '/checklists/',
+    path: '/checklists/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAtividadesIndexRoute =
   AuthenticatedAtividadesIndexRouteImport.update({
     id: '/atividades/',
@@ -99,14 +114,22 @@ const AuthenticatedAjudaIndexRoute = AuthenticatedAjudaIndexRouteImport.update({
   path: '/ajuda/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedChecklistsExecucaoIdRoute =
+  AuthenticatedChecklistsExecucaoIdRouteImport.update({
+    id: '/checklists/$execucaoId',
+    path: '/checklists/$execucaoId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/atividades/': typeof AuthenticatedAtividadesIndexRoute
+  '/checklists/': typeof AuthenticatedChecklistsIndexRoute
   '/construtor/': typeof AuthenticatedConstrutorIndexRoute
   '/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/gerar/': typeof AuthenticatedGerarIndexRoute
@@ -114,14 +137,17 @@ export interface FileRoutesByFullPath {
   '/painel/': typeof AuthenticatedPainelIndexRoute
   '/questoes/': typeof AuthenticatedQuestoesIndexRoute
   '/relatorios/': typeof AuthenticatedRelatoriosIndexRoute
+  '/reportes/': typeof AuthenticatedReportesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/ajuda': typeof AuthenticatedAjudaIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/atividades': typeof AuthenticatedAtividadesIndexRoute
+  '/checklists': typeof AuthenticatedChecklistsIndexRoute
   '/construtor': typeof AuthenticatedConstrutorIndexRoute
   '/equipa': typeof AuthenticatedEquipaIndexRoute
   '/gerar': typeof AuthenticatedGerarIndexRoute
@@ -129,6 +155,7 @@ export interface FileRoutesByTo {
   '/painel': typeof AuthenticatedPainelIndexRoute
   '/questoes': typeof AuthenticatedQuestoesIndexRoute
   '/relatorios': typeof AuthenticatedRelatoriosIndexRoute
+  '/reportes': typeof AuthenticatedReportesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,9 +163,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/trocar-password': typeof TrocarPasswordRoute
+  '/_authenticated/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/atividades/': typeof AuthenticatedAtividadesIndexRoute
+  '/_authenticated/checklists/': typeof AuthenticatedChecklistsIndexRoute
   '/_authenticated/construtor/': typeof AuthenticatedConstrutorIndexRoute
   '/_authenticated/equipa/': typeof AuthenticatedEquipaIndexRoute
   '/_authenticated/gerar/': typeof AuthenticatedGerarIndexRoute
@@ -146,6 +175,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/_authenticated/questoes/': typeof AuthenticatedQuestoesIndexRoute
   '/_authenticated/relatorios/': typeof AuthenticatedRelatoriosIndexRoute
+  '/_authenticated/reportes/': typeof AuthenticatedReportesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,9 +183,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/trocar-password'
+    | '/checklists/$execucaoId'
     | '/ajuda/'
     | '/app/'
     | '/atividades/'
+    | '/checklists/'
     | '/construtor/'
     | '/equipa/'
     | '/gerar/'
@@ -163,14 +195,17 @@ export interface FileRouteTypes {
     | '/painel/'
     | '/questoes/'
     | '/relatorios/'
+    | '/reportes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/trocar-password'
+    | '/checklists/$execucaoId'
     | '/ajuda'
     | '/app'
     | '/atividades'
+    | '/checklists'
     | '/construtor'
     | '/equipa'
     | '/gerar'
@@ -178,15 +213,18 @@ export interface FileRouteTypes {
     | '/painel'
     | '/questoes'
     | '/relatorios'
+    | '/reportes'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/trocar-password'
+    | '/_authenticated/checklists/$execucaoId'
     | '/_authenticated/ajuda/'
     | '/_authenticated/app/'
     | '/_authenticated/atividades/'
+    | '/_authenticated/checklists/'
     | '/_authenticated/construtor/'
     | '/_authenticated/equipa/'
     | '/_authenticated/gerar/'
@@ -194,6 +232,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/'
     | '/_authenticated/questoes/'
     | '/_authenticated/relatorios/'
+    | '/_authenticated/reportes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -232,6 +271,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/reportes/': {
+      id: '/_authenticated/reportes/'
+      path: '/reportes'
+      fullPath: '/reportes/'
+      preLoaderRoute: typeof AuthenticatedReportesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/relatorios/': {
       id: '/_authenticated/relatorios/'
@@ -282,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConstrutorIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checklists/': {
+      id: '/_authenticated/checklists/'
+      path: '/checklists'
+      fullPath: '/checklists/'
+      preLoaderRoute: typeof AuthenticatedChecklistsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/atividades/': {
       id: '/_authenticated/atividades/'
       path: '/atividades'
@@ -303,13 +356,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAjudaIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checklists/$execucaoId': {
+      id: '/_authenticated/checklists/$execucaoId'
+      path: '/checklists/$execucaoId'
+      fullPath: '/checklists/$execucaoId'
+      preLoaderRoute: typeof AuthenticatedChecklistsExecucaoIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedChecklistsExecucaoIdRoute: typeof AuthenticatedChecklistsExecucaoIdRoute
   AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAtividadesIndexRoute: typeof AuthenticatedAtividadesIndexRoute
+  AuthenticatedChecklistsIndexRoute: typeof AuthenticatedChecklistsIndexRoute
   AuthenticatedConstrutorIndexRoute: typeof AuthenticatedConstrutorIndexRoute
   AuthenticatedEquipaIndexRoute: typeof AuthenticatedEquipaIndexRoute
   AuthenticatedGerarIndexRoute: typeof AuthenticatedGerarIndexRoute
@@ -317,12 +379,16 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
   AuthenticatedQuestoesIndexRoute: typeof AuthenticatedQuestoesIndexRoute
   AuthenticatedRelatoriosIndexRoute: typeof AuthenticatedRelatoriosIndexRoute
+  AuthenticatedReportesIndexRoute: typeof AuthenticatedReportesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedChecklistsExecucaoIdRoute:
+    AuthenticatedChecklistsExecucaoIdRoute,
   AuthenticatedAjudaIndexRoute: AuthenticatedAjudaIndexRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAtividadesIndexRoute: AuthenticatedAtividadesIndexRoute,
+  AuthenticatedChecklistsIndexRoute: AuthenticatedChecklistsIndexRoute,
   AuthenticatedConstrutorIndexRoute: AuthenticatedConstrutorIndexRoute,
   AuthenticatedEquipaIndexRoute: AuthenticatedEquipaIndexRoute,
   AuthenticatedGerarIndexRoute: AuthenticatedGerarIndexRoute,
@@ -330,6 +396,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
   AuthenticatedQuestoesIndexRoute: AuthenticatedQuestoesIndexRoute,
   AuthenticatedRelatoriosIndexRoute: AuthenticatedRelatoriosIndexRoute,
+  AuthenticatedReportesIndexRoute: AuthenticatedReportesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
