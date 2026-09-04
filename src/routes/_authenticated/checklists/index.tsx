@@ -8,7 +8,16 @@ import { Card } from "@/components/ui/card";
 
 export const Route = createFileRoute("/_authenticated/checklists/")({
   component: ChecklistsPage,
+  head: () => ({
+    meta: [
+      { title: "Os meus checklists · UP Flow" },
+      { name: "description", content: "Verificações periódicas do teu setor: por fazer, em curso, concluídas e em falta." },
+      { property: "og:title", content: "Os meus checklists · UP Flow" },
+      { property: "og:description", content: "Verificações periódicas do teu setor: por fazer, em curso, concluídas e em falta." },
+    ],
+  }),
 });
+
 
 type Linha = {
   execucao_id: string;
