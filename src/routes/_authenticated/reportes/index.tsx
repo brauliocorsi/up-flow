@@ -250,7 +250,13 @@ function MuralReportes() {
                 </h2>
                 <div className="flex flex-col gap-2">
                   {cards.map((r) => (
-                    <CartaoReporte key={r.id} r={r} agora={agora} />
+                    <CartaoReporte
+                      key={r.id}
+                      r={r}
+                      agora={agora}
+                      cor={(setoresQ.data ?? []).find((s) => s.id === r.setor_destino_id)?.cor}
+                    />
+
                   ))}
                   {cards.length === 0 && (
                     <p className="rounded-md border border-dashed border-border px-3 py-6 text-center text-[11px] text-muted-foreground">
