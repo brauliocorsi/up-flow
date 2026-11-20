@@ -94,8 +94,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Rotinas UP" },
       { name: "twitter:description", content: "Gestão de rotinas diárias para a equipa da UP Móveis." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b4902931-1f97-4170-a0e3-f2c5d9aa6957/id-preview-de088385--165acb1c-240a-4ec6-a698-379248b9b764.lovable.app-1782295212600.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b4902931-1f97-4170-a0e3-f2c5d9aa6957/id-preview-de088385--165acb1c-240a-4ec6-a698-379248b9b764.lovable.app-1782295212600.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

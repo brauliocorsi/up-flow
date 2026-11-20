@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1795160464581,
+      "tag": "0000_central_reportes_segura",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795160794052,
+      "tag": "0001_central_reforcar_validacao_compatibilidade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795160883387,
+      "tag": "0002_central_grants_minimos",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795160928366,
+      "tag": "0003_central_privacidade_apuracao",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795160979359,
+      "tag": "0004_central_colunas_privadas",
+      "breakpoints": true
+    }
+  ]
+}

@@ -28,6 +28,7 @@ import { Trash2, GripVertical, Pencil, Plus } from "lucide-react";
 import { CADENCIAS, normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/construtor/")({
+  head: () => ({ meta: [{"title": "Construtor de rotinas · UP Flow"}, {"name": "description", "content": "Organização das rotinas semanais da equipa UP Móveis."}, {"property": "og:title", "content": "Construtor de rotinas · UP Flow"}, {"property": "og:description", "content": "Organização das rotinas semanais da equipa UP Móveis."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: ConstrutorPage,
 });
 

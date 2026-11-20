@@ -1012,6 +1012,76 @@ export type Database = {
           },
         ]
       }
+      reporte_envolvidos: {
+        Row: {
+          ativo: boolean
+          funcionario_id: string
+          id: string
+          marcado_em: string
+          marcado_por: string
+          reporte_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          funcionario_id: string
+          id?: string
+          marcado_em?: string
+          marcado_por: string
+          reporte_id: string
+        }
+        Update: {
+          ativo?: boolean
+          funcionario_id?: string
+          id?: string
+          marcado_em?: string
+          marcado_por?: string
+          reporte_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reporte_envolvidos_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_envolvidos_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
+            foreignKeyName: "reporte_envolvidos_marcado_por_fkey"
+            columns: ["marcado_por"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_envolvidos_marcado_por_fkey"
+            columns: ["marcado_por"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
+            foreignKeyName: "reporte_envolvidos_reporte_id_fkey"
+            columns: ["reporte_id"]
+            isOneToOne: false
+            referencedRelation: "reportes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_envolvidos_reporte_id_fkey"
+            columns: ["reporte_id"]
+            isOneToOne: false
+            referencedRelation: "vw_reportes_painel"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reporte_eventos: {
         Row: {
           anexos: string[]
@@ -1077,77 +1147,338 @@ export type Database = {
           },
         ]
       }
+      reporte_ficheiros: {
+        Row: {
+          caminho: string
+          criado_em: string
+          estado: string
+          evento_id: string | null
+          fase: string
+          id: string
+          ligado_em: string | null
+          mime: string
+          nome: string
+          reporte_id: string | null
+          resposta_id: string | null
+          tamanho: number
+          uploader_id: string
+        }
+        Insert: {
+          caminho: string
+          criado_em?: string
+          estado?: string
+          evento_id?: string | null
+          fase: string
+          id: string
+          ligado_em?: string | null
+          mime: string
+          nome: string
+          reporte_id?: string | null
+          resposta_id?: string | null
+          tamanho: number
+          uploader_id: string
+        }
+        Update: {
+          caminho?: string
+          criado_em?: string
+          estado?: string
+          evento_id?: string | null
+          fase?: string
+          id?: string
+          ligado_em?: string | null
+          mime?: string
+          nome?: string
+          reporte_id?: string | null
+          resposta_id?: string | null
+          tamanho?: number
+          uploader_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reporte_ficheiros_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "reporte_eventos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_ficheiros_reporte_id_fkey"
+            columns: ["reporte_id"]
+            isOneToOne: false
+            referencedRelation: "reportes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_ficheiros_reporte_id_fkey"
+            columns: ["reporte_id"]
+            isOneToOne: false
+            referencedRelation: "vw_reportes_painel"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_ficheiros_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "reporte_respostas_individuais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_ficheiros_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_ficheiros_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
+        ]
+      }
+      reporte_notificacoes: {
+        Row: {
+          criado_em: string
+          destinatario_id: string
+          id: string
+          lida_em: string | null
+          mensagem: string
+          reporte_id: string
+        }
+        Insert: {
+          criado_em?: string
+          destinatario_id: string
+          id?: string
+          lida_em?: string | null
+          mensagem: string
+          reporte_id: string
+        }
+        Update: {
+          criado_em?: string
+          destinatario_id?: string
+          id?: string
+          lida_em?: string | null
+          mensagem?: string
+          reporte_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reporte_notificacoes_destinatario_id_fkey"
+            columns: ["destinatario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_notificacoes_destinatario_id_fkey"
+            columns: ["destinatario_id"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
+            foreignKeyName: "reporte_notificacoes_reporte_id_fkey"
+            columns: ["reporte_id"]
+            isOneToOne: false
+            referencedRelation: "reportes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_notificacoes_reporte_id_fkey"
+            columns: ["reporte_id"]
+            isOneToOne: false
+            referencedRelation: "vw_reportes_painel"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reporte_respostas_individuais: {
+        Row: {
+          autor_id: string
+          criado_em: string
+          envolvido_id: string
+          id: string
+          resposta: string
+          texto: string
+        }
+        Insert: {
+          autor_id: string
+          criado_em?: string
+          envolvido_id: string
+          id?: string
+          resposta: string
+          texto: string
+        }
+        Update: {
+          autor_id?: string
+          criado_em?: string
+          envolvido_id?: string
+          id?: string
+          resposta?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reporte_respostas_individuais_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporte_respostas_individuais_autor_id_fkey"
+            columns: ["autor_id"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
+            foreignKeyName: "reporte_respostas_individuais_envolvido_id_fkey"
+            columns: ["envolvido_id"]
+            isOneToOne: false
+            referencedRelation: "reporte_envolvidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reportes: {
         Row: {
           anexos: string[]
+          apurado_em: string | null
+          apurado_por: string | null
           assumido_por: string | null
           atualizado_em: string
+          causa_alegada: string | null
+          conclusao: string | null
           contestado_em: string | null
+          correcao_resultado: string | null
+          corrigido_por: string | null
           criado_em: string
           data_prevista: string | null
           descricao: string
+          detetado_em: string | null
+          erro_confirmado: boolean
           escalado_resolucao: boolean
           escalado_resposta: boolean
           estado: string
+          evidencia_apuracao: string | null
           fechado_em: string | null
           gravidade: string
           id: string
           numero: string | null
+          ocorrido_em: string | null
           prazo_resolucao: string | null
           prazo_resposta: string | null
+          referencia_externa: string | null
+          referencia_tipo: string | null
           reportado_por: string
           respondido_em: string | null
+          responsaveis_apurados: string[]
           setor_destino_id: string
           setor_origem_id: string | null
+          tipo_causa: string
           titulo: string
+          up_care_referencia: string | null
+          validacao_evidencia: string | null
+          validado_por: string | null
         }
         Insert: {
           anexos?: string[]
+          apurado_em?: string | null
+          apurado_por?: string | null
           assumido_por?: string | null
           atualizado_em?: string
+          causa_alegada?: string | null
+          conclusao?: string | null
           contestado_em?: string | null
+          correcao_resultado?: string | null
+          corrigido_por?: string | null
           criado_em?: string
           data_prevista?: string | null
           descricao: string
+          detetado_em?: string | null
+          erro_confirmado?: boolean
           escalado_resolucao?: boolean
           escalado_resposta?: boolean
           estado?: string
+          evidencia_apuracao?: string | null
           fechado_em?: string | null
           gravidade?: string
           id?: string
           numero?: string | null
+          ocorrido_em?: string | null
           prazo_resolucao?: string | null
           prazo_resposta?: string | null
+          referencia_externa?: string | null
+          referencia_tipo?: string | null
           reportado_por: string
           respondido_em?: string | null
+          responsaveis_apurados?: string[]
           setor_destino_id: string
           setor_origem_id?: string | null
+          tipo_causa?: string
           titulo: string
+          up_care_referencia?: string | null
+          validacao_evidencia?: string | null
+          validado_por?: string | null
         }
         Update: {
           anexos?: string[]
+          apurado_em?: string | null
+          apurado_por?: string | null
           assumido_por?: string | null
           atualizado_em?: string
+          causa_alegada?: string | null
+          conclusao?: string | null
           contestado_em?: string | null
+          correcao_resultado?: string | null
+          corrigido_por?: string | null
           criado_em?: string
           data_prevista?: string | null
           descricao?: string
+          detetado_em?: string | null
+          erro_confirmado?: boolean
           escalado_resolucao?: boolean
           escalado_resposta?: boolean
           estado?: string
+          evidencia_apuracao?: string | null
           fechado_em?: string | null
           gravidade?: string
           id?: string
           numero?: string | null
+          ocorrido_em?: string | null
           prazo_resolucao?: string | null
           prazo_resposta?: string | null
+          referencia_externa?: string | null
+          referencia_tipo?: string | null
           reportado_por?: string
           respondido_em?: string | null
+          responsaveis_apurados?: string[]
           setor_destino_id?: string
           setor_origem_id?: string | null
+          tipo_causa?: string
           titulo?: string
+          up_care_referencia?: string | null
+          validacao_evidencia?: string | null
+          validado_por?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reportes_apurado_por_fkey"
+            columns: ["apurado_por"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reportes_apurado_por_fkey"
+            columns: ["apurado_por"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
           {
             foreignKeyName: "reportes_assumido_por_fkey"
             columns: ["assumido_por"]
@@ -1158,6 +1489,20 @@ export type Database = {
           {
             foreignKeyName: "reportes_assumido_por_fkey"
             columns: ["assumido_por"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
+            foreignKeyName: "reportes_corrigido_por_fkey"
+            columns: ["corrigido_por"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reportes_corrigido_por_fkey"
+            columns: ["corrigido_por"]
             isOneToOne: false
             referencedRelation: "vw_atividade_colaborador"
             referencedColumns: ["funcionario_id"]
@@ -1189,6 +1534,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "funcoes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reportes_validado_por_fkey"
+            columns: ["validado_por"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reportes_validado_por_fkey"
+            columns: ["validado_por"]
+            isOneToOne: false
+            referencedRelation: "vw_atividade_colaborador"
+            referencedColumns: ["funcionario_id"]
           },
         ]
       }
@@ -1628,6 +1987,25 @@ export type Database = {
         Args: { _cadencia: string; _data: string }
         Returns: boolean
       }
+      central_diretorio: { Args: never; Returns: Json }
+      central_gerir: { Args: { p_id: string }; Returns: boolean }
+      central_gestor: { Args: never; Returns: boolean }
+      central_ler_notificacoes: { Args: never; Returns: undefined }
+      central_lista: { Args: never; Returns: Json }
+      central_metricas: { Args: never; Returns: Json }
+      central_notificar: {
+        Args: { p_id: string; p_texto: string }
+        Returns: undefined
+      }
+      central_storage_ver: {
+        Args: { p_bucket: string; p_path: string }
+        Returns: boolean
+      }
+      central_submeter: {
+        Args: { p_acao: string; p_dados: Json; p_ficheiros?: string[] }
+        Returns: Json
+      }
+      central_ver: { Args: { p_id: string }; Returns: boolean }
       copiar_rotina_dia: {
         Args: {
           _dia_origem: number
@@ -1740,26 +2118,43 @@ export type Database = {
         }
         Returns: {
           anexos: string[]
+          apurado_em: string | null
+          apurado_por: string | null
           assumido_por: string | null
           atualizado_em: string
+          causa_alegada: string | null
+          conclusao: string | null
           contestado_em: string | null
+          correcao_resultado: string | null
+          corrigido_por: string | null
           criado_em: string
           data_prevista: string | null
           descricao: string
+          detetado_em: string | null
+          erro_confirmado: boolean
           escalado_resolucao: boolean
           escalado_resposta: boolean
           estado: string
+          evidencia_apuracao: string | null
           fechado_em: string | null
           gravidade: string
           id: string
           numero: string | null
+          ocorrido_em: string | null
           prazo_resolucao: string | null
           prazo_resposta: string | null
+          referencia_externa: string | null
+          referencia_tipo: string | null
           reportado_por: string
           respondido_em: string | null
+          responsaveis_apurados: string[]
           setor_destino_id: string
           setor_origem_id: string | null
+          tipo_causa: string
           titulo: string
+          up_care_referencia: string | null
+          validacao_evidencia: string | null
+          validado_por: string | null
         }
         SetofOptions: {
           from: "*"

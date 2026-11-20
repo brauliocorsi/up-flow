@@ -27,6 +27,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
+import { useNotificacoesCentral } from "@/components/qualidade/NotificacoesCentral";
 
 type Item = { to: string; label: string; icon: typeof Menu; badge?: number };
 type Section = { label: string; items: Item[] };
@@ -41,6 +42,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const reportesNotices = useNotificacoesCentral();
 
   const { data: isGestor } = useQuery({
     queryKey: ["is-gestor", user.id],
@@ -111,6 +113,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const qualidadeSection: Section = {
     label: tf("nav.sectionQualidade", "Qualidade"),
     items: [
+      { to: "/reportes/kanban", label: "Central de Erros", icon: AlertTriangle, badge: reportesNotices.data?.length },
       { to: "/reportes", label: tf("nav.reportes", "Reportes"), icon: AlertTriangle },
       { to: "/checklists", label: tf("nav.checklists", "Checklists"), icon: ClipboardCheck },
       ...(isGestor
@@ -215,6 +218,7 @@ export function AuthenticatedLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <Button asChild variant="ghost" size="icon"><Link to="/reportes/kanban" aria-label="Avisos de reportes" title="Avisos de reportes"><AlertTriangle className="h-5 w-5"/>{(reportesNotices.data?.length??0)>0&&<span className="text-xs text-destructive">{reportesNotices.data?.length}</span>}</Link></Button>
             <ThemeToggle className="hidden sm:inline-flex" />
             {isGestor && (
               <Link

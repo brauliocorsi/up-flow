@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/auth-context";
 
 export const Route = createFileRoute("/_authenticated/relatorios/")({
+  head: () => ({ meta: [{"title": "Relatórios de rotinas · UP Flow"}, {"name": "description", "content": "Indicadores de cumprimento e eficiência das rotinas UP Flow."}, {"property": "og:title", "content": "Relatórios de rotinas · UP Flow"}, {"property": "og:description", "content": "Indicadores de cumprimento e eficiência das rotinas UP Flow."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: RelatoriosPage,
   errorComponent: ({ error }) => (
     <main className="px-6 py-10 max-w-5xl mx-auto">

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [{"title": "Início · UP Flow"}, {"name": "description", "content": "Acesso às rotinas e qualidade da UP Móveis."}, {"property": "og:title", "content": "Início · UP Flow"}, {"property": "og:description", "content": "Acesso às rotinas e qualidade da UP Móveis."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: IndexRedirect,
 });
 

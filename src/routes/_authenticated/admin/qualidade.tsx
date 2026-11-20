@@ -40,6 +40,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { SetoresManager } from "@/components/SetoresManager";
+import { MetricasCentral } from "@/components/qualidade/MetricasCentral";
 import { cn } from "@/lib/utils";
 import {
   useEGestor,
@@ -63,6 +64,8 @@ export const Route = createFileRoute("/_authenticated/admin/qualidade")({
       { title: "Painel de qualidade · UP Flow" },
       { name: "description", content: "Indicadores de reportes, cumprimento de checklists e configuração do sistema de qualidade." },
       { property: "og:title", content: "Painel de qualidade · UP Flow" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Indicadores de reportes, cumprimento de checklists e configuração do sistema de qualidade." },
     ],
   }),
@@ -170,6 +173,7 @@ function QualidadeAdminPage() {
       <Tabs defaultValue="indicadores" className="mt-8">
         <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="indicadores">Indicadores</TabsTrigger>
+          <TabsTrigger value="apurados">Erros apurados</TabsTrigger>
           <TabsTrigger value="reportes">Reportes</TabsTrigger>
           <TabsTrigger value="checklists">Cumprimento de checklists</TabsTrigger>
           <TabsTrigger value="atividade">Atividade por pessoa</TabsTrigger>
@@ -179,6 +183,7 @@ function QualidadeAdminPage() {
         <TabsContent value="indicadores">
           <TabIndicadores />
         </TabsContent>
+        <TabsContent value="apurados"><MetricasCentral /></TabsContent>
         <TabsContent value="reportes">
           <TabReportes />
         </TabsContent>

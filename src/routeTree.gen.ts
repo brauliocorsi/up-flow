@@ -25,6 +25,7 @@ import { Route as AuthenticatedChecklistsIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAtividadesIndexRouteImport } from './routes/_authenticated/atividades/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda/index'
+import { Route as AuthenticatedReportesKanbanRouteImport } from './routes/_authenticated/reportes/kanban'
 import { Route as AuthenticatedReportesIdRouteImport } from './routes/_authenticated/reportes/$id'
 import { Route as AuthenticatedChecklistsExecucaoIdRouteImport } from './routes/_authenticated/checklists/$execucaoId'
 import { Route as AuthenticatedAdminQualidadeRouteImport } from './routes/_authenticated/admin/qualidade'
@@ -116,6 +117,12 @@ const AuthenticatedAjudaIndexRoute = AuthenticatedAjudaIndexRouteImport.update({
   path: '/ajuda/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReportesKanbanRoute =
+  AuthenticatedReportesKanbanRouteImport.update({
+    id: '/reportes/kanban',
+    path: '/reportes/kanban',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportesIdRoute = AuthenticatedReportesIdRouteImport.update({
   id: '/reportes/$id',
   path: '/reportes/$id',
@@ -141,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/admin/qualidade': typeof AuthenticatedAdminQualidadeRoute
   '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/reportes/$id': typeof AuthenticatedReportesIdRoute
+  '/reportes/kanban': typeof AuthenticatedReportesKanbanRoute
   '/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/atividades/': typeof AuthenticatedAtividadesIndexRoute
@@ -161,6 +169,7 @@ export interface FileRoutesByTo {
   '/admin/qualidade': typeof AuthenticatedAdminQualidadeRoute
   '/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/reportes/$id': typeof AuthenticatedReportesIdRoute
+  '/reportes/kanban': typeof AuthenticatedReportesKanbanRoute
   '/ajuda': typeof AuthenticatedAjudaIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/atividades': typeof AuthenticatedAtividadesIndexRoute
@@ -183,6 +192,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/qualidade': typeof AuthenticatedAdminQualidadeRoute
   '/_authenticated/checklists/$execucaoId': typeof AuthenticatedChecklistsExecucaoIdRoute
   '/_authenticated/reportes/$id': typeof AuthenticatedReportesIdRoute
+  '/_authenticated/reportes/kanban': typeof AuthenticatedReportesKanbanRoute
   '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/atividades/': typeof AuthenticatedAtividadesIndexRoute
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/admin/qualidade'
     | '/checklists/$execucaoId'
     | '/reportes/$id'
+    | '/reportes/kanban'
     | '/ajuda/'
     | '/app/'
     | '/atividades/'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/admin/qualidade'
     | '/checklists/$execucaoId'
     | '/reportes/$id'
+    | '/reportes/kanban'
     | '/ajuda'
     | '/app'
     | '/atividades'
@@ -246,6 +258,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/qualidade'
     | '/_authenticated/checklists/$execucaoId'
     | '/_authenticated/reportes/$id'
+    | '/_authenticated/reportes/kanban'
     | '/_authenticated/ajuda/'
     | '/_authenticated/app/'
     | '/_authenticated/atividades/'
@@ -381,6 +394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAjudaIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reportes/kanban': {
+      id: '/_authenticated/reportes/kanban'
+      path: '/reportes/kanban'
+      fullPath: '/reportes/kanban'
+      preLoaderRoute: typeof AuthenticatedReportesKanbanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reportes/$id': {
       id: '/_authenticated/reportes/$id'
       path: '/reportes/$id'
@@ -409,6 +429,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminQualidadeRoute: typeof AuthenticatedAdminQualidadeRoute
   AuthenticatedChecklistsExecucaoIdRoute: typeof AuthenticatedChecklistsExecucaoIdRoute
   AuthenticatedReportesIdRoute: typeof AuthenticatedReportesIdRoute
+  AuthenticatedReportesKanbanRoute: typeof AuthenticatedReportesKanbanRoute
   AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAtividadesIndexRoute: typeof AuthenticatedAtividadesIndexRoute
@@ -428,6 +449,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChecklistsExecucaoIdRoute:
     AuthenticatedChecklistsExecucaoIdRoute,
   AuthenticatedReportesIdRoute: AuthenticatedReportesIdRoute,
+  AuthenticatedReportesKanbanRoute: AuthenticatedReportesKanbanRoute,
   AuthenticatedAjudaIndexRoute: AuthenticatedAjudaIndexRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAtividadesIndexRoute: AuthenticatedAtividadesIndexRoute,

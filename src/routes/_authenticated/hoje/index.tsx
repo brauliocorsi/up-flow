@@ -11,6 +11,7 @@ import { NovaQuestaoDialog } from "@/components/NovaQuestaoDialog";
 import { QuestaoConversa, type QuestaoBase } from "@/components/QuestaoConversa";
 
 export const Route = createFileRoute("/_authenticated/hoje/")({
+  head: () => ({ meta: [{"title": "A minha rotina · UP Flow"}, {"name": "description", "content": "Tarefas e urgências de hoje na UP Móveis."}, {"property": "og:title", "content": "A minha rotina · UP Flow"}, {"property": "og:description", "content": "Tarefas e urgências de hoje na UP Móveis."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: HojePage,
 });
 

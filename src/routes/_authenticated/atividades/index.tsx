@@ -8,6 +8,7 @@ import { MacrosSection } from "@/components/MacrosSection";
 import { CADENCIAS, normalizeCadencia, type Cadencia } from "@/lib/cadencia";
 
 export const Route = createFileRoute("/_authenticated/atividades/")({
+  head: () => ({ meta: [{"title": "Biblioteca de atividades · UP Flow"}, {"name": "description", "content": "Gestão de atividades e cadências por setor da UP Móveis."}, {"property": "og:title", "content": "Biblioteca de atividades · UP Flow"}, {"property": "og:description", "content": "Gestão de atividades e cadências por setor da UP Móveis."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: AtividadesPage,
 });
 

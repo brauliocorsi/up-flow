@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 
 export const Route = createFileRoute("/trocar-password")({
+  head: () => ({ meta: [{"title": "Alterar palavra-passe · UP Flow"}, {"name": "description", "content": "Alteração segura da palavra-passe da conta UP Flow."}, {"property": "og:title", "content": "Alterar palavra-passe · UP Flow"}, {"property": "og:description", "content": "Alteração segura da palavra-passe da conta UP Flow."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();

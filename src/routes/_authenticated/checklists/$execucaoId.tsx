@@ -29,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/checklists/$execucaoId")({
       { title: "Execução de checklist · UP Flow" },
       { name: "description", content: "Responde aos itens da verificação do setor a partir do telemóvel." },
       { property: "og:title", content: "Execução de checklist · UP Flow" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Responde aos itens da verificação do setor a partir do telemóvel." },
     ],
   }),

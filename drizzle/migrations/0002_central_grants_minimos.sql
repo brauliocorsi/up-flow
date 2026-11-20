@@ -1,0 +1,3 @@
+REVOKE ALL ON public.reporte_envolvidos,public.reporte_respostas_individuais,public.reporte_notificacoes,public.reporte_ficheiros FROM PUBLIC,anon,authenticated;
+GRANT SELECT ON public.reporte_envolvidos,public.reporte_respostas_individuais,public.reporte_notificacoes,public.reporte_ficheiros TO authenticated;
+GRANT ALL ON public.reporte_envolvidos,public.reporte_respostas_individuais,public.reporte_notificacoes,public.reporte_ficheiros TO service_role;

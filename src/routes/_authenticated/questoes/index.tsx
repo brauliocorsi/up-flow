@@ -7,6 +7,7 @@ import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { QuestaoConversa, type QuestaoBase } from "@/components/QuestaoConversa";
 
 export const Route = createFileRoute("/_authenticated/questoes/")({
+  head: () => ({ meta: [{"title": "Questões · UP Flow"}, {"name": "description", "content": "Comunicação sobre atividades entre colaboradores e gestores."}, {"property": "og:title", "content": "Questões · UP Flow"}, {"property": "og:description", "content": "Comunicação sobre atividades entre colaboradores e gestores."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: QuestoesPage,
 });
 

@@ -7,6 +7,7 @@ import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { MacrosSection } from "@/components/MacrosSection";
 
 export const Route = createFileRoute("/_authenticated/ajuda/")({
+  head: () => ({ meta: [{"title": "Ajuda de processo · UP Flow"}, {"name": "description", "content": "Biblioteca de instruções e macros de processo da UP Móveis."}, {"property": "og:title", "content": "Ajuda de processo · UP Flow"}, {"property": "og:description", "content": "Biblioteca de instruções e macros de processo da UP Móveis."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: AjudaPage,
 });
 

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/route";
 
 export const Route = createFileRoute("/_authenticated/gerar/")({
+  head: () => ({ meta: [{"title": "Gerar tarefas · UP Flow"}, {"name": "description", "content": "Geração de tarefas de rotina por colaborador e data."}, {"property": "og:title", "content": "Gerar tarefas · UP Flow"}, {"property": "og:description", "content": "Geração de tarefas de rotina por colaborador e data."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: GerarPage,
 });
 

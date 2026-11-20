@@ -41,6 +41,8 @@ export const Route = createFileRoute("/_authenticated/reportes/")({
           "Acompanha os reportes de erro de processo por setor, prazos de resposta e resolução.",
       },
       { property: "og:title", content: "Mural de Reportes · UP Flow" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content: "Reportes de erro de processo por setor, com prazos e estado de tratamento.",
@@ -110,7 +112,7 @@ function MuralReportes() {
 
   useEffect(() => {
     const ch = supabase
-      .channel("mural-reportes")
+      .channel(`mural-reportes-${crypto.randomUUID()}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "reportes" }, () =>
         qc.invalidateQueries({ queryKey: ["reportes"] }),
       )
@@ -153,7 +155,18 @@ function MuralReportes() {
         if (aa !== bb) return aa - bb;
         return (b.criado_em ?? "").localeCompare(a.criado_em ?? "");
       });
-  }, [listaQ.data, fEstado, fGravidade, fDestino, fOrigem, fReportadoPor, fAssumidoPor, de, ate, soAtraso]);
+  }, [
+    listaQ.data,
+    fEstado,
+    fGravidade,
+    fDestino,
+    fOrigem,
+    fReportadoPor,
+    fAssumidoPor,
+    de,
+    ate,
+    soAtraso,
+  ]);
 
   const emAtraso = filtrados.filter((r) => r.resposta_em_atraso || r.resolucao_em_atraso).length;
 
@@ -174,6 +187,9 @@ function MuralReportes() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link to="/reportes/kanban">Central de Erros</Link>
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -211,23 +227,71 @@ function MuralReportes() {
 
       {mostrarFiltros && (
         <section className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4">
-          <FiltroSelect label="Estado" value={fEstado} onChange={setFEstado} opcoes={[{ v: "todos", l: "Todos" }, ...ESTADOS_REPORTE.map((e) => ({ v: e, l: LABEL_ESTADO[e] }))]} />
-          <FiltroSelect label="Gravidade" value={fGravidade} onChange={setFGravidade} opcoes={[{ v: "todas", l: "Todas" }, ...GRAVIDADES.map((g) => ({ v: g, l: LABEL_GRAVIDADE[g] }))]} />
-          <FiltroSelect label="Setor destino" value={fDestino} onChange={setFDestino} opcoes={[{ v: "todos", l: "Todos" }, ...(setoresQ.data ?? []).map((s) => ({ v: s.id, l: s.nome }))]} />
-          <FiltroSelect label="Setor origem" value={fOrigem} onChange={setFOrigem} opcoes={[{ v: "todos", l: "Todos" }, ...(setoresQ.data ?? []).map((s) => ({ v: s.id, l: s.nome }))]} />
-          <FiltroSelect label="Reportado por" value={fReportadoPor} onChange={setFReportadoPor} opcoes={[{ v: "todos", l: "Todos" }, ...pessoas.map(([id, n]) => ({ v: id, l: n }))]} />
-          <FiltroSelect label="Assumido por" value={fAssumidoPor} onChange={setFAssumidoPor} opcoes={[{ v: "todos", l: "Todos" }, ...pessoas.map(([id, n]) => ({ v: id, l: n }))]} />
+          <FiltroSelect
+            label="Estado"
+            value={fEstado}
+            onChange={setFEstado}
+            opcoes={[
+              { v: "todos", l: "Todos" },
+              ...ESTADOS_REPORTE.map((e) => ({ v: e, l: LABEL_ESTADO[e] })),
+            ]}
+          />
+          <FiltroSelect
+            label="Gravidade"
+            value={fGravidade}
+            onChange={setFGravidade}
+            opcoes={[
+              { v: "todas", l: "Todas" },
+              ...GRAVIDADES.map((g) => ({ v: g, l: LABEL_GRAVIDADE[g] })),
+            ]}
+          />
+          <FiltroSelect
+            label="Setor destino"
+            value={fDestino}
+            onChange={setFDestino}
+            opcoes={[
+              { v: "todos", l: "Todos" },
+              ...(setoresQ.data ?? []).map((s) => ({ v: s.id, l: s.nome })),
+            ]}
+          />
+          <FiltroSelect
+            label="Setor origem"
+            value={fOrigem}
+            onChange={setFOrigem}
+            opcoes={[
+              { v: "todos", l: "Todos" },
+              ...(setoresQ.data ?? []).map((s) => ({ v: s.id, l: s.nome })),
+            ]}
+          />
+          <FiltroSelect
+            label="Reportado por"
+            value={fReportadoPor}
+            onChange={setFReportadoPor}
+            opcoes={[{ v: "todos", l: "Todos" }, ...pessoas.map(([id, n]) => ({ v: id, l: n }))]}
+          />
+          <FiltroSelect
+            label="Assumido por"
+            value={fAssumidoPor}
+            onChange={setFAssumidoPor}
+            opcoes={[{ v: "todos", l: "Todos" }, ...pessoas.map(([id, n]) => ({ v: id, l: n }))]}
+          />
           <div className="flex flex-col gap-1.5">
-            <Label className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">De</Label>
+            <Label className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              De
+            </Label>
             <Input type="date" value={de} onChange={(e) => setDe(e.target.value)} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Até</Label>
+            <Label className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              Até
+            </Label>
             <Input type="date" value={ate} onChange={(e) => setAte(e.target.value)} />
           </div>
           <div className="flex items-center gap-2 sm:col-span-2">
             <Switch id="so-atraso" checked={soAtraso} onCheckedChange={setSoAtraso} />
-            <Label htmlFor="so-atraso" className="text-sm">Só em atraso</Label>
+            <Label htmlFor="so-atraso" className="text-sm">
+              Só em atraso
+            </Label>
           </div>
         </section>
       )}
@@ -240,13 +304,17 @@ function MuralReportes() {
         </p>
       ) : vista === "quadro" ? (
         <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {ESTADOS_REPORTE.map((estado) => {
+          {ESTADOS_REPORTE.filter(
+            (estado) => estado !== "nao_procede" || fEstado === "nao_procede",
+          ).map((estado) => {
             const cards = filtrados.filter((r) => r.estado === estado);
             return (
               <section key={estado} className="flex flex-col gap-2">
                 <h2 className="flex items-center justify-between px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   {LABEL_ESTADO[estado]}
-                  <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px]">{cards.length}</span>
+                  <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px]">
+                    {cards.length}
+                  </span>
                 </h2>
                 <div className="flex flex-col gap-2">
                   {cards.map((r) => (
@@ -256,7 +324,6 @@ function MuralReportes() {
                       agora={agora}
                       cor={(setoresQ.data ?? []).find((s) => s.id === r.setor_destino_id)?.cor}
                     />
-
                   ))}
                   {cards.length === 0 && (
                     <p className="rounded-md border border-dashed border-border px-3 py-6 text-center text-[11px] text-muted-foreground">
@@ -301,10 +368,16 @@ function MuralReportes() {
                       </Link>
                     </td>
                     <td className="py-2 pr-3">{r.setor_destino ?? "—"}</td>
-                    <td className="py-2 pr-3">{LABEL_ESTADO[r.estado as EstadoReporte] ?? r.estado}</td>
-                    <td className="py-2 pr-3">{LABEL_GRAVIDADE[r.gravidade as keyof typeof LABEL_GRAVIDADE] ?? r.gravidade}</td>
+                    <td className="py-2 pr-3">
+                      {LABEL_ESTADO[r.estado as EstadoReporte] ?? r.estado}
+                    </td>
+                    <td className="py-2 pr-3">
+                      {LABEL_GRAVIDADE[r.gravidade as keyof typeof LABEL_GRAVIDADE] ?? r.gravidade}
+                    </td>
                     <td className="py-2 pr-3">{r.reportado_por_nome ?? "—"}</td>
-                    <td className={cn("py-2 pr-3 text-xs", prazo?.classe)}>{prazo?.texto ?? "—"}</td>
+                    <td className={cn("py-2 pr-3 text-xs", prazo?.classe)}>
+                      {prazo?.texto ?? "—"}
+                    </td>
                   </tr>
                 );
               })}
@@ -338,7 +411,9 @@ function FiltroSelect({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{label}</Label>
+      <Label className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger>
           <SelectValue />
@@ -400,7 +475,9 @@ function CartaoReporte({ r, agora, cor }: { r: Reporte; agora: number; cor?: str
         )}
       </div>
       <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-        <span className="truncate">{r.reportado_por_nome ?? "—"} · {dataCurta(r.criado_em)}</span>
+        <span className="truncate">
+          {r.reportado_por_nome ?? "—"} · {dataCurta(r.criado_em)}
+        </span>
         {prazo && <span className={prazo.classe}>{prazo.texto}</span>}
       </div>
     </Link>

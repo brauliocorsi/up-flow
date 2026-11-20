@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { SetoresManager } from "@/components/SetoresManager";
 
 export const Route = createFileRoute("/_authenticated/equipa/")({
+  head: () => ({ meta: [{"title": "Equipa · UP Flow"}, {"name": "description", "content": "Gestão de colaboradores, setores, horários e acessos."}, {"property": "og:title", "content": "Equipa · UP Flow"}, {"property": "og:description", "content": "Gestão de colaboradores, setores, horários e acessos."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: EquipaPage,
 });
 

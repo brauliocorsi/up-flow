@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthUser } from "@/routes/_authenticated/route";
 
 export const Route = createFileRoute("/_authenticated/app/")({
+  head: () => ({ meta: [{"title": "Área pessoal · UP Flow"}, {"name": "description", "content": "Área pessoal de rotinas, equipa e qualidade UP Flow."}, {"property": "og:title", "content": "Área pessoal · UP Flow"}, {"property": "og:description", "content": "Área pessoal de rotinas, equipa e qualidade UP Flow."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: HomePage,
 });
 

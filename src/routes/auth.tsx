@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 
 export const Route = createFileRoute("/auth")({
+  head: () => ({ meta: [{"title": "Entrar · UP Flow"}, {"name": "description", "content": "Entrada segura na aplicação de rotinas da UP Móveis."}, {"property": "og:title", "content": "Entrar · UP Flow"}, {"property": "og:description", "content": "Entrada segura na aplicação de rotinas da UP Móveis."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();

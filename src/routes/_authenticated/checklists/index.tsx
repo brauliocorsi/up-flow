@@ -13,6 +13,8 @@ export const Route = createFileRoute("/_authenticated/checklists/")({
       { title: "Os meus checklists · UP Flow" },
       { name: "description", content: "Verificações periódicas do teu setor: por fazer, em curso, concluídas e em falta." },
       { property: "og:title", content: "Os meus checklists · UP Flow" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:description", content: "Verificações periódicas do teu setor: por fazer, em curso, concluídas e em falta." },
     ],
   }),

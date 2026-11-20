@@ -7,6 +7,7 @@ import { useAuthUser } from "@/routes/_authenticated/auth-context";
 import { corFuncionario } from "@/lib/cores";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
+  head: () => ({ meta: [{"title": "Painel da equipa · UP Flow"}, {"name": "description", "content": "Acompanhamento diário e histórico das rotinas da equipa."}, {"property": "og:title", "content": "Painel da equipa · UP Flow"}, {"property": "og:description", "content": "Acompanhamento diário e histórico das rotinas da equipa."}, {"property": "og:type", "content": "website"}, {"name": "twitter:card", "content": "summary"}] }),
   component: PainelPage,
 });
 
